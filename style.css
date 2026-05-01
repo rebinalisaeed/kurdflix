@@ -1,0 +1,335 @@
+/* ڕێکخستنی فۆنتەکانی Rudaw */
+@font-face {
+    font-family: 'Rudaw';
+    src: url('fonts/rudawregular2.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Rudaw';
+    src: url('fonts/rudawbold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+/* گۆڕاوەکانی ڕەنگ بۆ Dark/Light mode */
+:root {
+    --bg-primary: #0A0A0A;
+    --bg-secondary: #1A1A1A;
+    --text-primary: #E5E5E5;
+    --text-secondary: #B3B3B3;
+    --accent: #E50914;
+    --card-bg: #1F1F1F;
+    --border: #333;
+}
+
+[data-theme="light"] {
+    --bg-primary: #F5F5F5;
+    --bg-secondary: #FFFFFF;
+    --text-primary: #1A1A1A;
+    --text-secondary: #666;
+    --accent: #E50914;
+    --card-bg: #FFFFFF;
+    --border: #DDD;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.2s;
+}
+
+body {
+    font-family: 'Rudaw', sans-serif;
+    font-weight: normal;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+h1, h2, h3, .nav-menu a, .movie-title, button {
+    font-family: 'Rudaw', sans-serif;
+    font-weight: bold;
+}
+
+/* ناوبار */
+.navbar {
+    background-color: var(--bg-secondary);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--border);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 2rem;
+}
+
+.logo h1 {
+    font-size: 1.8rem;
+    color: var(--text-primary);
+}
+
+.logo span {
+    color: var(--accent);
+}
+
+.hamburger {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+    flex: 1;
+    justify-content: center;
+}
+
+.nav-menu a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 1.1rem;
+    transition: color 0.3s;
+    padding: 0.5rem 0;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+    color: var(--accent);
+    border-bottom: 2px solid var(--accent);
+}
+
+/* Dark/Light mode toggle */
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.theme-toggle i {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--accent);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* سلایدەکان */
+.container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.movie-section {
+    margin-bottom: 3rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    border-right: 4px solid var(--accent);
+    padding-right: 1rem;
+}
+
+.slider-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.slider-btn {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.3s;
+}
+
+.slider-btn:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
+.slider-container {
+    overflow-x: hidden;
+    position: relative;
+}
+
+.movies-slider {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    padding: 0.5rem 0.2rem;
+}
+
+.movies-slider::-webkit-scrollbar {
+    height: 8px;
+}
+
+.movies-slider::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+}
+
+.movies-slider::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
+}
+
+/* کارتی فیلم */
+.movie-card {
+    flex: 0 0 200px;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--border);
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+.movie-poster {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.movie-info {
+    padding: 0.8rem;
+}
+
+.movie-title {
+    font-size: 1rem;
+    margin-bottom: 0.3rem;
+    color: var(--text-primary);
+}
+
+.movie-year {
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: normal;
+}
+
+/* فووتەر */
+footer {
+    text-align: center;
+    padding: 2rem;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Responsive: مۆبایل */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 1rem;
+    }
+    
+    .hamburger {
+        display: block;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: var(--bg-secondary);
+        width: 70%;
+        height: 100vh;
+        text-align: center;
+        padding: 2rem;
+        gap: 1.5rem;
+        transition: left 0.3s;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+        border-left: 1px solid var(--border);
+    }
+    
+    .nav-menu.active {
+        left: 0;
+    }
+    
+    .movie-card {
+        flex: 0 0 150px;
+    }
+    
+    .movie-poster {
+        height: 225px;
+    }
+    
+    .section-header h2 {
+        font-size: 1.2rem;
+    }
+}
