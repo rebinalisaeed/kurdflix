@@ -5,16 +5,19 @@ const moviesData = {
         { id: 2, title: "دژی ڕێگا", year: "2023", poster: "assets/poster2.jpg", videoUrl: "https://streamsb.com/e/example2", type: "streamsb" },
         { id: 3, title: "ڕۆژی دوایین", year: "2025", poster: "assets/poster3.jpg", videoUrl: "https://vidmoly.com/e/example3", type: "vidmoly" },
         { id: 4, title: "بەندیخانە", year: "2024", poster: "assets/poster4.jpg", videoUrl: "https://streamwish.com/e/example4", type: "streamwish" },
-        { id: 5, title: "خەونی پڕۆ", year: "2023", poster: "assets/poster5.jpg", videoUrl: "https://vidmoly.com/e/example5", type: "vidmoly" }
+        { id: 5, title: "خەونی پڕۆ", year: "2023", poster: "assets/poster5.jpg", videoUrl: "https://vidmoly.com/e/example5", type: "vidmoly" },
+        { id: 6, title: "ڕێگای ئاسمان", year: "2025", poster: "assets/poster6.jpg", videoUrl: "https://streamsb.com/e/example6", type: "streamsb" }
     ],
     slider2: [
-        { id: 6, title: "گەرمی دڵ", year: "2024", poster: "assets/poster6.jpg", videoUrl: "https://streamsb.com/e/example6", type: "streamsb" },
-        { id: 7, title: "باڵندەکان", year: "2023", poster: "assets/poster7.jpg", videoUrl: "https://vidmoly.com/e/example7", type: "vidmoly" },
-        { id: 8, title: "سەردەمی زێڕین", year: "2025", poster: "assets/poster8.jpg", videoUrl: "https://streamsb.com/e/example8", type: "streamsb" }
+        { id: 7, title: "گەرمی دڵ", year: "2024", poster: "assets/poster7.jpg", videoUrl: "https://streamsb.com/e/example7", type: "streamsb" },
+        { id: 8, title: "باڵندەکان", year: "2023", poster: "assets/poster8.jpg", videoUrl: "https://vidmoly.com/e/example8", type: "vidmoly" },
+        { id: 9, title: "سەردەمی زێڕین", year: "2025", poster: "assets/poster9.jpg", videoUrl: "https://streamsb.com/e/example9", type: "streamsb" },
+        { id: 10, title: "خەونی پەروانە", year: "2024", poster: "assets/poster10.jpg", videoUrl: "https://vidmoly.com/e/example10", type: "vidmoly" }
     ],
     slider3: [
-        { id: 9, title: "قیزیل ئەلما", year: "2024", poster: "assets/poster9.jpg", videoUrl: "https://vidmoly.com/e/example9", type: "vidmoly" },
-        { id: 10, title: "کوروگلو", year: "2023", poster: "assets/poster10.jpg", videoUrl: "https://streamsb.com/e/example10", type: "streamsb" }
+        { id: 11, title: "قیزیل ئەلما", year: "2024", poster: "assets/poster11.jpg", videoUrl: "https://vidmoly.com/e/example11", type: "vidmoly" },
+        { id: 12, title: "کوروگلو", year: "2023", poster: "assets/poster12.jpg", videoUrl: "https://streamsb.com/e/example12", type: "streamsb" },
+        { id: 13, title: "دڵی باڵکانی", year: "2025", poster: "assets/poster13.jpg", videoUrl: "https://vidmoly.com/e/example13", type: "vidmoly" }
     ]
 };
 
@@ -50,13 +53,15 @@ function openPlayer(videoUrl, title) {
         embedUrl = videoUrl.replace("/e/", "/embed-4/");
     } else if (videoUrl.includes("streamwish")) {
         embedUrl = videoUrl.replace("/e/", "/embed/");
+    } else if (videoUrl.includes("sendvid")) {
+        embedUrl = videoUrl.replace("/e/", "/embed/");
     }
     
     const playerHTML = `
         <div id="playerModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column;">
             <div style="background:var(--bg-secondary); width:90%; max-width:1000px; border-radius:12px; overflow:hidden;">
                 <div style="display:flex; justify-content:space-between; padding:1rem; border-bottom:1px solid var(--border);">
-                    <h3>${title}</h3>
+                    <h3 style="color:var(--text-primary);">${title}</h3>
                     <button id="closePlayer" style="background:none; border:none; color:var(--text-primary); font-size:1.8rem; cursor:pointer;">&times;</button>
                 </div>
                 <div style="position:relative; padding-bottom:56.25%; height:0;">
