@@ -1,0 +1,44 @@
+{
+    "movies": [
+        {
+            "id": 1,
+            "title": "ئەفسانەی کوێستان",
+            "year": "2024",
+            "poster": "assets/poster1.jpg",
+            "type": "film",
+            "categories": ["kurdish-film", "all-films"],
+            "videoUrl": "https://vidmoly.com/e/example1",
+            "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا",
+            "trailerUrl": "https://www.youtube.com/embed/example1"
+        },
+        {
+            "id": 2,
+            "title": "قەڵای خەونەکان",
+            "year": "2023",
+            "poster": "assets/poster2.jpg",
+            "type": "series",
+            "categories": ["turkish-series", "all-series"],
+            "videoUrl": "https://streamsb.com/e/example2",
+            "description": "زنجیرەیەکی درامایی و سەرنجڕاکێش",
+            "trailerUrl": "https://www.youtube.com/embed/example2"
+        }
+    ],
+    "carousel": [
+        {
+            "id": 1,
+            "title": "ئەفسانەی کوێستان",
+            "category": "فیلمی کوردی",
+            "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا",
+            "poster": "assets/poster1.jpg",
+            "movieId": 1
+        },
+        {
+            "id": 2,
+            "title": "قەڵای خەونەکان",
+            "category": "زنجیرەی تورکی",
+            "description": "زنجیرەیەکی درامایی و سەرنجڕاکێش",
+            "poster": "assets/poster2.jpg",
+            "movieId": 2
+        }
+    ]
+}
