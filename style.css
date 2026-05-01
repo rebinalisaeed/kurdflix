@@ -3,17 +3,15 @@
     font-family: 'Rudaw';
     src: url('fonts/rudawregular2.ttf') format('truetype');
     font-weight: normal;
-    font-style: normal;
 }
 
 @font-face {
     font-family: 'Rudaw';
     src: url('fonts/rudawbold.ttf') format('truetype');
     font-weight: bold;
-    font-style: normal;
 }
 
-/* گۆڕاوەکانی ڕەنگ بۆ Dark/Light mode */
+/* گۆڕاوەکانی ڕەنگ بۆ Dark/Light */
 :root {
     --bg-primary: #0A0A0A;
     --bg-secondary: #1A1A1A;
@@ -54,36 +52,7 @@ h1, h2, h3, .nav-menu a, .movie-title, button {
     font-weight: bold;
 }
 
-/* لۆگۆی شێوازی Netflix */
-.logo h1 {
-    font-family: 'Rudaw', sans-serif;
-    font-weight: bold;
-    font-size: 2rem;
-    letter-spacing: -1px;
-    background: linear-gradient(135deg, #E50914 0%, #B20710 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    position: relative;
-    display: inline-block;
-}
-
-.logo span {
-    background: linear-gradient(135deg, #FFFFFF 0%, #E5E5E5 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    font-weight: bold;
-}
-
-[data-theme="light"] .logo span {
-    background: linear-gradient(135deg, #333 0%, #111 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-}
-
-/* ناوبار */
+/* ========== ناوبار و بانەڕ ========== */
 .navbar {
     background-color: var(--bg-secondary);
     padding: 1rem 2rem;
@@ -97,57 +66,145 @@ h1, h2, h3, .nav-menu a, .movie-title, button {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    max-width: 1400px;
+    max-width: 1600px;
     margin: 0 auto;
     gap: 2rem;
+    flex-wrap: wrap;
 }
 
-.hamburger {
-    display: none;
-    font-size: 1.8rem;
-    cursor: pointer;
-    color: var(--text-primary);
+/* لۆگۆ لە لای ڕاست */
+.logo {
+    order: 0;
 }
 
+.logo h1 {
+    font-size: 2rem;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #E50914 0%, #B20710 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.logo span {
+    background: linear-gradient(135deg, #FFFFFF 0%, #E5E5E5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+[data-theme="light"] .logo span {
+    background: linear-gradient(135deg, #333 0%, #111 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+/* مینیوی سەرەکی */
 .nav-menu {
     display: flex;
     list-style: none;
-    gap: 2rem;
+    gap: 1.5rem;
     flex: 1;
     justify-content: center;
+    margin: 0;
+    padding: 0;
 }
 
-.nav-menu a {
+.nav-menu > li > a {
     color: var(--text-primary);
     text-decoration: none;
-    font-size: 1.1rem;
-    transition: color 0.3s;
+    font-size: 1rem;
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.nav-menu > li > a:hover {
+    color: var(--accent);
+}
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 100;
+    list-style: none;
     padding: 0.5rem 0;
 }
 
-.nav-menu a:hover,
-.nav-menu a.active {
-    color: var(--accent);
-    border-bottom: 2px solid var(--accent);
+.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
 }
 
-/* Dark/Light mode toggle */
+.dropdown-menu li a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.9rem;
+}
+
+.dropdown-menu li a:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
+/* ئایکۆنەکانی لای چەپ */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    order: 2;
+}
+
+.search-icon, .login-icon {
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-primary);
+}
+
+.search-icon:hover, .login-icon:hover {
+    color: var(--accent);
+}
+
+.vip-btn {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: none;
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    color: #1A1A1A;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Theme toggle */
 .theme-toggle {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-}
-
-.theme-toggle i {
-    font-size: 1.2rem;
-    color: var(--text-secondary);
+    gap: 0.3rem;
 }
 
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px;
-    height: 24px;
+    width: 45px;
+    height: 22px;
 }
 
 .switch input {
@@ -164,19 +221,17 @@ h1, h2, h3, .nav-menu a, .movie-title, button {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: 0.4s;
     border-radius: 34px;
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 18px;
-    width: 18px;
+    height: 16px;
+    width: 16px;
     left: 3px;
     bottom: 3px;
     background-color: white;
-    transition: 0.4s;
     border-radius: 50%;
 }
 
@@ -185,102 +240,226 @@ input:checked + .slider {
 }
 
 input:checked + .slider:before {
-    transform: translateX(26px);
+    transform: translateX(23px);
 }
 
-/* سلایدەکان */
+/* هەمبەرگەر بۆ مۆبایل */
+.hamburger {
+    display: none;
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    order: 0;
+}
+
+/* فۆرمی گەڕان */
+.search-form {
+    position: relative;
+    margin-top: 1rem;
+    padding: 0 1rem;
+}
+
+.search-form input {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Rudaw', sans-serif;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.search-results .search-item {
+    padding: 0.8rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+}
+
+.search-results .search-item:hover {
+    background-color: var(--accent);
+}
+
+/* ========== سلایدی گەورە ========== */
+.hero-carousel {
+    position: relative;
+    width: 100%;
+    height: 70vh;
+    min-height: 500px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+}
+
+.carousel-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    padding: 3rem 4rem;
+}
+
+.carousel-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+
+.carousel-category {
+    display: inline-block;
+    background-color: var(--accent);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.carousel-description {
+    max-width: 600px;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    color: #DDD;
+}
+
+.carousel-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.carousel-btn {
+    padding: 0.6rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.carousel-btn.trailer {
+    background-color: var(--accent);
+    color: white;
+}
+
+.carousel-btn.info {
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+}
+
+.carousel-prev, .carousel-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    padding: 1rem;
+    cursor: pointer;
+    z-index: 10;
+    border-radius: 50%;
+}
+
+.carousel-prev {
+    right: 20px;
+}
+
+.carousel-next {
+    left: 20px;
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.5);
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: var(--accent);
+}
+
+/* ========== گریدی فیلم و زنجیرەکان ========== */
 .container {
     max-width: 1400px;
     margin: 2rem auto;
     padding: 0 1rem;
 }
 
-.movie-section {
-    margin-bottom: 3rem;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.category-header h2 {
+    font-size: 1.8rem;
+    border-right: 4px solid var(--accent);
+    padding-right: 1rem;
     margin-bottom: 1.5rem;
 }
 
-.section-header h2 {
-    font-size: 1.5rem;
-    border-right: 4px solid var(--accent);
-    padding-right: 1rem;
-}
-
-.slider-controls {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.slider-btn {
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border);
-    color: var(--text-primary);
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: all 0.3s;
-}
-
-.slider-btn:hover {
-    background-color: var(--accent);
-    color: white;
-}
-
-.slider-container {
-    overflow-x: hidden;
-    position: relative;
-}
-
-.movies-slider {
-    display: flex;
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1.5rem;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    padding: 0.5rem 0.2rem;
 }
 
-.movies-slider::-webkit-scrollbar {
-    height: 8px;
-}
-
-.movies-slider::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
-    border-radius: 10px;
-}
-
-.movies-slider::-webkit-scrollbar-thumb {
-    background: var(--accent);
-    border-radius: 10px;
-}
-
-/* کارتی فیلم */
 .movie-card {
-    flex: 0 0 200px;
     background-color: var(--card-bg);
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition: transform 0.3s;
     border: 1px solid var(--border);
 }
 
 .movie-card:hover {
     transform: scale(1.05);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
 .movie-poster {
     width: 100%;
-    height: 300px;
+    height: 280px;
     object-fit: cover;
 }
 
@@ -291,69 +470,148 @@ input:checked + .slider:before {
 .movie-title {
     font-size: 1rem;
     margin-bottom: 0.3rem;
-    color: var(--text-primary);
 }
 
 .movie-year {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--accent);
-    font-weight: normal;
 }
 
-/* فووتەر */
+/* ========== فووتەر ========== */
 footer {
     text-align: center;
     padding: 2rem;
     background-color: var(--bg-secondary);
     border-top: 1px solid var(--border);
     margin-top: 3rem;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
 }
 
-/* Responsive: مۆبایل */
-@media (max-width: 768px) {
-    .navbar {
-        padding: 1rem;
+/* ========== مۆدال ========== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.modal-content button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* ========== Responsive: تابلێت و مۆبایل ========== */
+@media (max-width: 1024px) {
+    .nav-container {
+        flex-wrap: wrap;
     }
     
+    .nav-menu {
+        gap: 1rem;
+    }
+    
+    .nav-menu > li > a {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 768px) {
     .hamburger {
         display: block;
     }
     
     .nav-menu {
         position: fixed;
-        left: -100%;
         top: 70px;
-        flex-direction: column;
-        background-color: var(--bg-secondary);
-        width: 70%;
+        right: -100%;
+        width: 80%;
         height: 100vh;
-        text-align: center;
+        background-color: var(--bg-secondary);
+        flex-direction: column;
         padding: 2rem;
-        gap: 1.5rem;
-        transition: left 0.3s;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.2);
-        border-left: 1px solid var(--border);
+        transition: right 0.3s;
+        z-index: 999;
+        gap: 1rem;
+        border-right: 1px solid var(--border);
     }
     
     .nav-menu.active {
-        left: 0;
+        right: 0;
     }
     
-    .movie-card {
-        flex: 0 0 150px;
+    .dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        display: none;
+        background-color: var(--bg-primary);
+        margin-right: 1rem;
+    }
+    
+    .dropdown.active .dropdown-menu {
+        display: block;
+    }
+    
+    .hero-carousel {
+        height: 50vh;
+        min-height: 400px;
+    }
+    
+    .carousel-overlay {
+        padding: 1.5rem;
+    }
+    
+    .carousel-title {
+        font-size: 1.5rem;
+    }
+    
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 1rem;
     }
     
     .movie-poster {
-        height: 225px;
+        height: 220px;
     }
     
-    .section-header h2 {
-        font-size: 1.2rem;
-    }
-    
-    .logo h1 {
-        font-size: 1.5rem;
+    .nav-actions {
+        gap: 0.5rem;
     }
 }
