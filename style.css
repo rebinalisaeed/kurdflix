@@ -54,6 +54,35 @@ h1, h2, h3, .nav-menu a, .movie-title, button {
     font-weight: bold;
 }
 
+/* لۆگۆی شێوازی Netflix */
+.logo h1 {
+    font-family: 'Rudaw', sans-serif;
+    font-weight: bold;
+    font-size: 2rem;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, #E50914 0%, #B20710 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    position: relative;
+    display: inline-block;
+}
+
+.logo span {
+    background: linear-gradient(135deg, #FFFFFF 0%, #E5E5E5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+}
+
+[data-theme="light"] .logo span {
+    background: linear-gradient(135deg, #333 0%, #111 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
 /* ناوبار */
 .navbar {
     background-color: var(--bg-secondary);
@@ -71,15 +100,6 @@ h1, h2, h3, .nav-menu a, .movie-title, button {
     max-width: 1400px;
     margin: 0 auto;
     gap: 2rem;
-}
-
-.logo h1 {
-    font-size: 1.8rem;
-    color: var(--text-primary);
-}
-
-.logo span {
-    color: var(--accent);
 }
 
 .hamburger {
@@ -331,5 +351,9 @@ footer {
     
     .section-header h2 {
         font-size: 1.2rem;
+    }
+    
+    .logo h1 {
+        font-size: 1.5rem;
     }
 }
