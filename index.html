@@ -5,86 +5,113 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>KurdFlix - دۆبلاژی کوردی</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome 6 (خۆڕایی) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body data-theme="dark">
 
-    <!-- مینیوی سەرەوە -->
+    <!-- بانەڕی سەرەوە -->
     <nav class="navbar">
         <div class="nav-container">
+            <!-- هەمبەرگەر بۆ مۆبایل -->
             <div class="hamburger" id="hamburger">
                 <i class="fas fa-bars"></i>
             </div>
+            
+            <!-- لۆگۆ لە لای ڕاست -->
             <div class="logo">
-                <h1 class="netflix-logo">KURD<span>FLIX</span></h1>
+                <h1>KURD<span>FLIX</span></h1>
             </div>
+            
+            <!-- مینیوی سەرەکی -->
             <ul class="nav-menu" id="nav-menu">
-                <li><a href="#" class="active">خانه</a></li>
-                <li><a href="#">فیلمەکان</a></li>
-                <li><a href="#">دراماکان</a></li>
-                <li><a href="#">دۆبلاژەکان</a></li>
+                <!-- فیلمەکان Dropdown -->
+                <li class="dropdown">
+                    <a href="#">فیلمەکان <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" data-category="all-films">هەموو</a></li>
+                        <li><a href="#" data-category="kurdish-film">فیلمی کوردی</a></li>
+                        <li><a href="#" data-category="hollywood">هۆلیوود</a></li>
+                        <li><a href="#" data-category="bollywood">بۆلیوود</a></li>
+                        <li><a href="#" data-category="russian">فیلمی روسی</a></li>
+                        <li><a href="#" data-category="korean">فیلمی کۆری</a></li>
+                        <li><a href="#" data-category="persian">فیلمی فارسی</a></li>
+                        <li><a href="#" data-category="arabic">فیلمی عەرەبی</a></li>
+                        <li><a href="#" data-category="turkish-film">فیلمی تورکی</a></li>
+                        <li><a href="#" data-category="european">فیلمی بیانی (ئەوروپی)</a></li>
+                    </ul>
+                </li>
+                
+                <!-- زنجیرەکان Dropdown -->
+                <li class="dropdown">
+                    <a href="#">زنجیرەکان <i class="fas fa-chevron-down"></i></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" data-category="all-series">هەموو</a></li>
+                        <li><a href="#" data-category="kurdish-series">زنجیرەی کوردی</a></li>
+                        <li><a href="#" data-category="american-series">زنجیرەی ئەمەریکی</a></li>
+                        <li><a href="#" data-category="korean-series">زنجیرەی کۆری</a></li>
+                        <li><a href="#" data-category="indian-series">زنجیرەی هیندی</a></li>
+                        <li><a href="#" data-category="chinese-series">زنجیرەی چینی</a></li>
+                        <li><a href="#" data-category="turkish-series">زنجیرەی تورکی</a></li>
+                        <li><a href="#" data-category="persian-series">زنجیرەی فارسی</a></li>
+                        <li><a href="#" data-category="arabic-series">زنجیرەی عەرەبی</a></li>
+                        <li><a href="#" data-category="anime">زنجیرەی ئەنیمی و ئەنیمەیشن</a></li>
+                        <li><a href="#" data-category="documentary">زنجیرەی دیکۆمێنتاری</a></li>
+                    </ul>
+                </li>
+                
+                <li><a href="#">زنجیرەفیلم</a></li>
+                <li><a href="#">ژێرنووسی کوردی</a></li>
+                <li><a href="#">Top 250</a></li>
+                <li><a href="#">هەواڵ و زانیاری</a></li>
+                <li><a href="staff.html">ستافی کوردفلێکس</a></li>
             </ul>
-            <div class="theme-toggle">
-                <i class="fas fa-sun" id="theme-icon"></i>
-                <label class="switch">
-                    <input type="checkbox" id="theme-switch">
-                    <span class="slider round"></span>
-                </label>
-                <i class="fas fa-moon" id="theme-icon-moon"></i>
+            
+            <!-- ئایکۆنەکانی لای چەپ (لەناو مینیودا) -->
+            <div class="nav-actions">
+                <div class="search-icon" id="searchIcon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="login-icon" id="loginIcon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <button class="vip-btn" id="vipBtn">VIP</button>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-switch">
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
             </div>
+        </div>
+        
+        <!-- فۆرمی گەڕان (initial hidden) -->
+        <div class="search-form" id="searchForm" style="display: none;">
+            <input type="text" id="searchInput" placeholder="گەڕان بە ناوی فیلم یان زنجیرە...">
+            <button id="searchClose"><i class="fas fa-times"></i></button>
+            <div id="searchResults" class="search-results"></div>
         </div>
     </nav>
 
-    <!-- ناوەڕۆکی سەرەکی -->
+    <!-- سلایدی گەورە (Full-width Carousel) -->
+    <section class="hero-carousel">
+        <div class="carousel-container" id="carouselContainer">
+            <!-- سلایدەکان لە لایەن JavaScriptەوە دادەنرێن -->
+        </div>
+        <button class="carousel-prev" id="carouselPrev"><i class="fas fa-chevron-right"></i></button>
+        <button class="carousel-next" id="carouselNext"><i class="fas fa-chevron-left"></i></button>
+        <div class="carousel-dots" id="carouselDots"></div>
+    </section>
+
+    <!-- بەشی فیلم و زنجیرەکان (بە پێی پۆل) -->
     <main class="container">
-        <!-- سلاید 1: بەرهەمە نوێیەکان -->
-        <section class="movie-section">
-            <div class="section-header">
-                <h2>🔥 بەرهەمە نوێیەکان</h2>
-                <div class="slider-controls">
-                    <button class="slider-btn prev-btn" data-slider="slider1"><i class="fas fa-chevron-right"></i></button>
-                    <button class="slider-btn next-btn" data-slider="slider1"><i class="fas fa-chevron-left"></i></button>
-                </div>
-            </div>
-            <div class="slider-container" id="slider1">
-                <div class="movies-slider">
-                    <!-- کارتەکان لێرەدا لە لایەن JavaScriptەوە دادەنرێن -->
-                </div>
-            </div>
-        </section>
-
-        <!-- سلاید 2: پڕبینەرترین دۆبلاژەکان -->
-        <section class="movie-section">
-            <div class="section-header">
-                <h2>⭐ پڕبینەرترین دۆبلاژەکان</h2>
-                <div class="slider-controls">
-                    <button class="slider-btn prev-btn" data-slider="slider2"><i class="fas fa-chevron-right"></i></button>
-                    <button class="slider-btn next-btn" data-slider="slider2"><i class="fas fa-chevron-left"></i></button>
-                </div>
-            </div>
-            <div class="slider-container" id="slider2">
-                <div class="movies-slider">
-                    <!-- کارتەکان لێرەدا لە لایەن JavaScriptەوە دادەنرێن -->
-                </div>
-            </div>
-        </section>
-
-        <!-- سلاید 3: دراماکانی تورکی دۆبلاژکراو -->
-        <section class="movie-section">
-            <div class="section-header">
-                <h2>🇹🇷 دراماکانی تورکی دۆبلاژکراو</h2>
-                <div class="slider-controls">
-                    <button class="slider-btn prev-btn" data-slider="slider3"><i class="fas fa-chevron-right"></i></button>
-                    <button class="slider-btn next-btn" data-slider="slider3"><i class="fas fa-chevron-left"></i></button>
-                </div>
-            </div>
-            <div class="slider-container" id="slider3">
-                <div class="movies-slider">
-                    <!-- کارتەکان لێرەدا لە لایەن JavaScriptەوە دادەنرێن -->
-                </div>
-            </div>
-        </section>
+        <div class="category-header">
+            <h2 id="currentCategoryTitle">هەموو فیلم و زنجیرەکان</h2>
+        </div>
+        <div class="movies-grid" id="moviesGrid">
+            <!-- کارتەکان لێرەدا لە لایەن JavaScriptەوە دادەنرێن -->
+        </div>
     </main>
 
     <!-- فووتەر -->
@@ -92,6 +119,29 @@
         <p>© 2025 KurdFlix - هەموو فیلمەکان بە دۆبلاژی کوردین</p>
         <p>ڤیدیۆکان لە لایەن پلاتفۆرمی ترەوە میوانبەری دەکرێن</p>
     </footer>
+
+    <!-- مۆدالی چوونە ژوورەوە -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>چوونە ژوورەوە</h2>
+            <form id="loginForm">
+                <input type="email" placeholder="ئیمەیڵ" required>
+                <input type="password" placeholder="پاسیۆرد" required>
+                <button type="submit">چوونە ژوورەوە</button>
+            </form>
+            <p>هەژمارت نییە؟ <a href="#">تۆمار بکە</a></p>
+        </div>
+    </div>
+
+    <!-- مۆدالی VIP -->
+    <div id="vipModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>VIP - پلانی تایبەت</h2>
+            <p>بە زوو ئەم بەشە کارا دەبێت...</p>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
