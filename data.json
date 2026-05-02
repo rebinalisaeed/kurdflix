@@ -6,7 +6,10 @@
             "year": "2024",
             "poster": "assets/poster1.jpg",
             "type": "film",
-            "categories": ["kurdish-film", "all-films"],
+            "categories": [
+                "kurdish-film",
+                "all-films"
+            ],
             "videoUrl": "https://vidmoly.com/e/example1",
             "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا",
             "trailerUrl": "https://www.youtube.com/embed/example1"
@@ -17,7 +20,10 @@
             "year": "2023",
             "poster": "assets/poster2.jpg",
             "type": "series",
-            "categories": ["turkish-series", "all-series"],
+            "categories": [
+                "turkish-series",
+                "all-series"
+            ],
             "videoUrl": "https://streamsb.com/e/example2",
             "description": "زنجیرەیەکی درامایی و سەرنجڕاکێش",
             "trailerUrl": "https://www.youtube.com/embed/example2"
@@ -38,6 +44,14 @@
             "category": "زنجیرەی تورکی",
             "description": "زنجیرەیەکی درامایی و سەرنجڕاکێش",
             "poster": "assets/poster2.jpg",
+            "movieId": 2
+        },
+        {
+            "id": 1777663261406,
+            "title": "تاڵانی پارە",
+            "category": "دراما کۆمێدی سەرکێشی",
+            "description": "دەستەیەک دەچن لۆخۆیان لەبانقەکی هەندەک پارەی دەدزن ",
+            "poster": "https://i.ibb.co/x8XQVThj/images-1.jpg",
             "movieId": 2
         }
     ]
