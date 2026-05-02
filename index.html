@@ -9,23 +9,19 @@
 </head>
 <body data-theme="dark">
 
-    <!-- بانەڕی سەرەوە -->
+    <!-- هێدر و ناوبار -->
     <nav class="navbar">
         <div class="nav-container">
-            <!-- هەمبەرگەر بۆ مۆبایل -->
             <div class="hamburger" id="hamburger">
                 <i class="fas fa-bars"></i>
             </div>
             
-            <!-- لای ڕاست: لۆگۆ + مینیو -->
             <div class="nav-right">
                 <div class="logo">
-                    <img src="https://i.ibb.co/Xfm9zwDY/Kurdflix-LOGO.png" alt="KurdFlix Logo" class="logo-image" onerror="this.src='https://via.placeholder.com/100x32?text=KurdFlix'">
+                    <img src="https://i.ibb.co/twZ1KZDK/IMG-20260503-021203-733.jpg" alt="KurdFlix Logo" class="logo-image" onerror="this.src='https://via.placeholder.com/100x32?text=KurdFlix'">
                 </div>
                 
-                <!-- مینیوی سەرەکی -->
                 <ul class="nav-menu" id="nav-menu">
-                    <!-- فیلمەکان Dropdown -->
                     <li class="dropdown">
                         <a href="#">فیلمەکان <i class="fas fa-chevron-down"></i></a>
                         <ul class="dropdown-menu">
@@ -42,7 +38,6 @@
                         </ul>
                     </li>
                     
-                    <!-- زنجیرەکان Dropdown -->
                     <li class="dropdown">
                         <a href="#">زنجیرەکان <i class="fas fa-chevron-down"></i></a>
                         <ul class="dropdown-menu">
@@ -67,10 +62,8 @@
                 </ul>
             </div>
             
-            <!-- ناوەڕاست بەتاڵ -->
             <div class="nav-center"></div>
             
-            <!-- ئایکۆن و دوگمەکان (لای چەپ) -->
             <div class="nav-actions">
                 <div class="search-icon" id="searchIcon">
                     <i class="fas fa-search"></i>
@@ -90,7 +83,6 @@
             </div>
         </div>
         
-        <!-- فۆرمی گەڕان -->
         <div class="search-form" id="searchForm" style="display: none;">
             <input type="text" id="searchInput" placeholder="گەڕان بە ناوی فیلم یان زنجیرە...">
             <button id="searchClose"><i class="fas fa-times"></i></button>
@@ -98,31 +90,25 @@
         </div>
     </nav>
 
-    <!-- سلایدی گەورە (Full-width Carousel) - بەبێ دوگمەکان -->
     <section class="hero-carousel">
         <div class="carousel-container" id="carouselContainer">
-            <!-- سلایدەکان لە لایەن JavaScriptەوە دادەنرێن -->
         </div>
         <div class="carousel-dots" id="carouselDots"></div>
     </section>
 
-    <!-- بەشی فیلم و زنجیرەکان -->
     <main class="container">
         <div class="category-header">
             <h2 id="currentCategoryTitle">هەموو فیلم و زنجیرەکان</h2>
         </div>
         <div class="movies-grid" id="moviesGrid">
-            <!-- کارتەکان لێرەدا لە لایەن JavaScriptەوە دادەنرێن -->
         </div>
     </main>
 
-    <!-- فووتەر -->
     <footer>
         <p>© 2025 KurdFlix - هەموو فیلمەکان بە دۆبلاژی کوردین</p>
         <p>ڤیدیۆکان لە لایەن پلاتفۆرمی ترەوە میوانبەری دەکرێن</p>
     </footer>
 
-    <!-- مۆدالی چوونە ژوورەوە -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -136,7 +122,6 @@
         </div>
     </div>
 
-    <!-- مۆدالی VIP -->
     <div id="vipModal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
