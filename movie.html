@@ -9,7 +9,7 @@
     <style>
         .movie-detail-container {
             max-width: 1200px;
-            margin: 2rem auto;
+            margin: 100px auto 2rem auto;
             padding: 0 1rem;
         }
         .movie-hero {
@@ -73,13 +73,48 @@
             margin-bottom: 1rem;
             display: inline-block;
         }
+        @media (max-width: 768px) {
+            .movie-detail-container {
+                margin-top: 80px;
+            }
+            .movie-hero-poster {
+                flex: 0 0 200px;
+            }
+            .movie-hero-info h1 {
+                font-size: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body data-theme="dark">
+
     <nav class="navbar">
         <div class="nav-container">
-            <div class="logo">
-                <h1>KURD<span>FLIX</span></h1>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
+            </div>
+            
+            <div class="nav-right">
+                <div class="logo">
+                    <h1>KURD<span>FLIX</span></h1>
+                </div>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="index.html">گەڕانەوە بۆ پەڕەی سەرەکی</a></li>
+                </ul>
+            </div>
+            
+            <div class="nav-center"></div>
+            
+            <div class="nav-actions">
+                <a href="index.html" style="color: var(--text-primary);"><i class="fas fa-home"></i></a>
+                <div class="theme-toggle">
+                    <i class="fas-fa-sun"></i>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-switch">
+                        <span class="slider round"></span>
+                    </label>
+                    <i class="fas fa-moon"></i>
+                </div>
             </div>
         </div>
     </nav>
@@ -96,7 +131,30 @@
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
-
+        
+        function initTheme() {
+            const themeSwitch = document.getElementById('theme-switch');
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                if (themeSwitch) themeSwitch.checked = true;
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                if (themeSwitch) themeSwitch.checked = false;
+            }
+            if (themeSwitch) {
+                themeSwitch.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        document.body.setAttribute('data-theme', 'light');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.body.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                });
+            }
+        }
+        
         async function loadMovieDetail() {
             const movieId = parseInt(getQueryParam('id'));
             if (!movieId) {
@@ -105,7 +163,7 @@
             }
             
             try {
-                const response = await fetch('data.json');
+                const response = await fetch('data.json?t=' + Date.now());
                 const data = await response.json();
                 const movie = data.movies.find(m => m.id === movieId);
                 
@@ -115,9 +173,9 @@
                 }
                 
                 let embedUrl = movie.videoUrl;
-                if (movie.videoUrl.includes("vidmoly")) {
+                if (movie.videoUrl && movie.videoUrl.includes("vidmoly")) {
                     embedUrl = movie.videoUrl.replace("/e/", "/embed/");
-                } else if (movie.videoUrl.includes("streamsb")) {
+                } else if (movie.videoUrl && movie.videoUrl.includes("streamsb")) {
                     embedUrl = movie.videoUrl.replace("/e/", "/embed-4/");
                 }
                 
@@ -167,6 +225,7 @@
             };
         }
         
+        initTheme();
         loadMovieDetail();
     </script>
 </body>
