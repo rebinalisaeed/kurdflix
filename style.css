@@ -84,7 +84,7 @@ body {
     flex-shrink: 0;
 }
 
-/* لۆگۆی وێنەیی */
+/* لۆگۆی وێنەیی - قەبارە نوێکراوە */
 .logo {
     flex-shrink: 0;
     display: flex;
@@ -93,7 +93,7 @@ body {
 }
 
 .logo-image {
-    height: 45px;
+    height: 32px;
     width: auto;
     display: block;
     transition: all 0.3s ease;
@@ -566,10 +566,10 @@ footer {
     text-decoration: none;
 }
 
-/* ========== گونجاندنی لۆگۆ بۆ شاشە جیاوازەکان ========== */
+/* ========== گونجاندنی لۆگۆ بۆ شاشە جیاوازەکان (قەبارە بچووککراوە) ========== */
 @media (max-width: 768px) {
     .logo-image {
-        height: 35px;
+        height: 26px;
     }
     
     .navbar {
@@ -700,6 +700,6 @@ footer {
 
 @media (max-width: 480px) {
     .logo-image {
-        height: 30px;
+        height: 22px;
     }
 }
