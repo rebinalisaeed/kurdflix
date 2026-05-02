@@ -67,13 +67,21 @@ button,
     font-weight: bold;
 }
 
-/* ========== ناوبار و بانەڕ ========== */
+/* ========== ناوبار و بانەڕ (لە سەرەتادا ڕوون) ========== */
 .navbar {
-    background-color: var(--bg-secondary);
+    background-color: transparent;
     padding: 0.8rem 2rem;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
+    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+}
+
+/* کاتێک سکرۆڵ کراوە، بانەڕەکە پاشەڕەنگی وەردەگرێت */
+.navbar.scrolled {
+    background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
 }
 
@@ -319,10 +327,10 @@ input:checked + .slider:before {
 .hero-carousel {
     position: relative;
     width: 100%;
-    height: 70vh;
-    min-height: 500px;
+    height: 100vh;
+    min-height: 600px;
     overflow: hidden;
-    margin-bottom: 2rem;
+    margin-top: 0;
 }
 
 .carousel-container {
@@ -353,7 +361,7 @@ input:checked + .slider:before {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
     padding: 3rem 4rem;
 }
 
@@ -404,35 +412,19 @@ input:checked + .slider:before {
     color: white;
 }
 
+/* نەهێشتنی دوگمەکانی پێشتر و دواتر */
 .carousel-prev, .carousel-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.5);
-    border: none;
-    color: white;
-    font-size: 1.8rem;
-    padding: 0.8rem;
-    cursor: pointer;
-    z-index: 10;
-    border-radius: 50%;
+    display: none;
 }
 
-.carousel-prev {
-    right: 20px;
-}
-
-.carousel-next {
-    left: 20px;
-}
-
+/* دۆتەکان */
 .carousel-dots {
     position: absolute;
-    bottom: 20px;
+    bottom: 30px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 0.5rem;
+    gap: 0.8rem;
     z-index: 10;
 }
 
@@ -442,10 +434,13 @@ input:checked + .slider:before {
     border-radius: 50%;
     background-color: rgba(255,255,255,0.5);
     cursor: pointer;
+    transition: all 0.3s ease;
 }
 
 .dot.active {
     background-color: var(--accent);
+    width: 24px;
+    border-radius: 5px;
 }
 
 /* ========== گریدی فیلم و زنجیرەکان ========== */
@@ -618,6 +613,10 @@ footer {
 }
 
 @media (max-width: 768px) {
+    .navbar {
+        padding: 0.6rem 1rem;
+    }
+    
     .hamburger {
         display: block;
     }
@@ -685,11 +684,6 @@ footer {
     .carousel-btn {
         padding: 0.4rem 1rem;
         font-size: 0.7rem;
-    }
-    
-    .carousel-prev, .carousel-next {
-        font-size: 1.2rem;
-        padding: 0.5rem;
     }
     
     .movies-grid {
