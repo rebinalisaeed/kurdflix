@@ -37,14 +37,18 @@
         .staff-name {
             font-size: 1.3rem;
             margin-bottom: 0.3rem;
+            font-family: 'NRT', sans-serif;
+            font-weight: bold;
         }
         .staff-role {
             color: var(--accent);
             margin-bottom: 0.5rem;
+            font-family: 'NRT', sans-serif;
         }
         .staff-bio {
             font-size: 0.85rem;
             color: var(--text-secondary);
+            font-family: 'NRT', sans-serif;
         }
         .back-btn {
             background-color: var(--bg-secondary);
@@ -54,6 +58,7 @@
             border-radius: 5px;
             cursor: pointer;
             display: inline-block;
+            font-family: 'NRT', sans-serif;
         }
         @media (max-width: 768px) {
             .staff-container {
@@ -72,7 +77,7 @@
             
             <div class="nav-right">
                 <div class="logo">
-                    <h1>KURD<span>FLIX</span></h1>
+                    <img src="https://i.ibb.co/Xfm9zwDY/Kurdflix-LOGO.png" alt="KurdFlix Logo" class="logo-image" onerror="this.src='https://via.placeholder.com/100x32?text=KurdFlix'">
                 </div>
                 <ul class="nav-menu" id="nav-menu">
                     <li><a href="index.html">گەڕانەوە بۆ پەڕەی سەرەکی</a></li>
@@ -97,8 +102,8 @@
 
     <div class="staff-container">
         <button class="back-btn" onclick="window.location.href='index.html'">← گەڕانەوە بۆ پەڕەی سەرەکی</button>
-        <h1 style="margin-top: 1rem;">🧑‍💻 ستافی کوردفلێکس</h1>
-        <p>ئەو تیمەی کە بۆ خزمەتکردنتان کۆشش دەکەن</p>
+        <h1 style="margin-top: 1rem; font-family:'NRT',sans-serif;">🧑‍💻 ستافی کوردفلێکس</h1>
+        <p style="font-family:'NRT',sans-serif;">ئەو تیمەی کە بۆ خزمەتکردنتان کۆشش دەکەن</p>
         
         <div class="staff-grid">
             <div class="staff-card">
@@ -151,7 +156,6 @@
         }
         initTheme();
         
-        // هەمبەرگەر بۆ مۆبایل
         const hamburger = document.getElementById('hamburger');
         const navMenu = document.getElementById('nav-menu');
         if (hamburger && navMenu) {
@@ -159,6 +163,24 @@
                 navMenu.classList.toggle('active');
             });
         }
+        
+        function initNavbarScroll() {
+            const navbar = document.querySelector('.navbar');
+            if (!navbar) return;
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        }
+        initNavbarScroll();
     </script>
 </body>
 </html>
