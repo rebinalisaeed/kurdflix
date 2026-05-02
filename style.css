@@ -93,6 +93,14 @@ button,
     flex-wrap: nowrap;
 }
 
+/* لۆگۆ و مینیو پێکەوە لە لای ڕاست */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-shrink: 0;
+}
+
 /* لۆگۆ */
 .logo {
     flex-shrink: 0;
@@ -128,8 +136,6 @@ button,
     gap: 1rem;
     margin: 0;
     padding: 0;
-    flex: 1;
-    justify-content: center;
 }
 
 .nav-menu > li > a {
@@ -184,6 +190,11 @@ button,
 .dropdown-menu li a:hover {
     background-color: var(--accent);
     color: white;
+}
+
+/* ناوەڕاست بەتاڵ - هیچ شتێک نییە */
+.nav-center {
+    flex: 1;
 }
 
 /* ئایکۆن و دوگمەکانی لای چەپ */
@@ -577,7 +588,7 @@ footer {
     text-decoration: none;
 }
 
-/* ========== Responsive ========== */
+/* ========== تەنها مۆبایل ========== */
 @media (max-width: 1100px) {
     .nav-menu > li > a {
         font-size: 0.75rem;
@@ -619,6 +630,10 @@ footer {
     
     .hamburger {
         display: block;
+    }
+    
+    .nav-right {
+        flex: 1;
     }
     
     .nav-menu {
