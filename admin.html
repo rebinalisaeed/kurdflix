@@ -35,6 +35,7 @@
             cursor: pointer;
             color: var(--text-secondary);
             border-radius: 8px;
+            font-family: 'NRT', sans-serif;
         }
         .tab-btn.active {
             background-color: var(--accent);
@@ -54,6 +55,7 @@
             margin-bottom: 0.5rem;
             font-weight: bold;
             color: var(--text-primary);
+            font-family: 'NRT', sans-serif;
         }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%;
@@ -82,6 +84,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-family: 'NRT', sans-serif;
         }
         .category-checkbox input {
             width: auto;
@@ -93,6 +96,7 @@
             cursor: pointer;
             font-size: 1rem;
             font-weight: bold;
+            font-family: 'NRT', sans-serif;
         }
         .btn-primary {
             background-color: var(--accent);
@@ -132,10 +136,12 @@
         .item-title {
             font-weight: bold;
             font-size: 1.1rem;
+            font-family: 'NRT', sans-serif;
         }
         .item-meta {
             font-size: 0.8rem;
             color: var(--text-secondary);
+            font-family: 'NRT', sans-serif;
         }
         .item-actions {
             display: flex;
@@ -150,6 +156,7 @@
         .search-filter input {
             flex: 1;
             padding: 0.5rem;
+            font-family: 'NRT', sans-serif;
         }
         .success-msg, .error-msg {
             position: fixed;
@@ -159,6 +166,7 @@
             border-radius: 8px;
             z-index: 1000;
             animation: fadeOut 3s ease forwards;
+            font-family: 'NRT', sans-serif;
         }
         .success-msg {
             background-color: #28a745;
@@ -186,7 +194,6 @@
             }
         }
         
-        /* پەڕەی پشتڕاستکردنەوەی پاسیۆرد */
         #adminAuth {
             position: fixed;
             top: 0;
@@ -206,11 +213,19 @@
             text-align: center;
             max-width: 400px;
         }
+        #adminAuth .auth-box h2 {
+            font-family: 'NRT', sans-serif;
+        }
+        #adminAuth .auth-box p {
+            font-family: 'NRT', sans-serif;
+        }
+        #adminAuth .auth-box input {
+            font-family: 'NRT', sans-serif;
+        }
     </style>
 </head>
 <body data-theme="dark">
 
-    <!-- پەڕەی پشتڕاستکردنەوەی پاسیۆرد -->
     <div id="adminAuth">
         <div class="auth-box">
             <h2><i class="fas fa-lock"></i> پەڕەی بەڕێوەبردن</h2>
@@ -221,7 +236,6 @@
         </div>
     </div>
 
-    <!-- ناوەڕۆکی سەرەکی Admin (دەشارێتەوە تا پاسیۆرد دروست بێت) -->
     <div id="adminContent" style="display: none;">
         <nav class="navbar">
             <div class="nav-container">
@@ -231,7 +245,7 @@
                 
                 <div class="nav-right">
                     <div class="logo">
-                        <h1>KURD<span>FLIX</span></h1>
+                        <img src="https://i.ibb.co/Xfm9zwDY/Kurdflix-LOGO.png" alt="KurdFlix Logo" class="logo-image" onerror="this.src='https://via.placeholder.com/100x32?text=KurdFlix'">
                     </div>
                     <ul class="nav-menu" id="nav-menu">
                         <li><a href="index.html">گەڕانەوە بۆ سایت</a></li>
@@ -256,7 +270,7 @@
 
         <div class="admin-container">
             <div class="admin-header">
-                <h1><i class="fas fa-cog"></i> پەڕەی بەڕێوەبردنی کۆنتێنت</h1>
+                <h1 style="font-family:'NRT',sans-serif;"><i class="fas fa-cog"></i> پەڕەی بەڕێوەبردنی کۆنتێنت</h1>
                 <button id="saveAllBtn" class="btn btn-success"><i class="fas fa-save"></i> پاشەکەوتی هەموو گۆڕانکارییەکان</button>
             </div>
             
@@ -268,7 +282,7 @@
             
             <div id="movies-tab" class="tab-content active">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-                    <h3><i class="fas fa-plus-circle"></i> زیادکردنی فیلم/زنجیرەی نوێ</h3>
+                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-plus-circle"></i> زیادکردنی فیلم/زنجیرەی نوێ</h3>
                     <form id="addMovieForm">
                         <div class="form-row">
                             <div class="form-group">
@@ -316,7 +330,7 @@
                 </div>
                 
                 <div>
-                    <h3><i class="fas fa-list"></i> لیستی فیلم و زنجیرەکان</h3>
+                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-list"></i> لیستی فیلم و زنجیرەکان</h3>
                     <div class="search-filter">
                         <input type="text" id="searchMovies" placeholder="گەڕان بە ناو...">
                         <select id="filterType">
@@ -331,7 +345,7 @@
             
             <div id="carousel-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-                    <h3><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
+                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
                     <form id="addSlideForm">
                         <div class="form-row">
                             <div class="form-group">
@@ -364,17 +378,17 @@
                 </div>
                 
                 <div>
-                    <h3><i class="fas fa-images"></i> لیستی سلایدەکان</h3>
+                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-images"></i> لیستی سلایدەکان</h3>
                     <div id="slidesList" class="items-list"></div>
                 </div>
             </div>
             
             <div id="stats-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px;">
-                    <h3><i class="fas fa-chart-bar"></i> ئامارەکانی کوردفلێکس</h3>
+                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-chart-bar"></i> ئامارەکانی کوردفلێکس</h3>
                     <div id="statsInfo"></div>
                     <hr style="margin: 1rem 0; border-color: var(--border);">
-                    <h4><i class="fas fa-download"></i> پاشەکەوتکردن و هێنانەدەرەوە</h4>
+                    <h4 style="font-family:'NRT',sans-serif;"><i class="fas fa-download"></i> پاشەکەوتکردن و هێنانەدەرەوە</h4>
                     <button id="exportDataBtn" class="btn btn-secondary"><i class="fas fa-download"></i> دابەزاندنی data.json</button>
                     <label for="importFile" class="btn btn-secondary" style="display: inline-block; cursor: pointer;"><i class="fas fa-upload"></i> هێنانی data.json</label>
                     <input type="file" id="importFile" style="display: none;" accept=".json">
