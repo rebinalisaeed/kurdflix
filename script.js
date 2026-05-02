@@ -1,45 +1,45 @@
-// بارکردنی داتاکان لە data.json
-let allMovies = []; // هەموو فیلم و زنجیرەکان
-let carouselSlides = []; // سلایدەکان
+// ========== داتاکان ==========
+let allMovies = [];
+let carouselSlides = [];
 let currentCategory = "all";
 let currentCarouselIndex = 0;
 let carouselInterval;
 
-// بارکردنی داتاکان
+// ========== بارکردنی داتاکان لە data.json ==========
 async function loadData() {
     try {
-        const response = await fetch('data.json');
+        const response = await fetch('data.json?t=' + Date.now());
         const data = await response.json();
-        allMovies = data.movies;
-        carouselSlides = data.carousel;
+        allMovies = data.movies || [];
+        carouselSlides = data.carousel || [];
         
-        // نمایش سلایدەکان
         renderCarousel();
         startCarouselAutoPlay();
-        
-        // نمایش فیلمەکان
         renderMoviesByCategory("all");
-        
-        // پڕکردنەوەی لیستی گەڕان
         populateSearchIndex();
     } catch (error) {
         console.error("Error loading data:", error);
-        // data.json نەبوو، بە داتای نموونەیی کاربکە
         loadSampleData();
     }
 }
 
-// داتای نموونەیی بۆ یەکەمجار (ئەگەر data.json نەبوو)
+// ========== داتای نموونەیی بۆ یەکەمجار ==========
 function loadSampleData() {
-    allMovies = sampleMovies;
-    carouselSlides = sampleCarousel;
+    allMovies = [
+        { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "https://via.placeholder.com/200x300?text=Poster1", type: "film", categories: ["kurdish-film", "all-films"], videoUrl: "https://vidmoly.com/e/example1", description: "چیرۆکی شەڕ و خۆشەویستی", trailerUrl: "" },
+        { id: 2, title: "دڵی باڵکان", year: "2024", poster: "https://via.placeholder.com/200x300?text=Poster2", type: "series", categories: ["turkish-series", "all-series"], videoUrl: "https://streamsb.com/e/example2", description: "زنجیرەیەکی درامایی", trailerUrl: "" }
+    ];
+    carouselSlides = [
+        { id: 1, title: "ئەفسانەی کوێستان", category: "فیلمی کوردی", description: "چیرۆکی شەڕ و خۆشەویستی", poster: "https://via.placeholder.com/1200x600?text=Slide1", movieId: 1 },
+        { id: 2, title: "دڵی باڵکان", category: "زنجیرەی تورکی", description: "زنجیرەیەکی درامایی سەرنجڕاکێش", poster: "https://via.placeholder.com/1200x600?text=Slide2", movieId: 2 }
+    ];
     renderCarousel();
     startCarouselAutoPlay();
     renderMoviesByCategory("all");
     populateSearchIndex();
 }
 
-// سلایدەکان نمایش بکە
+// ========== سلایدەکان ==========
 function renderCarousel() {
     const container = document.getElementById('carouselContainer');
     const dotsContainer = document.getElementById('carouselDots');
@@ -65,7 +65,6 @@ function renderCarousel() {
         `;
         container.appendChild(slideDiv);
         
-        // دۆتەکان
         const dot = document.createElement('div');
         dot.className = `dot ${index === 0 ? 'active' : ''}`;
         dot.dataset.index = index;
@@ -73,7 +72,6 @@ function renderCarousel() {
         dotsContainer.appendChild(dot);
     });
     
-    // ئیڤێنت بۆ دوگمەکانی سلاید
     document.querySelectorAll('.carousel-btn.trailer').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const movieId = parseInt(btn.dataset.id);
@@ -89,7 +87,6 @@ function renderCarousel() {
     });
 }
 
-// گۆڕینی سلاید بە دەست
 function goToSlide(index) {
     if (index < 0) index = carouselSlides.length - 1;
     if (index >= carouselSlides.length) index = 0;
@@ -107,22 +104,14 @@ function goToSlide(index) {
     currentCarouselIndex = index;
 }
 
-function nextSlide() {
-    goToSlide(currentCarouselIndex + 1);
-}
-
-function prevSlide() {
-    goToSlide(currentCarouselIndex - 1);
-}
-
 function startCarouselAutoPlay() {
     if (carouselInterval) clearInterval(carouselInterval);
     carouselInterval = setInterval(() => {
-        nextSlide();
+        goToSlide(currentCarouselIndex + 1);
     }, 6000);
 }
 
-// نمایش فیلم و زنجیرەکان بە پێی پۆل
+// ========== نمایش فیلم و زنجیرەکان ==========
 function renderMoviesByCategory(category) {
     const grid = document.getElementById('moviesGrid');
     const titleEl = document.getElementById('currentCategoryTitle');
@@ -141,7 +130,6 @@ function renderMoviesByCategory(category) {
         if (titleEl) titleEl.textContent = 'هەموو زنجیرەکان';
     } else {
         filtered = allMovies.filter(m => m.categories && m.categories.includes(category));
-        // ناونیشان بۆ کاتێگۆریەکە
         const categoryNames = {
             'kurdish-film': 'فیلمی کوردی', 'hollywood': 'هۆلیوود',
             'bollywood': 'بۆلیوود', 'russian': 'فیلمی روسی',
@@ -180,7 +168,7 @@ function renderMoviesByCategory(category) {
     });
 }
 
-// پڕکردنەوەی لیستی گەڕان
+// ========== گەڕان ==========
 let searchIndex = [];
 function populateSearchIndex() {
     searchIndex = allMovies.map(m => ({
@@ -190,13 +178,11 @@ function populateSearchIndex() {
     }));
 }
 
-// گەڕان
 function searchMovies(query) {
     if (!query.trim()) return [];
-    const results = searchIndex.filter(item =>
+    return searchIndex.filter(item =>
         item.title.toLowerCase().includes(query.toLowerCase())
     );
-    return results;
 }
 
 function displaySearchResults(results) {
@@ -220,7 +206,7 @@ function displaySearchResults(results) {
     });
 }
 
-// Initialize Dropdown clicks for mobile
+// ========== Initialize Functions ==========
 function initMobileDropdowns() {
     const dropdowns = document.querySelectorAll('.dropdown > a');
     dropdowns.forEach(dropdown => {
@@ -234,7 +220,6 @@ function initMobileDropdowns() {
     });
 }
 
-// Initialize category filters
 function initCategoryFilters() {
     document.querySelectorAll('.dropdown-menu a').forEach(link => {
         link.addEventListener('click', (e) => {
@@ -243,7 +228,6 @@ function initCategoryFilters() {
             if (category) {
                 currentCategory = category;
                 renderMoviesByCategory(category);
-                // بستن مینیو لە مۆبایلدا
                 if (window.innerWidth <= 768) {
                     document.getElementById('nav-menu').classList.remove('active');
                 }
@@ -252,7 +236,6 @@ function initCategoryFilters() {
     });
 }
 
-// Dark/Light Mode
 function initTheme() {
     const themeSwitch = document.getElementById('theme-switch');
     const savedTheme = localStorage.getItem('theme');
@@ -275,7 +258,6 @@ function initTheme() {
     });
 }
 
-// Hamburger menu for mobile
 function initHamburger() {
     const hamburger = document.getElementById('hamburger');
     const navMenu = document.getElementById('nav-menu');
@@ -284,7 +266,6 @@ function initHamburger() {
             navMenu.classList.toggle('active');
         });
         
-        // داخستنی مینیو کاتێک لینکێک کرتە دەکرێت
         document.querySelectorAll('.nav-menu a').forEach(link => {
             link.addEventListener('click', () => {
                 if (window.innerWidth <= 768) {
@@ -295,7 +276,6 @@ function initHamburger() {
     }
 }
 
-// Search functionality
 function initSearch() {
     const searchIcon = document.getElementById('searchIcon');
     const searchForm = document.getElementById('searchForm');
@@ -326,7 +306,6 @@ function initSearch() {
     }
 }
 
-// Modals
 function initModals() {
     const loginIcon = document.getElementById('loginIcon');
     const vipBtn = document.getElementById('vipBtn');
@@ -348,8 +327,8 @@ function initModals() {
     
     closeModals.forEach(close => {
         close.addEventListener('click', () => {
-            loginModal.style.display = 'none';
-            vipModal.style.display = 'none';
+            if (loginModal) loginModal.style.display = 'none';
+            if (vipModal) vipModal.style.display = 'none';
         });
     });
     
@@ -359,15 +338,27 @@ function initModals() {
     });
 }
 
-// Carousel buttons
-function initCarouselControls() {
-    const prevBtn = document.getElementById('carouselPrev');
-    const nextBtn = document.getElementById('carouselNext');
-    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+// ========== بانەڕی ڕوون کە بە سکرۆڵ دەگۆڕێت ==========
+function initNavbarScroll() {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
+    
+    if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+    
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    });
 }
 
-// کاتێک پەڕە بار بوو
+// ========== DOM Content Loaded ==========
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
     initMobileDropdowns();
@@ -376,17 +367,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initHamburger();
     initSearch();
     initModals();
-    initCarouselControls();
+    initNavbarScroll();
 });
-
-// داتای نموونەیی بۆ یەکەمجار
-const sampleMovies = [
-    { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "assets/poster1.jpg", type: "film", categories: ["kurdish-film", "all-films"], videoUrl: "https://vidmoly.com/e/example1" },
-    { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "assets/poster2.jpg", type: "series", categories: ["turkish-series", "all-series"], videoUrl: "https://streamsb.com/e/example2" },
-    { id: 3, title: "ڕۆژی دوایین", year: "2025", poster: "assets/poster3.jpg", type: "film", categories: ["hollywood", "all-films"], videoUrl: "https://vidmoly.com/e/example3" }
-];
-
-const sampleCarousel = [
-    { id: 1, title: "ئەفسانەی کوێستان", category: "فیلمی کوردی", description: "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا", poster: "assets/poster1.jpg", movieId: 1 },
-    { id: 2, title: "قەڵای خەونەکان", category: "زنجیرەی تورکی", description: "زنجیرەیەکی درامایی و سەرنجڕاکێش", poster: "assets/poster2.jpg", movieId: 2 }
-];
