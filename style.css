@@ -593,13 +593,13 @@ footer {
 
 /* ========== ستایلەکانی Responsive ========== */
 @media (max-width: 1024px) {
-    .nav-menu > li > a {
-        font-size: 0.8rem;
+    .hero-carousel {
+        height: 60vh;
+        min-height: 450px;
     }
     
-    .hero-carousel {
-        height: 70vh;
-        min-height: 500px;
+    .nav-menu > li > a {
+        font-size: 0.8rem;
     }
     
     .carousel-overlay {
