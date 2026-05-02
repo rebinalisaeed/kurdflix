@@ -241,21 +241,23 @@ function initTheme() {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
         document.body.setAttribute('data-theme', 'light');
-        themeSwitch.checked = true;
+        if (themeSwitch) themeSwitch.checked = true;
     } else {
         document.body.setAttribute('data-theme', 'dark');
-        themeSwitch.checked = false;
+        if (themeSwitch) themeSwitch.checked = false;
     }
     
-    themeSwitch.addEventListener('change', (e) => {
-        if (e.target.checked) {
-            document.body.setAttribute('data-theme', 'light');
-            localStorage.setItem('theme', 'light');
-        } else {
-            document.body.setAttribute('data-theme', 'dark');
-            localStorage.setItem('theme', 'dark');
-        }
-    });
+    if (themeSwitch) {
+        themeSwitch.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                document.body.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+    }
 }
 
 function initHamburger() {
