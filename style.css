@@ -50,7 +50,7 @@ body {
     line-height: 1.6;
 }
 
-/* ========== ناوبار و بانەڕ (لە سەرەتادا ڕوون) ========== */
+/* ========== ناوبار و بانەڕ ========== */
 .navbar {
     background-color: transparent;
     padding: 0.8rem 2rem;
@@ -62,7 +62,6 @@ body {
     transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
-/* کاتێک سکرۆڵ کراوە، بانەڕەکە پاشەڕەنگی وەردەگرێت */
 .navbar.scrolled {
     background-color: var(--bg-secondary);
     border-bottom: 1px solid var(--border);
@@ -76,7 +75,6 @@ body {
     flex-wrap: nowrap;
 }
 
-/* لۆگۆ و مینیو پێکەوە لە لای ڕاست */
 .nav-right {
     display: flex;
     align-items: center;
@@ -84,7 +82,6 @@ body {
     flex-shrink: 0;
 }
 
-/* لۆگۆی وێنەیی - قەبارە نوێکراوە */
 .logo {
     flex-shrink: 0;
     display: flex;
@@ -99,7 +96,6 @@ body {
     transition: all 0.3s ease;
 }
 
-/* مینیوی سەرەکی */
 .nav-menu {
     display: flex;
     list-style: none;
@@ -123,7 +119,6 @@ body {
     color: var(--accent);
 }
 
-/* Dropdown */
 .dropdown {
     position: relative;
 }
@@ -162,12 +157,10 @@ body {
     color: white;
 }
 
-/* ناوەڕاست بەتاڵ - هیچ شتێک نییە */
 .nav-center {
     flex: 1;
 }
 
-/* ئایکۆن و دوگمەکانی لای چەپ */
 .nav-actions {
     display: flex;
     align-items: center;
@@ -199,7 +192,6 @@ body {
     white-space: nowrap;
 }
 
-/* Theme toggle */
 .theme-toggle {
     display: flex;
     align-items: center;
@@ -254,7 +246,6 @@ input:checked + .slider:before {
     transform: translateX(20px);
 }
 
-/* هەمبەرگەر - تەنها لە مۆبایلدا */
 .hamburger {
     display: none;
     font-size: 1.5rem;
@@ -262,7 +253,6 @@ input:checked + .slider:before {
     color: var(--text-primary);
 }
 
-/* فۆرمی گەڕان */
 .search-form {
     position: relative;
     margin-top: 1rem;
@@ -304,7 +294,7 @@ input:checked + .slider:before {
     color: white;
 }
 
-/* ========== سلایدی گەورە ========== */
+/* ========== سلاید ========== */
 .hero-carousel {
     position: relative;
     width: 100%;
@@ -393,12 +383,10 @@ input:checked + .slider:before {
     color: white;
 }
 
-/* نەهێشتنی دوگمەکانی پێشتر و دواتر */
 .carousel-prev, .carousel-next {
     display: none;
 }
 
-/* دۆتەکان */
 .carousel-dots {
     position: absolute;
     bottom: 30px;
@@ -566,7 +554,7 @@ footer {
     text-decoration: none;
 }
 
-/* ========== گونجاندنی لۆگۆ بۆ شاشە جیاوازەکان (قەبارە بچووککراوە) ========== */
+/* ========== گونجاندنی شاشە ========== */
 @media (max-width: 768px) {
     .logo-image {
         height: 26px;
