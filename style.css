@@ -59,7 +59,7 @@ body {
     left: 0;
     right: 0;
     z-index: 1000;
-    transition: background-color 0.3s ease, backdrop-filter 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
 /* کاتێک سکرۆڵ کراوە، بانەڕەکە پاشەڕەنگی وەردەگرێت */
@@ -92,11 +92,36 @@ body {
     line-height: 0;
 }
 
-.logo-svg {
-    height: 35px;
+.logo svg {
+    height: 36px;
     width: auto;
     display: block;
     transition: all 0.3s ease;
+}
+
+/* گونجاندنی قەبارەی لۆگۆ بەپێی ئامێر */
+@media (min-width: 1025px) {
+    .logo svg {
+        height: 36px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .logo svg {
+        height: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .logo svg {
+        height: 28px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo svg {
+        height: 24px;
+    }
 }
 
 /* مینیوی سەرەکی */
@@ -254,7 +279,7 @@ input:checked + .slider:before {
     transform: translateX(20px);
 }
 
-/* هەمبەرگەر - تەنها لە مۆبایلدا */
+/* هەمبەرگەر - تەنها لە مۆبایل و تابلێتدا */
 .hamburger {
     display: none;
     font-size: 1.5rem;
@@ -566,13 +591,27 @@ footer {
     text-decoration: none;
 }
 
-/* ========== گونجاندنی لۆگۆ و شاشە ========== */
-/* قەبارەی لۆگۆ بۆ شاشە جیاوازەکان */
-@media (max-width: 768px) {
-    .logo-svg {
-        height: 28px;
+/* ========== ستایلەکانی Responsive ========== */
+@media (max-width: 1024px) {
+    .nav-menu > li > a {
+        font-size: 0.8rem;
     }
     
+    .hero-carousel {
+        height: 70vh;
+        min-height: 500px;
+    }
+    
+    .carousel-overlay {
+        padding: 2rem 3rem;
+    }
+    
+    .carousel-title {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 768px) {
     .navbar {
         padding: 0.6rem 1rem;
     }
@@ -700,7 +739,39 @@ footer {
 }
 
 @media (max-width: 480px) {
-    .logo-svg {
-        height: 24px;
+    .hero-carousel {
+        height: 40vh;
+        min-height: 350px;
     }
-                                                        }
+    
+    .carousel-overlay {
+        padding: 1rem;
+    }
+    
+    .carousel-title {
+        font-size: 1rem;
+    }
+    
+    .carousel-description {
+        font-size: 0.6rem;
+        max-width: 100%;
+    }
+    
+    .carousel-btn {
+        padding: 0.3rem 0.8rem;
+        font-size: 0.6rem;
+    }
+    
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 0.8rem;
+    }
+    
+    .movie-poster {
+        height: 180px;
+    }
+    
+    .category-header h2 {
+        font-size: 1.1rem;
+    }
+}
