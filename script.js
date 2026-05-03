@@ -27,11 +27,13 @@ async function loadData() {
 function loadSampleData() {
     allMovies = [
         { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "https://via.placeholder.com/200x300?text=Poster1", type: "film", categories: ["kurdish-film", "all-films"], videoUrl: "https://vidmoly.com/e/example1", description: "چیرۆکی شەڕ و خۆشەویستی", trailerUrl: "" },
-        { id: 2, title: "دڵی باڵکان", year: "2024", poster: "https://via.placeholder.com/200x300?text=Poster2", type: "series", categories: ["turkish-series", "all-series"], videoUrl: "https://streamsb.com/e/example2", description: "زنجیرەیەکی درامایی", trailerUrl: "" }
+        { id: 2, title: "دڵی باڵکان", year: "2024", poster: "https://via.placeholder.com/200x300?text=Poster2", type: "series", categories: ["turkish-series", "all-series"], videoUrl: "https://streamsb.com/e/example2", description: "زنجیرەیەکی درامایی", trailerUrl: "" },
+        { id: 3, title: "تاڵانی پارە", year: "2025", poster: "https://via.placeholder.com/200x300?text=Poster3", type: "film", categories: ["turkish-film", "all-films"], videoUrl: "https://vidmoly.com/e/example3", description: "فیلمێکی ئەکشنی تورکی", trailerUrl: "" }
     ];
     carouselSlides = [
-        { id: 1, title: "ئەفسانەی کوێستان", category: "فیلمی کوردی", description: "چیرۆکی شەڕ و خۆشەویستی", poster: "https://via.placeholder.com/1200x600?text=Slide1", movieId: 1 },
-        { id: 2, title: "دڵی باڵکان", category: "زنجیرەی تورکی", description: "زنجیرەیەکی درامایی سەرنجڕاکێش", poster: "https://via.placeholder.com/1200x600?text=Slide2", movieId: 2 }
+        { id: 1, title: "ئەفسانەی کوێستان", category: "فیلمی کوردی", description: "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا", poster: "https://via.placeholder.com/1200x600?text=Slide1", movieId: 1 },
+        { id: 2, title: "دڵی باڵکان", category: "زنجیرەی تورکی", description: "زنجیرەیەکی درامایی سەرنجڕاکێش", poster: "https://via.placeholder.com/1200x600?text=Slide2", movieId: 2 },
+        { id: 3, title: "تاڵانی پارە", category: "فیلمی تورکی", description: "فیلمێکی ئەکشنی خێرا و پڕ لە سەرکێشی", poster: "https://via.placeholder.com/1200x600?text=Slide3", movieId: 3 }
     ];
     renderCarousel();
     startCarouselAutoPlay();
@@ -206,20 +208,7 @@ function displaySearchResults(results) {
     });
 }
 
-// ========== Initialize Functions ==========
-function initMobileDropdowns() {
-    const dropdowns = document.querySelectorAll('.dropdown > a');
-    dropdowns.forEach(dropdown => {
-        dropdown.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
-                e.preventDefault();
-                const parent = dropdown.parentElement;
-                parent.classList.toggle('active');
-            }
-        });
-    });
-}
-
+// ========== Initialize Functions (Desktop & Tablet) ==========
 function initCategoryFilters() {
     document.querySelectorAll('.dropdown-menu a').forEach(link => {
         link.addEventListener('click', (e) => {
@@ -228,8 +217,32 @@ function initCategoryFilters() {
             if (category) {
                 currentCategory = category;
                 renderMoviesByCategory(category);
-                if (window.innerWidth <= 768) {
-                    document.getElementById('nav-menu').classList.remove('active');
+            }
+        });
+    });
+    
+    // بۆ مۆبایل - مێنیوی درۆپ داون
+    document.querySelectorAll('.mobile-dropdown-menu a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const category = link.dataset.category;
+            if (category) {
+                currentCategory = category;
+                renderMoviesByCategory(category);
+                // داخستنی مێنیوی مۆبایل
+                const mobileMenu = document.getElementById('mobileMenu');
+                const overlay = document.getElementById('mobileMenuOverlay');
+                if (mobileMenu) mobileMenu.classList.remove('active');
+                if (overlay) overlay.style.display = 'none';
+                document.body.style.overflow = '';
+                // گۆڕینی ئایکۆنی hamburger بۆ bars
+                const hamburger = document.getElementById('hamburgerBtn');
+                if (hamburger) {
+                    const icon = hamburger.querySelector('i');
+                    if (icon) {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
                 }
             }
         });
@@ -238,13 +251,17 @@ function initCategoryFilters() {
 
 function initTheme() {
     const themeSwitch = document.getElementById('theme-switch');
+    const mobileThemeSwitch = document.getElementById('mobile-theme-switch');
     const savedTheme = localStorage.getItem('theme');
+    
     if (savedTheme === 'light') {
         document.body.setAttribute('data-theme', 'light');
         if (themeSwitch) themeSwitch.checked = true;
+        if (mobileThemeSwitch) mobileThemeSwitch.checked = true;
     } else {
         document.body.setAttribute('data-theme', 'dark');
         if (themeSwitch) themeSwitch.checked = false;
+        if (mobileThemeSwitch) mobileThemeSwitch.checked = false;
     }
     
     if (themeSwitch) {
@@ -252,28 +269,26 @@ function initTheme() {
             if (e.target.checked) {
                 document.body.setAttribute('data-theme', 'light');
                 localStorage.setItem('theme', 'light');
+                if (mobileThemeSwitch) mobileThemeSwitch.checked = true;
             } else {
                 document.body.setAttribute('data-theme', 'dark');
                 localStorage.setItem('theme', 'dark');
+                if (mobileThemeSwitch) mobileThemeSwitch.checked = false;
             }
         });
     }
-}
-
-function initHamburger() {
-    const hamburger = document.getElementById('hamburger');
-    const navMenu = document.getElementById('nav-menu');
-    if (hamburger && navMenu) {
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-        });
-        
-        document.querySelectorAll('.nav-menu a').forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    navMenu.classList.remove('active');
-                }
-            });
+    
+    if (mobileThemeSwitch) {
+        mobileThemeSwitch.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                document.body.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+                if (themeSwitch) themeSwitch.checked = true;
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                if (themeSwitch) themeSwitch.checked = false;
+            }
         });
     }
 }
@@ -298,13 +313,13 @@ function initSearch() {
                 document.getElementById('searchResults').innerHTML = '';
             });
         }
-        
-        if (searchInput) {
-            searchInput.addEventListener('input', (e) => {
-                const results = searchMovies(e.target.value);
-                displaySearchResults(results);
-            });
-        }
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const results = searchMovies(e.target.value);
+            displaySearchResults(results);
+        });
     }
 }
 
@@ -340,7 +355,6 @@ function initModals() {
     });
 }
 
-// ========== بانەڕی ڕوون کە بە سکرۆڵ دەگۆڕێت ==========
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
@@ -360,14 +374,162 @@ function initNavbarScroll() {
     });
 }
 
+// ========== فەنکشنەکانی مۆبایل ==========
+function initMobileMenu() {
+    const hamburger = document.getElementById('hamburgerBtn');
+    const closeBtn = document.getElementById('closeMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const overlay = document.getElementById('mobileMenuOverlay');
+
+    if (!hamburger || !mobileMenu || !overlay) return;
+
+    function openMenu() {
+        mobileMenu.classList.add('active');
+        overlay.style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        const icon = hamburger.querySelector('i');
+        if (icon) {
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        }
+    }
+
+    function closeMenu() {
+        mobileMenu.classList.remove('active');
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+        const icon = hamburger.querySelector('i');
+        if (icon) {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
+    }
+
+    hamburger.addEventListener('click', openMenu);
+    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
+    overlay.addEventListener('click', closeMenu);
+}
+
+function initMobileDropdowns() {
+    const toggles = document.querySelectorAll('.mobile-dropdown-toggle');
+    toggles.forEach(toggle => {
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            const parent = toggle.parentElement;
+            const menu = parent.querySelector('.mobile-dropdown-menu');
+            if (menu) {
+                menu.classList.toggle('active');
+                const icon = toggle.querySelector('i');
+                if (icon) {
+                    icon.classList.toggle('fa-chevron-down');
+                    icon.classList.toggle('fa-chevron-up');
+                }
+            }
+        });
+    });
+}
+
+function initMobileSearch() {
+    const mobileSearchIcon = document.getElementById('mobileSearchIcon');
+    const searchForm = document.getElementById('searchForm');
+    const searchInput = document.getElementById('searchInput');
+    const searchClose = document.getElementById('searchClose');
+    
+    if (mobileSearchIcon && searchForm) {
+        mobileSearchIcon.addEventListener('click', () => {
+            searchForm.style.display = searchForm.style.display === 'none' ? 'block' : 'none';
+            if (searchForm.style.display === 'block' && searchInput) {
+                searchInput.focus();
+            }
+        });
+        
+        if (searchClose) {
+            searchClose.addEventListener('click', () => {
+                searchForm.style.display = 'none';
+                document.getElementById('searchResults').innerHTML = '';
+            });
+        }
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const results = searchMovies(e.target.value);
+            displaySearchResults(results);
+        });
+    }
+}
+
+function initMobileModals() {
+    const mobileLoginIcon = document.getElementById('mobileLoginIcon');
+    const mobileVipBtn = document.getElementById('mobileVipBtn');
+    const loginModal = document.getElementById('loginModal');
+    const vipModal = document.getElementById('vipModal');
+    const closeModals = document.querySelectorAll('.close-modal');
+    
+    if (mobileLoginIcon && loginModal) {
+        mobileLoginIcon.addEventListener('click', () => {
+            loginModal.style.display = 'flex';
+            // داخستنی مێنیوی مۆبایل
+            const mobileMenu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (mobileMenu) mobileMenu.classList.remove('active');
+            if (overlay) overlay.style.display = 'none';
+            document.body.style.overflow = '';
+            const hamburger = document.getElementById('hamburgerBtn');
+            if (hamburger) {
+                const icon = hamburger.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+    }
+    
+    if (mobileVipBtn && vipModal) {
+        mobileVipBtn.addEventListener('click', () => {
+            vipModal.style.display = 'flex';
+            const mobileMenu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            if (mobileMenu) mobileMenu.classList.remove('active');
+            if (overlay) overlay.style.display = 'none';
+            document.body.style.overflow = '';
+            const hamburger = document.getElementById('hamburgerBtn');
+            if (hamburger) {
+                const icon = hamburger.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+    }
+    
+    closeModals.forEach(close => {
+        close.addEventListener('click', () => {
+            if (loginModal) loginModal.style.display = 'none';
+            if (vipModal) vipModal.style.display = 'none';
+        });
+    });
+    
+    window.addEventListener('click', (e) => {
+        if (e.target === loginModal) loginModal.style.display = 'none';
+        if (e.target === vipModal) vipModal.style.display = 'none';
+    });
+}
+
 // ========== DOM Content Loaded ==========
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
-    initMobileDropdowns();
     initCategoryFilters();
     initTheme();
-    initHamburger();
     initSearch();
     initModals();
     initNavbarScroll();
+    
+    // فەنکشنەکانی مۆبایل
+    initMobileMenu();
+    initMobileDropdowns();
+    initMobileSearch();
+    initMobileModals();
 });
