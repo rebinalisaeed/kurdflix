@@ -1,22 +1,29 @@
-// ========== ناوی بەکارهێنەر و پاسیۆردی بەڕێوەبردن ==========
+// ========== ناوی بەکارهێنەر و پاسیۆرد ==========
 const ADMIN_USERNAME = "1234";
 const ADMIN_PASSWORD = "1234";
+
+// ========== لیستی چەشنەکان ==========
+const GENRES_LIST = [
+    "تاوانکاری", "زانستی خەیاڵی", "سەرکێشی", "ئاکشن", "کۆمیدی",
+    "ئەنیمەیشن", "موزیکی", "بایۆگرافی", "دۆکیۆمێنتاری", "ڕۆژئاوایی",
+    "وەرزشی", "سایکۆلۆژیی", "کۆمەڵایەتی", "دراما", "هەستبزوێن",
+    "نهێنی ئامێز", "خەیاڵی", "خێزانی", "ڕۆمانسی", "مێژوویی",
+    "ترسناک", "جەنگ", "پزیشکی", "کورتە", "تراژیدی"
+];
+
+// ========== داتاکان ==========
+let currentData = { movies: [], carousel: [], siteData: { aboutText: "", copyrightText: "", itemsPerPage: 20 } };
+let nextId = 100;
 
 // ========== پشتڕاستکردنەوەی چوونەژوورەوە ==========
 function checkAdminAuth() {
     const savedAuth = localStorage.getItem('admin_authenticated');
     const savedTime = localStorage.getItem('admin_auth_time');
     
-    if (savedAuth === 'true' && savedTime) {
-        const now = new Date().getTime();
-        if (now < parseInt(savedTime)) {
-            document.getElementById('adminAuth').style.display = 'none';
-            document.getElementById('adminContent').style.display = 'block';
-            return true;
-        } else {
-            localStorage.removeItem('admin_authenticated');
-            localStorage.removeItem('admin_auth_time');
-        }
+    if (savedAuth === 'true' && savedTime && new Date().getTime() < parseInt(savedTime)) {
+        document.getElementById('adminAuth').style.display = 'none';
+        document.getElementById('adminContent').style.display = 'block';
+        return true;
     }
     return false;
 }
@@ -27,15 +34,13 @@ function initAdminAuth() {
         document.getElementById('adminContent').style.display = 'none';
         
         document.getElementById('authSubmitBtn').addEventListener('click', () => {
-            const inputUsername = document.getElementById('adminUsername').value;
-            const inputPassword = document.getElementById('adminPassword').value;
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
             
-            if (inputUsername === ADMIN_USERNAME && inputPassword === ADMIN_PASSWORD) {
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
                 const expiryTime = new Date().getTime() + (7 * 24 * 60 * 60 * 1000);
                 localStorage.setItem('admin_authenticated', 'true');
                 localStorage.setItem('admin_auth_time', expiryTime);
-                document.getElementById('adminAuth').style.display = 'none';
-                document.getElementById('adminContent').style.display = 'block';
                 location.reload();
             } else {
                 const errorEl = document.getElementById('authError');
@@ -43,81 +48,57 @@ function initAdminAuth() {
                 setTimeout(() => errorEl.style.display = 'none', 2000);
             }
         });
-    } else {
-        document.getElementById('adminAuth')?.remove();
-        document.getElementById('adminContent').style.display = 'block';
     }
 }
-
-// ========== پێکهاتەی پۆلەکان ==========
-const categoriesConfig = {
-    film: [
-        { id: "kurdish-film", name: "فیلمی کوردی" },
-        { id: "hollywood", name: "هۆلیوود" },
-        { id: "bollywood", name: "بۆلیوود" },
-        { id: "russian", name: "فیلمی روسی" },
-        { id: "korean", name: "فیلمی کۆری" },
-        { id: "persian", name: "فیلمی فارسی" },
-        { id: "arabic", name: "فیلمی عەرەبی" },
-        { id: "turkish-film", name: "فیلمی تورکی" },
-        { id: "european", name: "فیلمی بیانی" }
-    ],
-    series: [
-        { id: "kurdish-series", name: "زنجیرەی کوردی" },
-        { id: "american-series", name: "زنجیرەی ئەمەریکی" },
-        { id: "korean-series", name: "زنجیرەی کۆری" },
-        { id: "indian-series", name: "زنجیرەی هیندی" },
-        { id: "chinese-series", name: "زنجیرەی چینی" },
-        { id: "turkish-series", name: "زنجیرەی تورکی" },
-        { id: "persian-series", name: "زنجیرەی فارسی" },
-        { id: "arabic-series", name: "زنجیرەی عەرەبی" },
-        { id: "anime", name: "ئەنیمی و ئەنیمەیشن" },
-        { id: "documentary", name: "دیکۆمێنتاری" }
-    ]
-};
-
-let currentData = { movies: [], carousel: [] };
-let nextId = 100;
 
 // ========== بارکردنی داتاکان ==========
 async function loadAdminData() {
     try {
         const response = await fetch('data.json?t=' + Date.now());
-        currentData = await response.json();
-        if (currentData.movies && currentData.movies.length > 0) {
+        const data = await response.json();
+        currentData = data;
+        if (!currentData.siteData) {
+            currentData.siteData = { aboutText: "", copyrightText: "", itemsPerPage: 20 };
+        }
+        if (currentData.movies.length > 0) {
             nextId = Math.max(...currentData.movies.map(m => m.id)) + 1;
         }
-        renderCategoriesCheckbox();
+        renderGenresCheckbox();
         renderMoviesList();
         renderSlidesList();
         updateSlideMovieSelect();
         renderStats();
+        loadSiteDataToForm();
     } catch (error) {
-        currentData = { movies: [], carousel: [] };
-        renderCategoriesCheckbox();
+        currentData = { movies: [], carousel: [], siteData: { aboutText: "", copyrightText: "", itemsPerPage: 20 } };
+        renderGenresCheckbox();
         renderMoviesList();
         renderSlidesList();
         renderStats();
     }
 }
 
-function renderCategoriesCheckbox() {
-    const container = document.getElementById('categoriesCheckbox');
+// ========== چەشنەکان ==========
+function renderGenresCheckbox() {
+    const container = document.getElementById('genresCheckbox');
     if (!container) return;
-    container.innerHTML = '';
-    const filmDiv = document.createElement('div');
-    filmDiv.innerHTML = '<strong><i class="fas fa-film"></i> پۆلەکانی فیلم:</strong><br>';
-    categoriesConfig.film.forEach(cat => {
-        filmDiv.innerHTML += `<label class="category-checkbox"><input type="checkbox" value="${cat.id}"> ${cat.name}</label>`;
+    container.innerHTML = GENRES_LIST.map(genre => `
+        <label class="checkbox-item"><input type="checkbox" value="${genre}"> ${genre}</label>
+    `).join('');
+    
+    // بۆ سلایدەکان
+    const slideGenresSelect = document.getElementById('slideGenres');
+    if (slideGenresSelect) {
+        slideGenresSelect.innerHTML = GENRES_LIST.map(genre => `<option value="${genre}">${genre}</option>`).join('');
+    }
+}
+
+function getSelectedGenres() {
+    const selected = [];
+    document.querySelectorAll('#genresCheckbox input[type="checkbox"]:checked').forEach(cb => {
+        selected.push(cb.value);
     });
-    container.appendChild(filmDiv);
-    const seriesDiv = document.createElement('div');
-    seriesDiv.style.marginTop = '1rem';
-    seriesDiv.innerHTML = '<strong><i class="fas fa-tv"></i> پۆلەکانی زنجیرە:</strong><br>';
-    categoriesConfig.series.forEach(cat => {
-        seriesDiv.innerHTML += `<label class="category-checkbox"><input type="checkbox" value="${cat.id}"> ${cat.name}</label>`;
-    });
-    container.appendChild(seriesDiv);
+    return selected;
 }
 
 function getSelectedCategories() {
@@ -131,32 +112,26 @@ function getSelectedCategories() {
 // ========== زیادکردنی فیلم ==========
 document.getElementById('addMovieForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const type = document.getElementById('movieType').value;
-    const title = document.getElementById('movieTitle').value;
-    const year = document.getElementById('movieYear').value;
-    const poster = document.getElementById('moviePoster').value;
-    const videoUrl = document.getElementById('movieVideoUrl').value;
-    const trailerUrl = document.getElementById('movieTrailerUrl').value;
-    const description = document.getElementById('movieDescription').value;
-    const categories = getSelectedCategories();
-    
-    if (type === 'film') categories.push('all-films');
-    else categories.push('all-series');
     
     const newMovie = {
         id: nextId++,
-        title: title,
-        year: year,
-        poster: poster || 'https://via.placeholder.com/200x300?text=No+Poster',
-        type: type,
-        categories: categories,
-        videoUrl: videoUrl,
-        description: description || 'زانیاری زیادە بەم زووانە دەخرێتە ناو سایت',
-        trailerUrl: trailerUrl || ''
+        title: document.getElementById('movieTitle').value,
+        year: document.getElementById('movieYear').value,
+        poster: document.getElementById('moviePoster').value || 'https://picsum.photos/200/300',
+        type: document.getElementById('movieType').value,
+        lang: document.getElementById('movieLang').value,
+        videoUrl: document.getElementById('movieVideoUrl').value,
+        trailerUrl: document.getElementById('movieTrailerUrl').value,
+        description: document.getElementById('movieDescription').value || 'زانیاری زیادە بەم زووانە دەخرێتە ناو سایت',
+        genres: getSelectedGenres(),
+        categories: getSelectedCategories()
     };
+    
     currentData.movies.push(newMovie);
     document.getElementById('addMovieForm').reset();
-    document.querySelectorAll('#categoriesCheckbox input[type="checkbox"]').forEach(cb => cb.checked = false);
+    document.querySelectorAll('#genresCheckbox input').forEach(cb => cb.checked = false);
+    document.querySelectorAll('#categoriesCheckbox input').forEach(cb => cb.checked = false);
+    
     renderMoviesList();
     updateSlideMovieSelect();
     renderStats();
@@ -167,15 +142,18 @@ function renderMoviesList() {
     const container = document.getElementById('moviesList');
     const searchTerm = document.getElementById('searchMovies')?.value.toLowerCase() || '';
     const filterType = document.getElementById('filterType')?.value || 'all';
+    
     let filtered = currentData.movies.filter(movie => {
         const matchSearch = movie.title.toLowerCase().includes(searchTerm);
         const matchType = filterType === 'all' || movie.type === filterType;
         return matchSearch && matchType;
     });
+    
     if (filtered.length === 0) {
         container.innerHTML = '<p style="text-align:center;">هیچ فیلم/زنجیرەیەک نەدۆزرایەوە</p>';
         return;
     }
+    
     container.innerHTML = '';
     filtered.forEach(movie => {
         const div = document.createElement('div');
@@ -183,8 +161,8 @@ function renderMoviesList() {
         div.innerHTML = `
             <div class="item-info">
                 <div class="item-title">${movie.title}</div>
-                <div class="item-meta">${movie.year} | ${movie.type === 'film' ? 'فیلم' : 'زنجیرە'} | ID: ${movie.id}</div>
-                <div class="item-meta">پۆلەکان: ${movie.categories.join(', ')}</div>
+                <div class="item-meta">${movie.year} | ${movie.type === 'film' ? 'فیلم' : 'زنجیرە'} | ${movie.lang} | ID: ${movie.id}</div>
+                <div class="item-meta">چەشنەکان: ${movie.genres?.join(', ') || '---'}</div>
             </div>
             <div class="item-actions">
                 <button class="btn btn-danger delete-movie" data-id="${movie.id}"><i class="fas fa-trash"></i> سڕینەوە</button>
@@ -192,6 +170,7 @@ function renderMoviesList() {
         `;
         container.appendChild(div);
     });
+    
     document.querySelectorAll('.delete-movie').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const id = parseInt(btn.dataset.id);
@@ -211,19 +190,21 @@ function renderMoviesList() {
 // ========== سلایدەکان ==========
 document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const title = document.getElementById('slideTitle').value;
-    const category = document.getElementById('slideCategory').value;
-    const poster = document.getElementById('slideImage').value;
-    const movieId = parseInt(document.getElementById('slideMovieId').value);
-    const description = document.getElementById('slideDescription').value;
+    
+    const slideGenresSelect = document.getElementById('slideGenres');
+    const selectedGenres = slideGenresSelect ? Array.from(slideGenresSelect.selectedOptions).map(opt => opt.value) : [];
+    
     const newSlide = {
         id: Date.now(),
-        title: title,
-        category: category,
-        description: description,
-        poster: poster || 'https://via.placeholder.com/1200x600?text=Slide',
-        movieId: movieId
+        title: document.getElementById('slideTitle').value,
+        category: document.getElementById('slideCategory').value,
+        year: document.getElementById('slideYear').value,
+        description: document.getElementById('slideDescription').value,
+        poster: document.getElementById('slideImage').value || 'https://picsum.photos/1080/1920',
+        movieId: parseInt(document.getElementById('slideMovieId').value),
+        genres: selectedGenres
     };
+    
     currentData.carousel.push(newSlide);
     document.getElementById('addSlideForm').reset();
     renderSlidesList();
@@ -234,10 +215,12 @@ document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
 function renderSlidesList() {
     const container = document.getElementById('slidesList');
     if (!container) return;
+    
     if (currentData.carousel.length === 0) {
         container.innerHTML = '<p style="text-align:center;">هیچ سلایدێک نەدۆزرایەوە</p>';
         return;
     }
+    
     container.innerHTML = '';
     currentData.carousel.forEach(slide => {
         const div = document.createElement('div');
@@ -245,8 +228,8 @@ function renderSlidesList() {
         div.innerHTML = `
             <div class="item-info">
                 <div class="item-title">${slide.title}</div>
-                <div class="item-meta">${slide.category} | پەیوەندی بە فیلم ID: ${slide.movieId}</div>
-                <div class="item-meta">${slide.description.substring(0, 100)}...</div>
+                <div class="item-meta">${slide.category} | ${slide.year || ''} | پەیوەندی بە فیلم ID: ${slide.movieId}</div>
+                <div class="item-meta">چەشنەکان: ${slide.genres?.join(', ') || '---'}</div>
             </div>
             <div class="item-actions">
                 <button class="btn btn-danger delete-slide" data-id="${slide.id}"><i class="fas fa-trash"></i> سڕینەوە</button>
@@ -254,6 +237,7 @@ function renderSlidesList() {
         `;
         container.appendChild(div);
     });
+    
     document.querySelectorAll('.delete-slide').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const id = parseInt(btn.dataset.id);
@@ -279,8 +263,32 @@ function updateSlideMovieSelect() {
     });
 }
 
+// ========== داتای سایت (فووتەر) ==========
+function loadSiteDataToForm() {
+    const aboutTextarea = document.getElementById('aboutTextEdit');
+    const copyrightInput = document.getElementById('copyrightTextEdit');
+    const itemsPerPageInput = document.getElementById('itemsPerPage');
+    
+    if (aboutTextarea) aboutTextarea.value = currentData.siteData?.aboutText || '';
+    if (copyrightInput) copyrightInput.value = currentData.siteData?.copyrightText || 'kurdflix.com 2026 ©';
+    if (itemsPerPageInput) itemsPerPageInput.value = currentData.siteData?.itemsPerPage || 20;
+}
+
+function saveSiteData() {
+    const aboutTextarea = document.getElementById('aboutTextEdit');
+    const copyrightInput = document.getElementById('copyrightTextEdit');
+    const itemsPerPageInput = document.getElementById('itemsPerPage');
+    
+    if (!currentData.siteData) currentData.siteData = {};
+    currentData.siteData.aboutText = aboutTextarea?.value || '';
+    currentData.siteData.copyrightText = copyrightInput?.value || 'kurdflix.com 2026 ©';
+    currentData.siteData.itemsPerPage = parseInt(itemsPerPageInput?.value) || 20;
+}
+
 // ========== پاشەکەوتکردن ==========
 async function saveAllData() {
+    saveSiteData();
+    
     try {
         const response = await fetch('save_data.php', {
             method: 'POST',
@@ -321,6 +329,7 @@ document.getElementById('importFile')?.addEventListener('change', (e) => {
             renderSlidesList();
             updateSlideMovieSelect();
             renderStats();
+            loadSiteDataToForm();
             showMessage('داتاکە بە سەرکەوتوویی هێنرایەوە', 'success');
         } catch (error) {
             showMessage('هەڵە لە خوێندنەوەی فایلەکە', 'error');
@@ -336,22 +345,22 @@ function renderStats() {
     const seriesCount = currentData.movies.filter(m => m.type === 'series').length;
     const carouselCount = currentData.carousel.length;
     container.innerHTML = `
-        <div class="form-row">
+        <div class="form-row-3">
             <div style="background-color: var(--accent); padding: 1rem; border-radius: 8px; text-align: center;">
-                <h3 style="font-family:'NRT',sans-serif;">${currentData.movies.length}</h3>
-                <p style="font-family:'NRT',sans-serif;">کۆی گشتی فیلم و زنجیرە</p>
+                <h3>${currentData.movies.length}</h3>
+                <p>کۆی گشتی</p>
             </div>
             <div style="background-color: var(--accent); padding: 1rem; border-radius: 8px; text-align: center;">
-                <h3 style="font-family:'NRT',sans-serif;">${filmCount}</h3>
-                <p style="font-family:'NRT',sans-serif;">فیلم</p>
+                <h3>${filmCount}</h3>
+                <p>فیلم</p>
             </div>
             <div style="background-color: var(--accent); padding: 1rem; border-radius: 8px; text-align: center;">
-                <h3 style="font-family:'NRT',sans-serif;">${seriesCount}</h3>
-                <p style="font-family:'NRT',sans-serif;">زنجیرە</p>
+                <h3>${seriesCount}</h3>
+                <p>زنجیرە</p>
             </div>
             <div style="background-color: var(--accent); padding: 1rem; border-radius: 8px; text-align: center;">
-                <h3 style="font-family:'NRT',sans-serif;">${carouselCount}</h3>
-                <p style="font-family:'NRT',sans-serif;">سلاید</p>
+                <h3>${carouselCount}</h3>
+                <p>سلاید</p>
             </div>
         </div>
     `;
@@ -365,7 +374,7 @@ function showMessage(msg, type) {
     setTimeout(() => div.remove(), 3000);
 }
 
-// ========== فیلتەر و گەڕان ==========
+// ========== فیلتەر ==========
 document.getElementById('searchMovies')?.addEventListener('input', () => renderMoviesList());
 document.getElementById('filterType')?.addEventListener('change', () => renderMoviesList());
 
@@ -383,16 +392,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 document.getElementById('saveAllBtn')?.addEventListener('click', saveAllData);
 document.getElementById('exportDataBtn')?.addEventListener('click', downloadData);
 
-// ========== Theme بۆ Admin ==========
+// ========== Theme ==========
 function initAdminTheme() {
     const themeSwitch = document.getElementById('theme-switch');
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
         document.body.setAttribute('data-theme', 'light');
         if (themeSwitch) themeSwitch.checked = true;
-    } else {
-        document.body.setAttribute('data-theme', 'dark');
-        if (themeSwitch) themeSwitch.checked = false;
     }
     themeSwitch?.addEventListener('change', (e) => {
         if (e.target.checked) {
@@ -405,35 +411,7 @@ function initAdminTheme() {
     });
 }
 
-// ========== بانەڕی سکرۆڵ بۆ Admin ==========
-function initAdminNavbarScroll() {
-    const navbar = document.querySelector('.navbar');
-    if (!navbar) return;
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
-}
-
-// ========== هەمبەرگەر بۆ Admin (مۆبایل) ==========
-const hamburger = document.getElementById('hamburger');
-const navMenu = document.getElementById('nav-menu');
-if (hamburger && navMenu) {
-    hamburger.addEventListener('click', () => {
-        navMenu.classList.toggle('active');
-    });
-}
-
-// ========== Initialize All ==========
+// ========== Initialize ==========
 initAdminAuth();
 loadAdminData();
 initAdminTheme();
-initAdminNavbarScroll();
