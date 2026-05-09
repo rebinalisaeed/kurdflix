@@ -16,6 +16,14 @@ async function loadData() {
         startCarouselAutoPlay();
         renderAllSections();
         populateSearchIndex();
+        
+        // نوسینی فووتەر لە داتاکان
+        if (data.siteData) {
+            const aboutP = document.getElementById('aboutText');
+            const copyrightP = document.getElementById('copyrightText');
+            if (aboutP && data.siteData.aboutText) aboutP.textContent = data.siteData.aboutText;
+            if (copyrightP && data.siteData.copyrightText) copyrightP.textContent = data.siteData.copyrightText;
+        }
     } catch (error) {
         console.error("Error loading data:", error);
         loadSampleData();
@@ -25,23 +33,31 @@ async function loadData() {
 // ========== داتای نموونەیی بۆ یەکەمجار ==========
 function loadSampleData() {
     allMovies = [
-        { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "https://picsum.photos/200/300?random=1", type: "film", categories: ["kurdish-film"], lang: "kurdish", description: "فیلمێکی کوردی سەبارەت بە شەڕ و خۆشەویستی", genres: ["دراما", "ئاکشن"], videoUrl: "https://vidmoly.com/e/example1" },
-        { id: 2, title: "دڵی باڵکان", year: "2024", poster: "https://picsum.photos/200/300?random=2", type: "series", categories: ["turkish-series"], lang: "turkish", description: "زنجیرەیەکی درامایی تورکی", genres: ["ڕۆمانسی", "تراژیدی"], videoUrl: "https://streamsb.com/e/example2" },
-        { id: 3, title: "تاڵانی پارە", year: "2025", poster: "https://picsum.photos/200/300?random=3", type: "film", categories: ["turkish-film"], lang: "turkish", description: "فیلمێکی ئەکشنی تورکی", genres: ["هەستبزوێن", "تاوانکاری"], videoUrl: "https://vidmoly.com/e/example3" },
-        { id: 4, title: "خەونی پڕۆ", year: "2023", poster: "https://picsum.photos/200/300?random=4", type: "film", categories: ["kurdish-film"], lang: "kurdish", description: "فیلمێکی کوردی", genres: ["کۆمیدی"], videoUrl: "https://vidmoly.com/e/example4" },
-        { id: 5, title: "قیزیل ئەلما", year: "2024", poster: "https://picsum.photos/200/300?random=5", type: "series", categories: ["turkish-series"], lang: "turkish", description: "زنجیرەیەکی مێژوویی", genres: ["مێژوویی", "جەنگ"], videoUrl: "https://streamsb.com/e/example5" }
+        { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "https://picsum.photos/200/300?random=1", type: "film", lang: "kurdish", categories: ["kurdish-film"], description: "فیلمێکی کوردی", genres: ["دراما", "ئاکشن"], videoUrl: "https://vidmoly.com/e/example1" },
+        { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "https://picsum.photos/200/300?random=2", type: "series", lang: "turkish", categories: ["turkish-series"], description: "زنجیرەیەکی درامایی", genres: ["دراما", "ڕۆمانسی"], videoUrl: "https://streamsb.com/e/example2" }
     ];
-    
     carouselSlides = [
-        { movieId: 1, title: "ئەفسانەی کوێستان", category: "فیلمی کوردی", year: "2024", description: "فیلمێکی کوردی سەبارەت بە شەڕ و خۆشەویستی لە دڵی چیاکاندا", poster: "https://picsum.photos/1080/1920?random=1", genres: ["دراما", "ئاکشن"] },
-        { movieId: 2, title: "دڵی باڵکان", category: "زنجیرەی تورکی", year: "2024", description: "زنجیرەیەکی درامایی خێزانی کە چیرۆکی خۆشەویستی و خیانەت دەگێڕێتەوە", poster: "https://picsum.photos/1080/1920?random=2", genres: ["ڕۆمانسی", "تراژیدی"] },
-        { movieId: 3, title: "تاڵانی پارە", category: "فیلمی تورکی", year: "2025", description: "فیلمێکی ئەکشنی خێرا و پڕ لە سەرکێشی", poster: "https://picsum.photos/1080/1920?random=3", genres: ["هەستبزوێن", "تاوانکاری"] }
+        { id: 1, title: "ئەفسانەی کوێستان", category: "فیلمی کوردی", year: "2024", description: "فیلمێکی کوردی", images: { mobile: "https://picsum.photos/1080/1920?random=1", tablet: "https://picsum.photos/1080/1920?random=1", desktop: "https://picsum.photos/1080/1920?random=1" }, movieId: 1, genres: ["دراما", "ئاکشن"] }
     ];
-    
     renderCarousel();
     startCarouselAutoPlay();
     renderAllSections();
     populateSearchIndex();
+}
+
+// ========== هەڵبژاردنی وێنەی گونجاو بە پێی قەبارەی شاشە ==========
+function getResponsiveImage(slide) {
+    const width = window.innerWidth;
+    if (slide.images) {
+        if (width <= 768) {
+            return slide.images.mobile || slide.images.desktop;
+        } else if (width <= 1024) {
+            return slide.images.tablet || slide.images.mobile || slide.images.desktop;
+        } else {
+            return slide.images.desktop || slide.images.mobile;
+        }
+    }
+    return slide.poster || "https://picsum.photos/1080/1920";
 }
 
 // ========== سلایدەکان ==========
@@ -56,17 +72,19 @@ function renderCarousel() {
     carouselSlides.forEach((slide, index) => {
         const slideDiv = document.createElement('div');
         slideDiv.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
-        slideDiv.style.backgroundImage = `url('${slide.poster}')`;
+        const imageUrl = getResponsiveImage(slide);
+        slideDiv.style.backgroundImage = `url('${imageUrl}')`;
         
-        // نمایش چەشنەکان (genres) بە شێوەی لیست
-        const genresHtml = slide.genres ? `<div class="carousel-genres">${slide.genres.slice(0, 3).map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>` : '';
+        const genresHtml = slide.genres && slide.genres.length > 0 
+            ? `<div class="carousel-genres">${slide.genres.slice(0, 3).map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>` 
+            : '';
         
         slideDiv.innerHTML = `
             <div class="carousel-content">
-                <span class="carousel-category">${slide.category}</span>
-                <span class="carousel-year">${slide.year}</span>
+                ${slide.category ? `<span class="carousel-category">${slide.category}</span>` : ''}
+                ${slide.year ? `<span class="carousel-year">${slide.year}</span>` : ''}
                 ${genresHtml}
-                <p class="carousel-desc">${slide.description}</p>
+                <p class="carousel-desc">${slide.description || ''}</p>
                 <div class="carousel-buttons">
                     <button class="carousel-btn trailer" data-id="${slide.movieId}">🎬 سەیرکردن</button>
                     <button class="carousel-btn info" data-id="${slide.movieId}">ℹ️ زانیاری زیاتر</button>
@@ -89,6 +107,20 @@ function renderCarousel() {
         });
     });
 }
+
+// گۆڕینی وێنەی سلاید کاتێک شاشە قەبارەی گۆڕا
+window.addEventListener('resize', () => {
+    if (carouselSlides.length > 0) {
+        const slides = document.querySelectorAll('.carousel-slide');
+        slides.forEach((slide, index) => {
+            const slideData = carouselSlides[index];
+            if (slideData) {
+                const imageUrl = getResponsiveImage(slideData);
+                slide.style.backgroundImage = `url('${imageUrl}')`;
+            }
+        });
+    }
+});
 
 function goToSlide(index) {
     if (index < 0) index = carouselSlides.length - 1;
@@ -135,73 +167,41 @@ function renderSlider(containerId, movies) {
 }
 
 function renderAllSections() {
-    // نوێترین بەرهەمەکان (دواین 20 بەرهەم)
     const latest = [...allMovies].reverse().slice(0, 20);
     renderSlider('latestMoviesSlider', latest);
-    
-    // نوێترین فیلمەکان
-    const films = allMovies.filter(m => m.type === 'film').slice(0, 20);
-    renderSlider('filmsSlider', films);
-    
-    // نوێترین زنجیرەکان
-    const series = allMovies.filter(m => m.type === 'series').slice(0, 20);
-    renderSlider('seriesSlider', series);
-    
-    // نوێترین بەرهەمی منداڵان (ئەو بەرهەمانەی کە categories پێویستیان هەیە)
-    const kids = allMovies.filter(m => m.categories && m.categories.includes('kids')).slice(0, 20);
-    renderSlider('kidsSlider', kids);
-    
-    // نوێترین بەرهەمی کوردی
-    const kurdish = allMovies.filter(m => m.lang === 'kurdish').slice(0, 20);
-    renderSlider('kurdishSlider', kurdish);
-    
-    // نوێترین بەرهەمی فارسی
-    const persian = allMovies.filter(m => m.lang === 'persian').slice(0, 20);
-    renderSlider('persianSlider', persian);
-    
-    // نوێترین بەرهەمی عەرەبی
-    const arabic = allMovies.filter(m => m.lang === 'arabic').slice(0, 20);
-    renderSlider('arabicSlider', arabic);
-    
-    // نوێترین بەرهەمی تورکی
-    const turkish = allMovies.filter(m => m.lang === 'turkish').slice(0, 20);
-    renderSlider('turkishSlider', turkish);
+    renderSlider('filmsSlider', allMovies.filter(m => m.type === 'film').slice(0, 20));
+    renderSlider('seriesSlider', allMovies.filter(m => m.type === 'series').slice(0, 20));
+    renderSlider('kidsSlider', allMovies.filter(m => m.categories && m.categories.includes('kids')).slice(0, 20));
+    renderSlider('kurdishSlider', allMovies.filter(m => m.lang === 'kurdish').slice(0, 20));
+    renderSlider('persianSlider', allMovies.filter(m => m.lang === 'persian').slice(0, 20));
+    renderSlider('arabicSlider', allMovies.filter(m => m.lang === 'arabic').slice(0, 20));
+    renderSlider('turkishSlider', allMovies.filter(m => m.lang === 'turkish').slice(0, 20));
 }
 
 // ========== گەڕان ==========
 let searchIndex = [];
 function populateSearchIndex() {
-    searchIndex = allMovies.map(m => ({
-        id: m.id,
-        title: m.title,
-        type: m.type
-    }));
+    searchIndex = allMovies.map(m => ({ id: m.id, title: m.title, type: m.type }));
 }
 
 function searchMovies(query) {
     if (!query.trim()) return [];
-    return searchIndex.filter(item =>
-        item.title.toLowerCase().includes(query.toLowerCase())
-    );
+    return searchIndex.filter(item => item.title.toLowerCase().includes(query.toLowerCase()));
 }
 
 function displaySearchResults(results) {
     const resultsDiv = document.getElementById('searchResults');
     if (!resultsDiv) return;
-    
     if (results.length === 0) {
         resultsDiv.innerHTML = '<div class="search-item">هیچ ئەنجامێک نەدۆزرایەوە</div>';
         return;
     }
-    
     resultsDiv.innerHTML = '';
     results.forEach(result => {
         const item = document.createElement('div');
         item.className = 'search-item';
         item.textContent = `${result.title} (${result.type === 'film' ? 'فیلم' : 'زنجیرە'})`;
-        item.onclick = () => {
-            window.location.href = `movie.html?id=${result.id}`;
-        };
+        item.onclick = () => window.location.href = `movie.html?id=${result.id}`;
         resultsDiv.appendChild(item);
     });
 }
@@ -212,10 +212,7 @@ function initCategoryFilters() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const category = link.dataset.category;
-            if (category) {
-                // بۆ کاتێک کە پێویستە پەڕەیەکی جیا بکرێتەوە بۆ هەموو بەرهەمەکان
-                window.location.href = `all-movies.html?category=${category}`;
-            }
+            if (category) window.location.href = `all-movies.html?category=${category}`;
         });
     });
 }
@@ -237,7 +234,6 @@ function initTheme() {
     const themeSwitch = document.getElementById('theme-switch');
     const mobileThemeSwitch = document.getElementById('mobile-theme-switch');
     const savedTheme = localStorage.getItem('theme');
-    
     if (savedTheme === 'light') {
         document.body.setAttribute('data-theme', 'light');
         if (themeSwitch) themeSwitch.checked = true;
@@ -247,7 +243,6 @@ function initTheme() {
         if (themeSwitch) themeSwitch.checked = false;
         if (mobileThemeSwitch) mobileThemeSwitch.checked = false;
     }
-    
     if (themeSwitch) {
         themeSwitch.addEventListener('change', (e) => {
             if (e.target.checked) {
@@ -261,7 +256,6 @@ function initTheme() {
             }
         });
     }
-    
     if (mobileThemeSwitch) {
         mobileThemeSwitch.addEventListener('change', (e) => {
             if (e.target.checked) {
@@ -282,9 +276,7 @@ function initHamburger() {
     const closeBtn = document.getElementById('closeMenuBtn');
     const mobileMenu = document.getElementById('mobileMenu');
     const overlay = document.getElementById('mobileMenuOverlay');
-
     if (!hamburger || !mobileMenu || !overlay) return;
-
     function openMenu() {
         mobileMenu.classList.add('active');
         overlay.style.display = 'block';
@@ -295,7 +287,6 @@ function initHamburger() {
             icon.classList.add('fa-times');
         }
     }
-
     function closeMenu() {
         mobileMenu.classList.remove('active');
         overlay.style.display = 'none';
@@ -306,7 +297,6 @@ function initHamburger() {
             icon.classList.add('fa-bars');
         }
     }
-
     hamburger.addEventListener('click', openMenu);
     if (closeBtn) closeBtn.addEventListener('click', closeMenu);
     overlay.addEventListener('click', closeMenu);
@@ -337,24 +327,18 @@ function initSearch() {
     const searchForm = document.getElementById('searchForm');
     const searchInput = document.getElementById('searchInput');
     const searchClose = document.getElementById('searchClose');
-    
     const openSearch = () => {
         searchForm.style.display = searchForm.style.display === 'none' ? 'block' : 'none';
-        if (searchForm.style.display === 'block' && searchInput) {
-            searchInput.focus();
-        }
+        if (searchForm.style.display === 'block' && searchInput) searchInput.focus();
     };
-    
     if (searchIcon) searchIcon.addEventListener('click', openSearch);
     if (mobileSearchIcon) mobileSearchIcon.addEventListener('click', openSearch);
-    
     if (searchClose) {
         searchClose.addEventListener('click', () => {
             searchForm.style.display = 'none';
             document.getElementById('searchResults').innerHTML = '';
         });
     }
-    
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
             const results = searchMovies(e.target.value);
@@ -369,26 +353,18 @@ function initModals() {
     const loginModal = document.getElementById('loginModal');
     const vipModal = document.getElementById('vipModal');
     const closeModals = document.querySelectorAll('.close-modal');
-    
     loginIcons.forEach(icon => {
-        icon.addEventListener('click', () => {
-            if (loginModal) loginModal.style.display = 'flex';
-        });
+        icon.addEventListener('click', () => { if (loginModal) loginModal.style.display = 'flex'; });
     });
-    
     vipBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (vipModal) vipModal.style.display = 'flex';
-        });
+        btn.addEventListener('click', () => { if (vipModal) vipModal.style.display = 'flex'; });
     });
-    
     closeModals.forEach(close => {
         close.addEventListener('click', () => {
             if (loginModal) loginModal.style.display = 'none';
             if (vipModal) vipModal.style.display = 'none';
         });
     });
-    
     window.addEventListener('click', (e) => {
         if (e.target === loginModal) loginModal.style.display = 'none';
         if (e.target === vipModal) vipModal.style.display = 'none';
@@ -398,26 +374,17 @@ function initModals() {
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
-    
-    if (window.scrollY > 50) {
-        navbar.classList.add('scrolled');
-    } else {
-        navbar.classList.remove('scrolled');
-    }
-    
+    if (window.scrollY > 50) navbar.classList.add('scrolled');
+    else navbar.classList.remove('scrolled');
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
+        if (window.scrollY > 50) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
     });
 }
 
 // ========== DOM Content Loaded ==========
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
-    initCategoryFilters();
     initSliderControls();
     initTheme();
     initHamburger();
