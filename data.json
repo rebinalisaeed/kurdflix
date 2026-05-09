@@ -31,28 +31,38 @@
     ],
     "carousel": [
         {
-            "id": 1,
-            "title": "ئەفسانەی کوێستان",
-            "category": "فیلمی کوردی",
-            "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا",
-            "poster": "assets/poster1.jpg",
-            "movieId": 1
+            "id": 1778292633763,
+            "title": "Crim 101",
+            "category": "",
+            "year": "2026",
+            "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان، بەو هیوایەی پلانی ئەو دزییە چەندین ملیۆن دۆلارییەیان پووچەڵ بکاتەوە.",
+            "poster": "https://i.ibb.co/KkkXHS1/1080x1920-CAN-Style-C-V1-Crime101-RGB.jpg",
+            "movieId": 1,
+            "genres": [
+                "تاوانکاری",
+                "موزیکی",
+                "هەستبزوێن"
+            ]
         },
         {
-            "id": 2,
-            "title": "قەڵای خەونەکان",
-            "category": "زنجیرەی تورکی",
-            "description": "زنجیرەیەکی درامایی و سەرنجڕاکێش",
-            "poster": "assets/poster2.jpg",
-            "movieId": 2
-        },
-        {
-            "id": 1777663261406,
-            "title": "تاڵانی پارە",
-            "category": "دراما کۆمێدی سەرکێشی",
-            "description": "دەستەیەک دەچن لۆخۆیان لەبانقەکی هەندەک پارەی دەدزن ",
-            "poster": "https://i.ibb.co/x8XQVThj/images-1.jpg",
-            "movieId": 2
+            "id": 1778292974779,
+            "title": "Berlin2",
+            "category": "درامای ئیسپانی",
+            "year": "2026",
+            "description": "دەستەیەک لە ئیسپانیا گروپێکی دروست دەکەن و هەڵدەکورنە سەر بانکی نێودەوڵەتی ئیسپانیا کە زنجیرەیەک تاڵانکاری گەورە دەکەن",
+            "poster": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp",
+            "movieId": 2,
+            "genres": [
+                "تاوانکاری",
+                "سەرکێشی",
+                "دراما",
+                "هەستبزوێن"
+            ]
         }
-    ]
+    ],
+    "siteData": {
+        "aboutText": "",
+        "copyrightText": "",
+        "itemsPerPage": 20
+    }
 }
