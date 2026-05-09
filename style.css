@@ -89,7 +89,7 @@ body {
     display: block;
 }
 
-/* هەمبەرگەر و ئایکۆنی گەڕان بۆ مۆبایل - بە شێوەی پێشگریمان نادیار */
+/* هەمبەرگەر و ئایکۆنی گەڕان بۆ مۆبایل */
 .hamburger, .mobile-search-icon {
     display: none;
     background: none;
@@ -327,7 +327,7 @@ input:checked + .slider:before {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, #292929, transparent);
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
     padding: 2rem;
     text-align: center;
     color: white;
@@ -344,12 +344,26 @@ input:checked + .slider:before {
     padding: 0.3rem 1rem;
     border-radius: 20px;
     font-size: 0.8rem;
-    margin-bottom: 0.3rem;
 }
 
 .carousel-year {
     font-size: 0.9rem;
     opacity: 0.9;
+}
+
+.carousel-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 0.3rem 0;
+}
+
+.genre-tag {
+    background-color: rgba(255,255,255,0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
 }
 
 .carousel-desc {
@@ -385,10 +399,6 @@ input:checked + .slider:before {
     color: white;
 }
 
-.carousel-prev, .carousel-next {
-    display: none;
-}
-
 .carousel-dots {
     position: absolute;
     bottom: 20px;
@@ -415,7 +425,7 @@ input:checked + .slider:before {
     border-radius: 5px;
 }
 
-/* ========== بەشەکانی فیلم و زنجیرەکان (سکرۆڵی ئاسۆیی) ========== */
+/* ========== بەشەکانی فیلم و زنجیرەکان ========== */
 .container {
     max-width: 1400px;
     margin: 2rem auto;
@@ -782,28 +792,8 @@ footer {
     margin-top: 0.5rem;
 }
 
-/* ========== Responsive: مۆبایل و تابلێت ========== */
-@media (max-width: 1024px) {
-    .hero-carousel {
-        height: 70vh;
-    }
-    
-    .carousel-content {
-        padding: 1.5rem;
-    }
-    
-    .carousel-title {
-        font-size: 1.5rem;
-    }
-    
-    .carousel-desc {
-        font-size: 0.8rem;
-        max-width: 90%;
-    }
-}
-
+/* ========== Responsive ========== */
 @media (max-width: 768px) {
-    /* ناوبار بۆ مۆبایل */
     .navbar {
         padding: 0.5rem 1rem;
     }
@@ -823,13 +813,11 @@ footer {
         height: 28px;
     }
     
-    /* سلاید بۆ مۆبایل */
     .hero-carousel {
         height: 100vh;
     }
     
     .carousel-content {
-        bottom: 0;
         padding: 1.5rem;
     }
     
@@ -851,7 +839,6 @@ footer {
         font-size: 0.75rem;
     }
     
-    /* بەشەکان */
     .section-header h2 a {
         font-size: 1rem;
     }
@@ -874,7 +861,6 @@ footer {
         font-size: 0.75rem;
     }
     
-    /* فووتەر */
     .social-icons {
         gap: 1rem;
     }
@@ -882,47 +868,10 @@ footer {
     .social-icons a {
         font-size: 1.2rem;
     }
-    
-    .footer-logo svg {
-        height: 40px;
-    }
-    
-    .footer-about p {
-        font-size: 0.75rem;
-    }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 769px) and (max-width: 1024px) {
     .hero-carousel {
         height: 100vh;
-    }
-    
-    .carousel-content {
-        padding: 1rem;
-    }
-    
-    .carousel-category {
-        font-size: 0.6rem;
-    }
-    
-    .carousel-desc {
-        font-size: 0.65rem;
-    }
-    
-    .carousel-btn {
-        padding: 0.3rem 0.8rem;
-        font-size: 0.65rem;
-    }
-    
-    .movie-card {
-        flex: 0 0 110px;
-    }
-    
-    .movie-poster {
-        height: 150px;
-    }
-    
-    .section-header h2 a {
-        font-size: 0.9rem;
     }
 }
