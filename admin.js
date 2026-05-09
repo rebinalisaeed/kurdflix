@@ -81,21 +81,23 @@ async function loadAdminData() {
 // ========== چەشنەکان ==========
 function renderGenresCheckbox() {
     const container = document.getElementById('genresCheckbox');
-    if (!container) return;
-    container.innerHTML = GENRES_LIST.map(genre => `
-        <label class="checkbox-item"><input type="checkbox" value="${genre}"> ${genre}</label>
-    `).join('');
+    if (container) {
+        container.innerHTML = GENRES_LIST.map(genre => `
+            <label class="checkbox-item"><input type="checkbox" value="${genre}"> ${genre}</label>
+        `).join('');
+    }
     
-    // بۆ سلایدەکان
-    const slideGenresSelect = document.getElementById('slideGenres');
-    if (slideGenresSelect) {
-        slideGenresSelect.innerHTML = GENRES_LIST.map(genre => `<option value="${genre}">${genre}</option>`).join('');
+    const slideGenresContainer = document.getElementById('slideGenresCheckbox');
+    if (slideGenresContainer) {
+        slideGenresContainer.innerHTML = GENRES_LIST.map(genre => `
+            <label class="checkbox-item"><input type="checkbox" value="${genre}"> ${genre}</label>
+        `).join('');
     }
 }
 
-function getSelectedGenres() {
+function getSelectedGenres(containerId = 'genresCheckbox') {
     const selected = [];
-    document.querySelectorAll('#genresCheckbox input[type="checkbox"]:checked').forEach(cb => {
+    document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`).forEach(cb => {
         selected.push(cb.value);
     });
     return selected;
@@ -123,7 +125,7 @@ document.getElementById('addMovieForm')?.addEventListener('submit', (e) => {
         videoUrl: document.getElementById('movieVideoUrl').value,
         trailerUrl: document.getElementById('movieTrailerUrl').value,
         description: document.getElementById('movieDescription').value || 'زانیاری زیادە بەم زووانە دەخرێتە ناو سایت',
-        genres: getSelectedGenres(),
+        genres: getSelectedGenres('genresCheckbox'),
         categories: getSelectedCategories()
     };
     
@@ -187,12 +189,11 @@ function renderMoviesList() {
     });
 }
 
-// ========== سلایدەکان ==========
+// ========== سلایدەکان (گونجاو بۆ سێ وێنە) ==========
 document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const slideGenresSelect = document.getElementById('slideGenres');
-    const selectedGenres = slideGenresSelect ? Array.from(slideGenresSelect.selectedOptions).map(opt => opt.value) : [];
+    const selectedGenres = getSelectedGenres('slideGenresCheckbox');
     
     const newSlide = {
         id: Date.now(),
@@ -200,13 +201,19 @@ document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
         category: document.getElementById('slideCategory').value,
         year: document.getElementById('slideYear').value,
         description: document.getElementById('slideDescription').value,
-        poster: document.getElementById('slideImage').value || 'https://picsum.photos/1080/1920',
+        images: {
+            mobile: document.getElementById('slideImageMobile').value,
+            tablet: document.getElementById('slideImageTablet').value,
+            desktop: document.getElementById('slideImageDesktop').value
+        },
         movieId: parseInt(document.getElementById('slideMovieId').value),
         genres: selectedGenres
     };
     
     currentData.carousel.push(newSlide);
     document.getElementById('addSlideForm').reset();
+    document.querySelectorAll('#slideGenresCheckbox input').forEach(cb => cb.checked = false);
+    
     renderSlidesList();
     renderStats();
     showMessage('سلاید بە سەرکەوتوویی زیاد کرا', 'success');
@@ -228,8 +235,9 @@ function renderSlidesList() {
         div.innerHTML = `
             <div class="item-info">
                 <div class="item-title">${slide.title}</div>
-                <div class="item-meta">${slide.category} | ${slide.year || ''} | پەیوەندی بە فیلم ID: ${slide.movieId}</div>
+                <div class="item-meta">${slide.category || '---'} | ${slide.year || ''} | پەیوەندی بە فیلم ID: ${slide.movieId}</div>
                 <div class="item-meta">چەشنەکان: ${slide.genres?.join(', ') || '---'}</div>
+                <div class="item-meta">وێنەکان: مۆبایل ✓ | تابلێت ✓ | کۆمپیوتەر ✓</div>
             </div>
             <div class="item-actions">
                 <button class="btn btn-danger delete-slide" data-id="${slide.id}"><i class="fas fa-trash"></i> سڕینەوە</button>
@@ -263,7 +271,7 @@ function updateSlideMovieSelect() {
     });
 }
 
-// ========== داتای سایت (فووتەر) ==========
+// ========== داتای سایت ==========
 function loadSiteDataToForm() {
     const aboutTextarea = document.getElementById('aboutTextEdit');
     const copyrightInput = document.getElementById('copyrightTextEdit');
@@ -275,14 +283,10 @@ function loadSiteDataToForm() {
 }
 
 function saveSiteData() {
-    const aboutTextarea = document.getElementById('aboutTextEdit');
-    const copyrightInput = document.getElementById('copyrightTextEdit');
-    const itemsPerPageInput = document.getElementById('itemsPerPage');
-    
     if (!currentData.siteData) currentData.siteData = {};
-    currentData.siteData.aboutText = aboutTextarea?.value || '';
-    currentData.siteData.copyrightText = copyrightInput?.value || 'kurdflix.com 2026 ©';
-    currentData.siteData.itemsPerPage = parseInt(itemsPerPageInput?.value) || 20;
+    currentData.siteData.aboutText = document.getElementById('aboutTextEdit')?.value || '';
+    currentData.siteData.copyrightText = document.getElementById('copyrightTextEdit')?.value || 'kurdflix.com 2026 ©';
+    currentData.siteData.itemsPerPage = parseInt(document.getElementById('itemsPerPage')?.value) || 20;
 }
 
 // ========== پاشەکەوتکردن ==========
