@@ -320,9 +320,27 @@ input:checked + .slider:before {
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
-    background-color: var(--bg-primary);
+}
+
+/* لە شاشە گەورەکاندا contain بەکاربهێنە بۆ دیتنی وێنەی تەواو */
+@media (min-width: 769px) {
+    .carousel-bg-img {
+        object-fit: contain;
+        background-color: var(--bg-primary);
+    }
+    
+    .hero-carousel {
+        background-color: var(--bg-primary);
+    }
+}
+
+/* بۆ مۆبایل - cover بۆ پڕکردنەوەی شاشە */
+@media (max-width: 768px) {
+    .carousel-bg-img {
+        object-fit: cover;
+    }
 }
 
 /* ناوەڕۆکی سلاید */
@@ -332,7 +350,7 @@ input:checked + .slider:before {
     left: 0;
     right: 0;
     background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
-    padding: 2rem 2rem 3rem 2rem;
+    padding: 1.5rem 2rem 2rem 2rem;
     text-align: center;
     color: white;
     display: flex;
@@ -853,6 +871,10 @@ footer {
     .carousel-desc {
         font-size: 0.7rem;
         max-width: 95%;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     
     .carousel-btn {
@@ -948,6 +970,7 @@ footer {
     
     .carousel-desc {
         font-size: 0.6rem;
+        -webkit-line-clamp: 2;
     }
     
     .carousel-btn {
