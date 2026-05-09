@@ -6,13 +6,12 @@
             "year": "2024",
             "poster": "assets/poster1.jpg",
             "type": "film",
-            "categories": [
-                "kurdish-film",
-                "all-films"
-            ],
+            "lang": "kurdish",
+            "categories": ["kurdish-film", "all-films"],
             "videoUrl": "https://vidmoly.com/e/example1",
             "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا",
-            "trailerUrl": "https://www.youtube.com/embed/example1"
+            "trailerUrl": "https://www.youtube.com/embed/example1",
+            "genres": ["دراما", "ئاکشن", "سەرکێشی"]
         },
         {
             "id": 2,
@@ -20,49 +19,47 @@
             "year": "2023",
             "poster": "assets/poster2.jpg",
             "type": "series",
-            "categories": [
-                "turkish-series",
-                "all-series"
-            ],
+            "lang": "turkish",
+            "categories": ["turkish-series", "all-series"],
             "videoUrl": "https://streamsb.com/e/example2",
             "description": "زنجیرەیەکی درامایی و سەرنجڕاکێش",
-            "trailerUrl": "https://www.youtube.com/embed/example2"
+            "trailerUrl": "https://www.youtube.com/embed/example2",
+            "genres": ["دراما", "ڕۆمانسی", "تراژیدی"]
         }
     ],
     "carousel": [
         {
             "id": 1778292633763,
             "title": "Crim 101",
-            "category": "",
+            "category": "تاوانکاری",
             "year": "2026",
             "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان، بەو هیوایەی پلانی ئەو دزییە چەندین ملیۆن دۆلارییەیان پووچەڵ بکاتەوە.",
-            "poster": "https://i.ibb.co/KkkXHS1/1080x1920-CAN-Style-C-V1-Crime101-RGB.jpg",
+            "images": {
+                "mobile": "https://i.ibb.co/KkkXHS1/1080x1920-CAN-Style-C-V1-Crime101-RGB.jpg",
+                "tablet": "https://i.ibb.co/KkkXHS1/1080x1920-CAN-Style-C-V1-Crime101-RGB.jpg",
+                "desktop": "https://i.ibb.co/KkkXHS1/1080x1920-CAN-Style-C-V1-Crime101-RGB.jpg"
+            },
             "movieId": 1,
-            "genres": [
-                "تاوانکاری",
-                "موزیکی",
-                "هەستبزوێن"
-            ]
+            "genres": ["تاوانکاری", "هەستبزوێن", "دراما"]
         },
         {
             "id": 1778292974779,
-            "title": "Berlin2",
+            "title": "Berlin 2",
             "category": "درامای ئیسپانی",
             "year": "2026",
             "description": "دەستەیەک لە ئیسپانیا گروپێکی دروست دەکەن و هەڵدەکورنە سەر بانکی نێودەوڵەتی ئیسپانیا کە زنجیرەیەک تاڵانکاری گەورە دەکەن",
-            "poster": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp",
+            "images": {
+                "mobile": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp",
+                "tablet": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp",
+                "desktop": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp"
+            },
             "movieId": 2,
-            "genres": [
-                "تاوانکاری",
-                "سەرکێشی",
-                "دراما",
-                "هەستبزوێن"
-            ]
+            "genres": ["تاوانکاری", "سەرکێشی", "دراما", "هەستبزوێن"]
         }
     ],
     "siteData": {
-        "aboutText": "",
-        "copyrightText": "",
+        "aboutText": "کوردفلێکس پێگەیەکی نوێیە تازەگەری دەکات لە گەیاندنی بەرهەمە سینەماییە خۆماڵیەکان و جیهانیەکان هەروەها ئاشناتان دەکات بە نوێترین بەرهەمی زنجیرە دراماکانی کوردی و دەرەکی.",
+        "copyrightText": "kurdflix.com 2026 ©",
         "itemsPerPage": 20
     }
 }
