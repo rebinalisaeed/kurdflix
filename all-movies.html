@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KurdFlix - هەموو بەرهەمەکان</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .all-movies-container {
+            max-width: 1400px;
+            margin: 100px auto 2rem auto;
+            padding: 0 1rem;
+        }
+        .movies-grid-large {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .page-btn.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        .page-btn:hover:not(.active) {
+            background-color: var(--border);
+        }
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .filter-bar select, .filter-bar input {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .back-btn {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 768px) {
+            .all-movies-container {
+                margin-top: 80px;
+            }
+            .movies-grid-large {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
+                    <defs><path id="arcPath" d="M 10,168 Q 450,100 890,168" /></defs>
+                    <text font-family="'Arial Black'" font-size="148" font-weight="900" font-style="italic" fill="#E50914" letter-spacing="-3">
+                        <textPath href="#arcPath" startOffset="50%" text-anchor="middle">KURDFLIX</textPath>
+                    </text>
+                </svg>
+            </div>
+            <div class="nav-actions">
+                <a href="index.html" style="color: var(--text-primary);"><i class="fas fa-home"></i> گەڕانەوە</a>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch"><input type="checkbox" id="theme-switch"><span class="slider round"></span></label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="all-movies-container">
+        <button class="back-btn" onclick="window.location.href='index.html'">← گەڕانەوە بۆ پەڕەی سەرەکی</button>
+        <h1 id="pageTitle">هەموو بەرهەمەکان</h1>
+        
+        <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="گەڕان بە ناو...">
+            <select id="typeFilter">
+                <option value="all">هەموو جۆرەکان</option>
+                <option value="film">فیلم</option>
+                <option value="series">زنجیرە</option>
+            </select>
+            <select id="langFilter">
+                <option value="all">هەموو زمانەکان</option>
+                <option value="kurdish">کوردی</option>
+                <option value="turkish">تورکی</option>
+                <option value="persian">فارسی</option>
+                <option value="arabic">عەرەبی</option>
+                <option value="english">ئینگلیزی</option>
+            </select>
+            <select id="genreFilter">
+                <option value="all">هەموو چەشنەکان</option>
+            </select>
+        </div>
+        
+        <div class="movies-grid-large" id="moviesGrid"></div>
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <script>
+        let allMoviesData = [];
+        let currentPage = 1;
+        let itemsPerPage = 20;
+        let currentFilters = { search: "", type: "all", lang: "all", genre: "all" };
+        
+        async function loadAllMovies() {
+            try {
+                const response = await fetch('data.json?t=' + Date.now());
+                const data = await response.json();
+                allMoviesData = data.movies || [];
+                itemsPerPage = data.siteData?.itemsPerPage || 20;
+                
+                // پڕکردنەوەی چەشنەکان
+                const allGenres = new Set();
+                allMoviesData.forEach(m => {
+                    if (m.genres) m.genres.forEach(g => allGenres.add(g));
+                });
+                const genreSelect = document.getElementById('genreFilter');
+                if (genreSelect) {
+                    genreSelect.innerHTML = '<option value="all">هەموو چەشنەکان</option>' + 
+                        Array.from(allGenres).sort().map(g => `<option value="${g}">${g}</option>`).join('');
+                }
+                
+                // بەکارهێنانی فیلتەرەکان لە URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const typeParam = urlParams.get('type');
+                const categoryParam = urlParams.get('category');
+                const langParam = urlParams.get('lang');
+                
+                if (typeParam === 'films') currentFilters.type = 'film';
+                if (typeParam === 'series') currentFilters.type = 'series';
+                if (typeParam === 'latest') currentFilters.type = 'all';
+                if (langParam) currentFilters.lang = langParam;
+                if (categoryParam === 'kids') currentFilters.genre = 'kids';
+                
+                const titleEl = document.getElementById('pageTitle');
+                if (typeParam === 'films') titleEl.textContent = 'هەموو فیلمەکان';
+                if (typeParam === 'series') titleEl.textContent = 'هەموو زنجیرەکان';
+                if (langParam === 'kurdish') titleEl.textContent = 'هەموو بەرهەمی کوردی';
+                if (langParam === 'persian') titleEl.textContent = 'هەموو بەرهەمی فارسی';
+                if (langParam === 'arabic') titleEl.textContent = 'هەموو بەرهەمی عەرەبی';
+                if (langParam === 'turkish') titleEl.textContent = 'هەموو بەرهەمی تورکی';
+                
+                applyFiltersAndRender();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        
+        function filterMovies() {
+            return allMoviesData.filter(movie => {
+                const matchSearch = movie.title.toLowerCase().includes(currentFilters.search.toLowerCase());
+                const matchType = currentFilters.type === 'all' || movie.type === currentFilters.type;
+                const matchLang = currentFilters.lang === 'all' || movie.lang === currentFilters.lang;
+                const matchGenre = currentFilters.genre === 'all' || 
+                    (movie.genres && movie.genres.includes(currentFilters.genre)) ||
+                    (currentFilters.genre === 'kids' && movie.categories && movie.categories.includes('kids'));
+                return matchSearch && matchType && matchLang && matchGenre;
+            });
+        }
+        
+        function applyFiltersAndRender() {
+            const filtered = filterMovies();
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            if (currentPage > totalPages) currentPage = 1;
+            
+            const start = (currentPage - 1) * itemsPerPage;
+            const paginatedMovies = filtered.slice(start, start + itemsPerPage);
+            
+            renderMovies(paginatedMovies);
+            renderPagination(totalPages);
+        }
+        
+        function renderMovies(movies) {
+            const grid = document.getElementById('moviesGrid');
+            if (!grid) return;
+            
+            if (movies.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; grid-column:1/-1;">هیچ بەرهەمێک نەدۆزرایەوە</p>';
+                return;
+            }
+            
+            grid.innerHTML = movies.map(movie => `
+                <div class="movie-card" onclick="location.href='movie.html?id=${movie.id}'">
+                    <img src="${movie.poster}" class="movie-poster" onerror="this.src='https://picsum.photos/200/300'">
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.title}</h3>
+                        <p class="movie-year">${movie.year}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderPagination(totalPages) {
+            const container = document.getElementById('pagination');
+            if (!container || totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let pages = [];
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(`<button class="page-btn ${i === currentPage ? 'active' : ''}" data-page="${i}">${i}</button>`);
+            }
+            container.innerHTML = pages.join('');
+            
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    currentPage = parseInt(btn.dataset.page);
+                    applyFiltersAndRender();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+        }
+        
+        function initFilters() {
+            const searchInput = document.getElementById('searchInput');
+            const typeFilter = document.getElementById('typeFilter');
+            const langFilter = document.getElementById('langFilter');
+            const genreFilter = document.getElementById('genreFilter');
+            
+            if (searchInput) {
+                searchInput.value = currentFilters.search;
+                searchInput.addEventListener('input', (e) => {
+                    currentFilters.search = e.target.value;
+                    currentPage = 1;
+                    applyFiltersAndRender();
+                });
+            }
+            if (typeFilter) {
+                typeFilter.value = currentFilters.type;
+                typeFilter.addEventListener('change', (e) => {
+                    currentFilters.type = e.target.value;
+                    currentPage = 1;
+                    applyFiltersAndRender();
+                });
+            }
+            if (langFilter) {
+                langFilter.value = currentFilters.lang;
+                langFilter.addEventListener('change', (e) => {
+                    currentFilters.lang = e.target.value;
+                    currentPage = 1;
+                    applyFiltersAndRender();
+                });
+            }
+            if (genreFilter) {
+                genreFilter.value = currentFilters.genre;
+                genreFilter.addEventListener('change', (e) => {
+                    currentFilters.genre = e.target.value;
+                    currentPage = 1;
+                    applyFiltersAndRender();
+                });
+            }
+        }
+        
+        function initTheme() {
+            const themeSwitch = document.getElementById('theme-switch');
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                if (themeSwitch) themeSwitch.checked = true;
+            }
+            if (themeSwitch) {
+                themeSwitch.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        document.body.setAttribute('data-theme', 'light');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.body.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                });
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAllMovies();
+            initFilters();
+            initTheme();
+        });
+    </script>
+</body>
+</html>
