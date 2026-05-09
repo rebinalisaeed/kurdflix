@@ -26,6 +26,7 @@
             border-bottom: 2px solid var(--border);
             padding-bottom: 1rem;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
         .tab-btn {
             background: none;
@@ -71,22 +72,26 @@
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
         }
-        .categories-grid {
+        .form-row-3 {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 0.5rem;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
             padding: 1rem;
             background-color: var(--bg-secondary);
             border-radius: 8px;
             border: 1px solid var(--border);
         }
-        .category-checkbox {
+        .checkbox-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-family: 'NRT', sans-serif;
         }
-        .category-checkbox input {
+        .checkbox-item input {
             width: auto;
         }
         .btn {
@@ -153,10 +158,13 @@
             margin-bottom: 1rem;
             flex-wrap: wrap;
         }
-        .search-filter input {
+        .search-filter input, .search-filter select {
             flex: 1;
             padding: 0.5rem;
-            font-family: 'NRT', sans-serif;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
         }
         .success-msg, .error-msg {
             position: fixed;
@@ -185,7 +193,7 @@
             .admin-container {
                 margin-top: 80px;
             }
-            .form-row {
+            .form-row, .form-row-3 {
                 grid-template-columns: 1fr;
             }
             .item-card {
@@ -215,16 +223,7 @@
             max-width: 400px;
             width: 90%;
         }
-        #adminAuth .auth-box h2 {
-            font-family: 'NRT', sans-serif;
-            margin-bottom: 1rem;
-        }
-        #adminAuth .auth-box p {
-            font-family: 'NRT', sans-serif;
-            margin-bottom: 1rem;
-        }
         #adminAuth .auth-box input {
-            font-family: 'NRT', sans-serif;
             width: 100%;
             padding: 0.8rem;
             margin: 0.5rem 0;
@@ -232,6 +231,14 @@
             border: 1px solid var(--border);
             background: var(--bg-primary);
             color: var(--text-primary);
+        }
+        
+        /* ستایل بۆ داتای سایت (فووتەر و ...) */
+        .site-data-section {
+            background-color: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
         }
     </style>
 </head>
@@ -245,51 +252,27 @@
             <input type="text" id="adminUsername" placeholder="ناوی بەکارهێنەر">
             <input type="password" id="adminPassword" placeholder="پاسیۆرد">
             <button id="authSubmitBtn" class="btn btn-primary" style="width:100%; margin-top:0.5rem;">چوونە ژوورەوە</button>
-            <p id="authError" style="color:#E50914; margin-top:1rem; display:none;">ناوی بەکارهێنەر یان پاسیۆرد هەڵەیە!</p>
+            <p id="authError" style="color:#E50914; margin-top:1rem; display:none;">ئەم ناو و پاسیۆردە هەڵەیە!</p>
         </div>
     </div>
 
-    <!-- ناوەڕۆکی سەرەکی Admin (دەشارێتەوە تا چوونەژوورەوە دروست بێت) -->
+    <!-- ناوەڕۆکی سەرەکی Admin -->
     <div id="adminContent" style="display: none;">
         <nav class="navbar">
             <div class="nav-container">
-                <div class="hamburger" id="hamburger">
-                    <i class="fas fa-bars"></i>
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
+                        <defs><path id="arcPath" d="M 10,168 Q 450,100 890,168" /></defs>
+                        <text font-family="'Arial Black'" font-size="148" font-weight="900" font-style="italic" fill="#E50914" letter-spacing="-3">
+                            <textPath href="#arcPath" startOffset="50%" text-anchor="middle">KURDFLIX</textPath>
+                        </text>
+                    </svg>
                 </div>
-                
-                <div class="nav-right">
-                    <div class="logo">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
-                            <defs>
-                                <path id="arcPath" d="M 10,168 Q 450,100 890,168" />
-                            </defs>
-                            <text
-                                font-family="'Arial Black', 'Arial Bold', sans-serif"
-                                font-size="148"
-                                font-weight="900"
-                                font-style="italic"
-                                fill="#E50914"
-                                letter-spacing="-3"
-                            >
-                                <textPath href="#arcPath" startOffset="50%" text-anchor="middle">KURDFLIX</textPath>
-                            </text>
-                        </svg>
-                    </div>
-                    <ul class="nav-menu" id="nav-menu">
-                        <li><a href="index.html">گەڕانەوە بۆ سایت</a></li>
-                    </ul>
-                </div>
-                
-                <div class="nav-center"></div>
-                
                 <div class="nav-actions">
-                    <a href="index.html" style="color: var(--text-primary);"><i class="fas fa-home"></i></a>
+                    <a href="index.html" style="color: var(--text-primary);"><i class="fas fa-home"></i> گەڕانەوە</a>
                     <div class="theme-toggle">
                         <i class="fas fa-sun"></i>
-                        <label class="switch">
-                            <input type="checkbox" id="theme-switch">
-                            <span class="slider round"></span>
-                        </label>
+                        <label class="switch"><input type="checkbox" id="theme-switch"><span class="slider round"></span></label>
                         <i class="fas fa-moon"></i>
                     </div>
                 </div>
@@ -298,68 +281,95 @@
 
         <div class="admin-container">
             <div class="admin-header">
-                <h1 style="font-family:'NRT',sans-serif;"><i class="fas fa-cog"></i> پەڕەی بەڕێوەبردنی کۆنتێنت</h1>
+                <h1><i class="fas fa-cog"></i> پەڕەی بەڕێوەبردنی کۆنتێنت</h1>
                 <button id="saveAllBtn" class="btn btn-success"><i class="fas fa-save"></i> پاشەکەوتی هەموو گۆڕانکارییەکان</button>
             </div>
             
             <div class="admin-tabs">
                 <button class="tab-btn active" data-tab="movies-tab">فیلم و زنجیرەکان</button>
                 <button class="tab-btn" data-tab="carousel-tab">سلایدەکان</button>
+                <button class="tab-btn" data-tab="site-tab">داتای سایت</button>
                 <button class="tab-btn" data-tab="stats-tab">ئامارەکان</button>
             </div>
             
             <!-- Tab 1: فیلم و زنجیرەکان -->
             <div id="movies-tab" class="tab-content active">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-plus-circle"></i> زیادکردنی فیلم/زنجیرەی نوێ</h3>
+                    <h3><i class="fas fa-plus-circle"></i> زیادکردنی فیلم/زنجیرەی نوێ</h3>
                     <form id="addMovieForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>ناونیشان</label>
+                                <label>ناونیشان *</label>
                                 <input type="text" id="movieTitle" required placeholder="ناوی فیلم یان زنجیرە...">
                             </div>
                             <div class="form-group">
-                                <label>ساڵ</label>
+                                <label>ساڵ *</label>
                                 <input type="text" id="movieYear" required placeholder="2024">
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>جۆر</label>
+                                <label>جۆر *</label>
                                 <select id="movieType">
                                     <option value="film">فیلم</option>
                                     <option value="series">زنجیرە</option>
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label>لینکی پۆستەر (Poster URL)</label>
-                                <input type="url" id="moviePoster" placeholder="https://example.com/poster.jpg">
+                                <label>زمان / وڵات *</label>
+                                <select id="movieLang">
+                                    <option value="kurdish">کوردی</option>
+                                    <option value="turkish">تورکی</option>
+                                    <option value="persian">فارسی</option>
+                                    <option value="arabic">عەرەبی</option>
+                                    <option value="english">ئینگلیزی</option>
+                                    <option value="korean">کۆری</option>
+                                    <option value="other">دیکە</option>
+                                </select>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
+                                <label>لینکی پۆستەر (Poster URL)</label>
+                                <input type="url" id="moviePoster" placeholder="https://example.com/poster.jpg">
+                            </div>
+                            <div class="form-group">
                                 <label>لینکی ڤیدیۆ (Vidmoly/StreamSB)</label>
                                 <input type="url" id="movieVideoUrl" placeholder="https://vidmoly.com/e/...">
                             </div>
-                            <div class="form-group">
-                                <label>لینکی ترایلەر (YouTube)</label>
-                                <input type="url" id="movieTrailerUrl" placeholder="https://www.youtube.com/embed/...">
-                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>لینکی ترایلەر (YouTube)</label>
+                            <input type="url" id="movieTrailerUrl" placeholder="https://www.youtube.com/embed/...">
                         </div>
                         <div class="form-group">
                             <label>کورتە (Description)</label>
                             <textarea id="movieDescription" rows="3" placeholder="کورتەیەکی کورت لەسەر فیلمەکە..."></textarea>
                         </div>
+                        
+                        <!-- چەشنەکان (Genres) -->
                         <div class="form-group">
-                            <label>پۆلەکان (Categories) - دەتوانیت چەند دانە هەڵبژێریت</label>
-                            <div class="categories-grid" id="categoriesCheckbox"></div>
+                            <label>چەشنەکان (دەتوانیت چەند دانە هەڵبژێریت)</label>
+                            <div class="checkbox-group" id="genresCheckbox">
+                                <!-- چەشنەکان لە لایەن JavaScriptەوە دادەنرێن -->
+                            </div>
                         </div>
+                        
+                        <!-- پۆلەکان (Categories) -->
+                        <div class="form-group">
+                            <label>پۆلە تایبەتییەکان (بۆ منداڵان، هتد)</label>
+                            <div class="checkbox-group" id="categoriesCheckbox">
+                                <label class="checkbox-item"><input type="checkbox" value="kids"> بەرهەمی منداڵان</label>
+                                <label class="checkbox-item"><input type="checkbox" value="top250"> Top 250</label>
+                            </div>
+                        </div>
+                        
                         <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> زیادکردن</button>
                     </form>
                 </div>
                 
                 <div>
-                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-list"></i> لیستی فیلم و زنجیرەکان</h3>
+                    <h3><i class="fas fa-list"></i> لیستی فیلم و زنجیرەکان</h3>
                     <div class="search-filter">
                         <input type="text" id="searchMovies" placeholder="گەڕان بە ناو...">
                         <select id="filterType">
@@ -375,11 +385,11 @@
             <!-- Tab 2: سلایدەکان -->
             <div id="carousel-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
-                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
+                    <h3><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
                     <form id="addSlideForm">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>ناونیشان</label>
+                                <label>ناونیشان *</label>
                                 <input type="text" id="slideTitle" required placeholder="ناوی فیلم/زنجیرە...">
                             </div>
                             <div class="form-group">
@@ -389,13 +399,25 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group">
+                                <label>ساڵ</label>
+                                <input type="text" id="slideYear" placeholder="2024">
+                            </div>
+                            <div class="form-group">
                                 <label>لینکی وێنەی سلاید (Slide Image URL)</label>
                                 <input type="url" id="slideImage" placeholder="https://example.com/slide.jpg">
                             </div>
+                        </div>
+                        <div class="form-row">
                             <div class="form-group">
                                 <label>پەیوەندی بە فیلم/زنجیرە (Movie ID)</label>
                                 <select id="slideMovieId">
                                     <option value="">-- هەڵبژێرە --</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>چەشنەکان (بۆ سلاید)</label>
+                                <select id="slideGenres" multiple style="height:80px;">
+                                    <!-- چەشنەکان لە لایەن JavaScriptەوە دادەنرێن -->
                                 </select>
                             </div>
                         </div>
@@ -408,18 +430,44 @@
                 </div>
                 
                 <div>
-                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-images"></i> لیستی سلایدەکان</h3>
+                    <h3><i class="fas fa-images"></i> لیستی سلایدەکان</h3>
                     <div id="slidesList" class="items-list"></div>
                 </div>
             </div>
             
-            <!-- Tab 3: ئامارەکان -->
+            <!-- Tab 3: داتای سایت (فووتەر و نوسینەکان) -->
+            <div id="site-tab" class="tab-content">
+                <div class="site-data-section">
+                    <h3><i class="fas fa-address-card"></i> دەربارە (About)</h3>
+                    <div class="form-group">
+                        <label>نوسینی دەربارە</label>
+                        <textarea id="aboutTextEdit" rows="4" class="form-control" placeholder="نوسینی دەربارەی کوردفلێکس..."></textarea>
+                    </div>
+                </div>
+                <div class="site-data-section">
+                    <h3><i class="fas fa-copyright"></i> کۆپی‌ڕایت (Copyright)</h3>
+                    <div class="form-group">
+                        <label>نوسینی کۆپی‌ڕایت</label>
+                        <input type="text" id="copyrightTextEdit" class="form-control" placeholder="kurdflix.com 2026 ©">
+                    </div>
+                </div>
+                <div class="site-data-section">
+                    <h3><i class="fas fa-chart-line"></i> ژمارەی بەرهەمەکان لە هەر پەڕەیەک</h3>
+                    <div class="form-group">
+                        <label>ژمارەی بەرهەمەکان لە هەر پەڕەیەکی all-movies.html</label>
+                        <input type="number" id="itemsPerPage" min="5" max="50" value="20" class="form-control">
+                        <small>ئەم ژمارەیە دیاری دەکات کە لە هەر پەڕەیەکدا چەند بەرهەم نمایش بکرێت</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tab 4: ئامارەکان -->
             <div id="stats-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px;">
-                    <h3 style="font-family:'NRT',sans-serif;"><i class="fas fa-chart-bar"></i> ئامارەکانی کوردفلێکس</h3>
+                    <h3><i class="fas fa-chart-bar"></i> ئامارەکانی کوردفلێکس</h3>
                     <div id="statsInfo"></div>
                     <hr style="margin: 1rem 0; border-color: var(--border);">
-                    <h4 style="font-family:'NRT',sans-serif;"><i class="fas fa-download"></i> پاشەکەوتکردن و هێنانەدەرەوە</h4>
+                    <h4><i class="fas fa-download"></i> پاشەکەوتکردن و هێنانەدەرەوە</h4>
                     <button id="exportDataBtn" class="btn btn-secondary"><i class="fas fa-download"></i> دابەزاندنی data.json</button>
                     <label for="importFile" class="btn btn-secondary" style="display: inline-block; cursor: pointer;"><i class="fas fa-upload"></i> هێنانی data.json</label>
                     <input type="file" id="importFile" style="display: none;" accept=".json">
