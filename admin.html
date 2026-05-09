@@ -233,12 +233,25 @@
             color: var(--text-primary);
         }
         
-        /* ستایل بۆ داتای سایت (فووتەر و ...) */
+        /* ستایل بۆ داتای سایت */
         .site-data-section {
             background-color: var(--bg-secondary);
             padding: 1.5rem;
             border-radius: 12px;
             margin-bottom: 2rem;
+        }
+        
+        /* ستایل بۆ وێنەکانی سلاید */
+        .image-input-group {
+            background-color: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        .image-input-group h4 {
+            margin-bottom: 0.8rem;
+            color: var(--accent);
         }
     </style>
 </head>
@@ -252,7 +265,7 @@
             <input type="text" id="adminUsername" placeholder="ناوی بەکارهێنەر">
             <input type="password" id="adminPassword" placeholder="پاسیۆرد">
             <button id="authSubmitBtn" class="btn btn-primary" style="width:100%; margin-top:0.5rem;">چوونە ژوورەوە</button>
-            <p id="authError" style="color:#E50914; margin-top:1rem; display:none;">ئەم ناو و پاسیۆردە هەڵەیە!</p>
+            <p id="authError" style="color:#E50914; margin-top:1rem; display:none;">ناوی بەکارهێنەر یان پاسیۆرد هەڵەیە!</p>
         </div>
     </div>
 
@@ -355,9 +368,9 @@
                             </div>
                         </div>
                         
-                        <!-- پۆلەکان (Categories) -->
+                        <!-- پۆلە تایبەتییەکان -->
                         <div class="form-group">
-                            <label>پۆلە تایبەتییەکان (بۆ منداڵان، هتد)</label>
+                            <label>پۆلە تایبەتییەکان</label>
                             <div class="checkbox-group" id="categoriesCheckbox">
                                 <label class="checkbox-item"><input type="checkbox" value="kids"> بەرهەمی منداڵان</label>
                                 <label class="checkbox-item"><input type="checkbox" value="top250"> Top 250</label>
@@ -382,7 +395,7 @@
                 </div>
             </div>
             
-            <!-- Tab 2: سلایدەکان -->
+            <!-- Tab 2: سلایدەکان (گونجاو بۆ سێ وێنە) -->
             <div id="carousel-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h3><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
@@ -403,28 +416,45 @@
                                 <input type="text" id="slideYear" placeholder="2024">
                             </div>
                             <div class="form-group">
-                                <label>لینکی وێنەی سلاید (Slide Image URL)</label>
-                                <input type="url" id="slideImage" placeholder="https://example.com/slide.jpg">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
                                 <label>پەیوەندی بە فیلم/زنجیرە (Movie ID)</label>
                                 <select id="slideMovieId">
                                     <option value="">-- هەڵبژێرە --</option>
                                 </select>
                             </div>
-                            <div class="form-group">
-                                <label>چەشنەکان (بۆ سلاید)</label>
-                                <select id="slideGenres" multiple style="height:80px;">
-                                    <!-- چەشنەکان لە لایەن JavaScriptەوە دادەنرێن -->
-                                </select>
+                        </div>
+                        
+                        <!-- سێ جۆر وێنە بۆ سلاید -->
+                        <div class="form-group">
+                            <label>وێنەکانی سلاید (پێویستە سێ جۆر وێنە دابنێیت)</label>
+                            <div class="image-input-group">
+                                <h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل (Mobile)</h4>
+                                <input type="url" id="slideImageMobile" placeholder="https://example.com/mobile.jpg">
+                                <small>قەبارەی پێشنیارکراو: 1080x1920 پیکسڵ</small>
+                            </div>
+                            <div class="image-input-group">
+                                <h4><i class="fas fa-tablet-alt"></i> وێنەی تابلێت (Tablet)</h4>
+                                <input type="url" id="slideImageTablet" placeholder="https://example.com/tablet.jpg">
+                                <small>قەبارەی پێشنیارکراو: 1200x1600 پیکسڵ</small>
+                            </div>
+                            <div class="image-input-group">
+                                <h4><i class="fas fa-desktop"></i> وێنەی کۆمپیوتەر (Desktop)</h4>
+                                <input type="url" id="slideImageDesktop" placeholder="https://example.com/desktop.jpg">
+                                <small>قەبارەی پێشنیارکراو: 1920x1080 پیکسڵ</small>
                             </div>
                         </div>
+                        
                         <div class="form-group">
                             <label>کورتە</label>
                             <textarea id="slideDescription" rows="2" placeholder="کورتەیەک بۆ سلایدەکە..."></textarea>
                         </div>
+                        
+                        <div class="form-group">
+                            <label>چەشنەکان (بۆ سلاید)</label>
+                            <div class="checkbox-group" id="slideGenresCheckbox">
+                                <!-- چەشنەکان لە لایەن JavaScriptەوە دادەنرێن -->
+                            </div>
+                        </div>
+                        
                         <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> زیادکردنی سلاید</button>
                     </form>
                 </div>
@@ -435,7 +465,7 @@
                 </div>
             </div>
             
-            <!-- Tab 3: داتای سایت (فووتەر و نوسینەکان) -->
+            <!-- Tab 3: داتای سایت -->
             <div id="site-tab" class="tab-content">
                 <div class="site-data-section">
                     <h3><i class="fas fa-address-card"></i> دەربارە (About)</h3>
