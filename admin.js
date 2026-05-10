@@ -14,6 +14,8 @@ const GENRES_LIST = [
 // ========== داتاکان ==========
 let currentData = { movies: [], carousel: [], siteData: { aboutText: "", copyrightText: "", itemsPerPage: 20 } };
 let nextId = 100;
+let editingMovieId = null;
+let editingSlideId = null;
 
 // ========== پشتڕاستکردنەوەی چوونەژوورەوە ==========
 function checkAdminAuth() {
@@ -103,6 +105,17 @@ function getSelectedGenres(containerId = 'genresCheckbox') {
     return selected;
 }
 
+function setSelectedGenres(containerId, genres) {
+    const checkboxes = document.querySelectorAll(`#${containerId} input[type="checkbox"]`);
+    checkboxes.forEach(cb => {
+        if (genres && genres.includes(cb.value)) {
+            cb.checked = true;
+        } else {
+            cb.checked = false;
+        }
+    });
+}
+
 function getSelectedCategories() {
     const selected = [];
     document.querySelectorAll('#categoriesCheckbox input[type="checkbox"]:checked').forEach(cb => {
@@ -111,25 +124,61 @@ function getSelectedCategories() {
     return selected;
 }
 
-// ========== زیادکردنی فیلم ==========
+function setSelectedCategories(categories) {
+    const checkboxes = document.querySelectorAll('#categoriesCheckbox input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        if (categories && categories.includes(cb.value)) {
+            cb.checked = true;
+        } else {
+            cb.checked = false;
+        }
+    });
+}
+
+// ========== زیادکردن و دەستکاری فیلم ==========
 document.getElementById('addMovieForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     
-    const newMovie = {
-        id: nextId++,
-        title: document.getElementById('movieTitle').value,
-        year: document.getElementById('movieYear').value,
-        poster: document.getElementById('moviePoster').value || 'https://picsum.photos/200/300',
-        type: document.getElementById('movieType').value,
-        lang: document.getElementById('movieLang').value,
-        videoUrl: document.getElementById('movieVideoUrl').value,
-        trailerUrl: document.getElementById('movieTrailerUrl').value,
-        description: document.getElementById('movieDescription').value || 'زانیاری زیادە بەم زووانە دەخرێتە ناو سایت',
-        genres: getSelectedGenres('genresCheckbox'),
-        categories: getSelectedCategories()
-    };
+    if (editingMovieId) {
+        // دەستکاری بەرهەمێکی هەیە
+        const index = currentData.movies.findIndex(m => m.id === editingMovieId);
+        if (index !== -1) {
+            currentData.movies[index] = {
+                ...currentData.movies[index],
+                title: document.getElementById('movieTitle').value,
+                year: document.getElementById('movieYear').value,
+                poster: document.getElementById('moviePoster').value || 'https://picsum.photos/200/300',
+                type: document.getElementById('movieType').value,
+                lang: document.getElementById('movieLang').value,
+                videoUrl: document.getElementById('movieVideoUrl').value,
+                trailerUrl: document.getElementById('movieTrailerUrl').value,
+                description: document.getElementById('movieDescription').value || 'زانیاری زیادە بەم زووانە دەخرێتە ناو سایت',
+                genres: getSelectedGenres('genresCheckbox'),
+                categories: getSelectedCategories()
+            };
+            showMessage('بەرهەم بە سەرکەوتوویی دەستکاری کرا', 'success');
+            editingMovieId = null;
+            document.querySelector('#addMovieForm button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> زیادکردن';
+        }
+    } else {
+        // زیادکردنی بەرهەمی نوێ
+        const newMovie = {
+            id: nextId++,
+            title: document.getElementById('movieTitle').value,
+            year: document.getElementById('movieYear').value,
+            poster: document.getElementById('moviePoster').value || 'https://picsum.photos/200/300',
+            type: document.getElementById('movieType').value,
+            lang: document.getElementById('movieLang').value,
+            videoUrl: document.getElementById('movieVideoUrl').value,
+            trailerUrl: document.getElementById('movieTrailerUrl').value,
+            description: document.getElementById('movieDescription').value || 'زانیاری زیادە بەم زووانە دەخرێتە ناو سایت',
+            genres: getSelectedGenres('genresCheckbox'),
+            categories: getSelectedCategories()
+        };
+        currentData.movies.push(newMovie);
+        showMessage('فیلم/زنجیرە بە سەرکەوتوویی زیاد کرا', 'success');
+    }
     
-    currentData.movies.push(newMovie);
     document.getElementById('addMovieForm').reset();
     document.querySelectorAll('#genresCheckbox input').forEach(cb => cb.checked = false);
     document.querySelectorAll('#categoriesCheckbox input').forEach(cb => cb.checked = false);
@@ -137,8 +186,35 @@ document.getElementById('addMovieForm')?.addEventListener('submit', (e) => {
     renderMoviesList();
     updateSlideMovieSelect();
     renderStats();
-    showMessage('فیلم/زنجیرە بە سەرکەوتوویی زیاد کرا', 'success');
 });
+
+function editMovie(movie) {
+    editingMovieId = movie.id;
+    
+    document.getElementById('movieTitle').value = movie.title;
+    document.getElementById('movieYear').value = movie.year;
+    document.getElementById('moviePoster').value = movie.poster || '';
+    document.getElementById('movieType').value = movie.type;
+    document.getElementById('movieLang').value = movie.lang || 'other';
+    document.getElementById('movieVideoUrl').value = movie.videoUrl || '';
+    document.getElementById('movieTrailerUrl').value = movie.trailerUrl || '';
+    document.getElementById('movieDescription').value = movie.description || '';
+    
+    setSelectedGenres('genresCheckbox', movie.genres);
+    setSelectedCategories(movie.categories);
+    
+    document.querySelector('#addMovieForm button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> پاشەکەوتکردنی گۆڕانکارییەکان';
+    
+    document.getElementById('movies-tab').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelEditMovie() {
+    editingMovieId = null;
+    document.getElementById('addMovieForm').reset();
+    document.querySelectorAll('#genresCheckbox input').forEach(cb => cb.checked = false);
+    document.querySelectorAll('#categoriesCheckbox input').forEach(cb => cb.checked = false);
+    document.querySelector('#addMovieForm button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> زیادکردن';
+}
 
 function renderMoviesList() {
     const container = document.getElementById('moviesList');
@@ -163,10 +239,11 @@ function renderMoviesList() {
         div.innerHTML = `
             <div class="item-info">
                 <div class="item-title">${movie.title}</div>
-                <div class="item-meta">${movie.year} | ${movie.type === 'film' ? 'فیلم' : 'زنجیرە'} | ${movie.lang} | ID: ${movie.id}</div>
+                <div class="item-meta">${movie.year} | ${movie.type === 'film' ? 'فیلم' : 'زنجیرە'} | ${movie.lang || '---'} | ID: ${movie.id}</div>
                 <div class="item-meta">چەشنەکان: ${movie.genres?.join(', ') || '---'}</div>
             </div>
             <div class="item-actions">
+                <button class="btn btn-warning edit-movie" data-id="${movie.id}"><i class="fas fa-edit"></i> دەستکاری</button>
                 <button class="btn btn-danger delete-movie" data-id="${movie.id}"><i class="fas fa-trash"></i> سڕینەوە</button>
             </div>
         `;
@@ -187,16 +264,22 @@ function renderMoviesList() {
             }
         });
     });
+    
+    document.querySelectorAll('.edit-movie').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = parseInt(btn.dataset.id);
+            const movie = currentData.movies.find(m => m.id === id);
+            if (movie) editMovie(movie);
+        });
+    });
 }
 
-// ========== سلایدەکان (گونجاو بۆ سێ وێنە) ==========
+// ========== زیادکردن و دەستکاری سلاید ==========
 document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     
     const selectedGenres = getSelectedGenres('slideGenresCheckbox');
-    
-    const newSlide = {
-        id: Date.now(),
+    const slideData = {
         title: document.getElementById('slideTitle').value,
         category: document.getElementById('slideCategory').value,
         year: document.getElementById('slideYear').value,
@@ -210,14 +293,54 @@ document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
         genres: selectedGenres
     };
     
-    currentData.carousel.push(newSlide);
+    if (editingSlideId) {
+        // دەستکاری سلایدی هەیە
+        const index = currentData.carousel.findIndex(s => s.id === editingSlideId);
+        if (index !== -1) {
+            currentData.carousel[index] = { ...currentData.carousel[index], ...slideData };
+            showMessage('سلاید بە سەرکەوتوویی دەستکاری کرا', 'success');
+            editingSlideId = null;
+            document.querySelector('#addSlideForm button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> زیادکردنی سلاید';
+        }
+    } else {
+        // زیادکردنی سلایدی نوێ
+        const newSlide = { id: Date.now(), ...slideData };
+        currentData.carousel.push(newSlide);
+        showMessage('سلاید بە سەرکەوتوویی زیاد کرا', 'success');
+    }
+    
     document.getElementById('addSlideForm').reset();
     document.querySelectorAll('#slideGenresCheckbox input').forEach(cb => cb.checked = false);
     
     renderSlidesList();
     renderStats();
-    showMessage('سلاید بە سەرکەوتوویی زیاد کرا', 'success');
 });
+
+function editSlide(slide) {
+    editingSlideId = slide.id;
+    
+    document.getElementById('slideTitle').value = slide.title;
+    document.getElementById('slideCategory').value = slide.category || '';
+    document.getElementById('slideYear').value = slide.year || '';
+    document.getElementById('slideDescription').value = slide.description || '';
+    document.getElementById('slideImageMobile').value = slide.images?.mobile || '';
+    document.getElementById('slideImageTablet').value = slide.images?.tablet || '';
+    document.getElementById('slideImageDesktop').value = slide.images?.desktop || '';
+    document.getElementById('slideMovieId').value = slide.movieId || '';
+    
+    setSelectedGenres('slideGenresCheckbox', slide.genres);
+    
+    document.querySelector('#addSlideForm button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> پاشەکەوتکردنی گۆڕانکارییەکان';
+    
+    document.getElementById('carousel-tab').scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelEditSlide() {
+    editingSlideId = null;
+    document.getElementById('addSlideForm').reset();
+    document.querySelectorAll('#slideGenresCheckbox input').forEach(cb => cb.checked = false);
+    document.querySelector('#addSlideForm button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> زیادکردنی سلاید';
+}
 
 function renderSlidesList() {
     const container = document.getElementById('slidesList');
@@ -237,9 +360,10 @@ function renderSlidesList() {
                 <div class="item-title">${slide.title}</div>
                 <div class="item-meta">${slide.category || '---'} | ${slide.year || ''} | پەیوەندی بە فیلم ID: ${slide.movieId}</div>
                 <div class="item-meta">چەشنەکان: ${slide.genres?.join(', ') || '---'}</div>
-                <div class="item-meta">وێنەکان: مۆبایل ✓ | تابلێت ✓ | کۆمپیوتەر ✓</div>
+                <div class="item-meta">وێنەکان: ${slide.images?.mobile ? 'مۆبایل ✓' : 'مۆبایل ✗'} | ${slide.images?.tablet ? 'تابلێت ✓' : 'تابلێت ✗'} | ${slide.images?.desktop ? 'کۆمپیوتەر ✓' : 'کۆمپیوتەر ✗'}</div>
             </div>
             <div class="item-actions">
+                <button class="btn btn-warning edit-slide" data-id="${slide.id}"><i class="fas fa-edit"></i> دەستکاری</button>
                 <button class="btn btn-danger delete-slide" data-id="${slide.id}"><i class="fas fa-trash"></i> سڕینەوە</button>
             </div>
         `;
@@ -255,6 +379,14 @@ function renderSlidesList() {
                 renderStats();
                 showMessage('سلاید سڕایەوە', 'success');
             }
+        });
+    });
+    
+    document.querySelectorAll('.edit-slide').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const id = parseInt(btn.dataset.id);
+            const slide = currentData.carousel.find(s => s.id === id);
+            if (slide) editSlide(slide);
         });
     });
 }
@@ -389,6 +521,20 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById(btn.dataset.tab).classList.add('active');
+        
+        // هەڵوەشاندنەوەی دەستکاری کاتێک تاب دەگۆڕێت
+        if (editingMovieId) {
+            editingMovieId = null;
+            document.getElementById('addMovieForm').reset();
+            document.querySelectorAll('#genresCheckbox input').forEach(cb => cb.checked = false);
+            document.querySelector('#addMovieForm button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> زیادکردن';
+        }
+        if (editingSlideId) {
+            editingSlideId = null;
+            document.getElementById('addSlideForm').reset();
+            document.querySelectorAll('#slideGenresCheckbox input').forEach(cb => cb.checked = false);
+            document.querySelector('#addSlideForm button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> زیادکردنی سلاید';
+        }
     });
 });
 
