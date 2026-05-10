@@ -120,6 +120,10 @@
             background-color: #28a745;
             color: white;
         }
+        .btn-warning {
+            background-color: #ffc107;
+            color: #1A1A1A;
+        }
         .items-list {
             margin-top: 2rem;
         }
@@ -184,6 +188,17 @@
             background-color: #dc3545;
             color: white;
         }
+        .edit-form {
+            background-color: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border: 1px solid var(--accent);
+            display: none;
+        }
+        .edit-form.active {
+            display: block;
+        }
         @keyframes fadeOut {
             0% { opacity: 1; }
             70% { opacity: 1; }
@@ -202,7 +217,6 @@
             }
         }
         
-        /* پەڕەی پشتڕاستکردنەوەی چوونەژوورەوە */
         #adminAuth {
             position: fixed;
             top: 0;
@@ -233,7 +247,6 @@
             color: var(--text-primary);
         }
         
-        /* ستایل بۆ داتای سایت */
         .site-data-section {
             background-color: var(--bg-secondary);
             padding: 1.5rem;
@@ -241,7 +254,6 @@
             margin-bottom: 2rem;
         }
         
-        /* ستایل بۆ وێنەکانی سلاید */
         .image-input-group {
             background-color: var(--bg-primary);
             padding: 1rem;
@@ -257,7 +269,6 @@
 </head>
 <body data-theme="dark">
 
-    <!-- پەڕەی پشتڕاستکردنەوەی چوونەژوورەوە -->
     <div id="adminAuth">
         <div class="auth-box">
             <h2><i class="fas fa-lock"></i> پەڕەی بەڕێوەبردن</h2>
@@ -269,7 +280,6 @@
         </div>
     </div>
 
-    <!-- ناوەڕۆکی سەرەکی Admin -->
     <div id="adminContent" style="display: none;">
         <nav class="navbar">
             <div class="nav-container">
@@ -305,7 +315,6 @@
                 <button class="tab-btn" data-tab="stats-tab">ئامارەکان</button>
             </div>
             
-            <!-- Tab 1: فیلم و زنجیرەکان -->
             <div id="movies-tab" class="tab-content active">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h3><i class="fas fa-plus-circle"></i> زیادکردنی فیلم/زنجیرەی نوێ</h3>
@@ -360,15 +369,11 @@
                             <textarea id="movieDescription" rows="3" placeholder="کورتەیەکی کورت لەسەر فیلمەکە..."></textarea>
                         </div>
                         
-                        <!-- چەشنەکان (Genres) -->
                         <div class="form-group">
                             <label>چەشنەکان (دەتوانیت چەند دانە هەڵبژێریت)</label>
-                            <div class="checkbox-group" id="genresCheckbox">
-                                <!-- چەشنەکان لە لایەن JavaScriptەوە دادەنرێن -->
-                            </div>
+                            <div class="checkbox-group" id="genresCheckbox"></div>
                         </div>
                         
-                        <!-- پۆلە تایبەتییەکان -->
                         <div class="form-group">
                             <label>پۆلە تایبەتییەکان</label>
                             <div class="checkbox-group" id="categoriesCheckbox">
@@ -395,7 +400,6 @@
                 </div>
             </div>
             
-            <!-- Tab 2: سلایدەکان (گونجاو بۆ سێ وێنە) -->
             <div id="carousel-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h3><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
@@ -406,24 +410,23 @@
                                 <input type="text" id="slideTitle" required placeholder="ناوی فیلم/زنجیرە...">
                             </div>
                             <div class="form-group">
-                                <label>چەشن (Category)</label>
-                                <input type="text" id="slideCategory" placeholder="فیلمی کوردی، زنجیرەی تورکی، ...">
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
                                 <label>ساڵ</label>
                                 <input type="text" id="slideYear" placeholder="2024">
                             </div>
+                        </div>
+                        <div class="form-row">
                             <div class="form-group">
                                 <label>پەیوەندی بە فیلم/زنجیرە (Movie ID)</label>
                                 <select id="slideMovieId">
                                     <option value="">-- هەڵبژێرە --</option>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label>چەشن (Category) - ئۆپشنال</label>
+                                <input type="text" id="slideCategory" placeholder="فیلمی کوردی، زنجیرەی تورکی، ...">
+                            </div>
                         </div>
                         
-                        <!-- سێ جۆر وێنە بۆ سلاید -->
                         <div class="form-group">
                             <label>وێنەکانی سلاید (پێویستە سێ جۆر وێنە دابنێیت)</label>
                             <div class="image-input-group">
@@ -450,9 +453,7 @@
                         
                         <div class="form-group">
                             <label>چەشنەکان (بۆ سلاید)</label>
-                            <div class="checkbox-group" id="slideGenresCheckbox">
-                                <!-- چەشنەکان لە لایەن JavaScriptەوە دادەنرێن -->
-                            </div>
+                            <div class="checkbox-group" id="slideGenresCheckbox"></div>
                         </div>
                         
                         <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> زیادکردنی سلاید</button>
@@ -465,7 +466,6 @@
                 </div>
             </div>
             
-            <!-- Tab 3: داتای سایت -->
             <div id="site-tab" class="tab-content">
                 <div class="site-data-section">
                     <h3><i class="fas fa-address-card"></i> دەربارە (About)</h3>
@@ -491,7 +491,6 @@
                 </div>
             </div>
             
-            <!-- Tab 4: ئامارەکان -->
             <div id="stats-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px;">
                     <h3><i class="fas fa-chart-bar"></i> ئامارەکانی کوردفلێکس</h3>
