@@ -49,7 +49,7 @@
             "year": "2026",
             "description": "دەستەیەک لە ئیسپانیا گروپێکی دروست دەکەن و هەڵدەکورنە سەر بانکی نێودەوڵەتی ئیسپانیا کە زنجیرەیەک تاڵانکاری گەورە دەکەن",
             "images": {
-                "mobile": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp",
+                "mobile": "https://i.ibb.co/VcMxhpTP/imresizer-1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp",
                 "tablet": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp",
                 "desktop": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp"
             },
@@ -63,3 +63,5 @@
         "itemsPerPage": 20
     }
 }
+
+
