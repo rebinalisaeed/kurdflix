@@ -3,6 +3,8 @@ let allMovies = [];
 let carouselSlides = [];
 let currentCarouselIndex = 0;
 let carouselInterval;
+let touchStartX = 0;
+let touchEndX = 0;
 
 // ========== بارکردنی داتاکان لە data.json ==========
 async function loadData() {
@@ -73,7 +75,6 @@ function renderCarousel() {
         slideDiv.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
         const imageUrl = getResponsiveImage(slide);
         
-        // دروستکردنی تاگەکانی چەشن (genres)
         const genresHtml = slide.genres && slide.genres.length > 0 
             ? `<div class="carousel-genres">${slide.genres.slice(0, 3).map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>` 
             : '';
@@ -107,6 +108,49 @@ function renderCarousel() {
             window.location.href = `movie.html?id=${movieId}`;
         });
     });
+    
+    // زیادکردنی ڕووداوەکانی تەچ بۆ گۆڕینی سلاید بە پەنجە
+    initTouchEvents();
+}
+
+// ========== دەستکاری سلاید بە پەنجە (Touch Events) ==========
+function initTouchEvents() {
+    const carousel = document.querySelector('.hero-carousel');
+    if (!carousel) return;
+    
+    carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    carousel.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+}
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = touchStartX - touchEndX;
+    
+    if (Math.abs(diff) < swipeThreshold) return;
+    
+    if (diff > 0) {
+        // swipe left - بڕۆ بۆ سلایدی دواتر
+        goToSlide(currentCarouselIndex + 1);
+    } else {
+        // swipe right - بڕۆ بۆ سلایدی پێشتر
+        goToSlide(currentCarouselIndex - 1);
+    }
+    
+    // نوێکردنەوەی تایمەری ئۆتۆپلەی
+    resetCarouselAutoPlay();
+}
+
+function resetCarouselAutoPlay() {
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
+        startCarouselAutoPlay();
+    }
 }
 
 // گۆڕینی وێنەی سلاید کاتێک شاشە قەبارەی گۆڕا
