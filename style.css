@@ -285,13 +285,14 @@ input:checked + .slider:before {
     color: white;
 }
 
-/* ========== سلایدی سەرەکی (بە <img>) ========== */
+/* ========== سلایدی سەرەکی (باشترین ڕێکخستن بۆ 1080x1920) ========== */
 .hero-carousel {
     position: relative;
     width: 100%;
     height: 100vh;
     overflow: hidden;
     margin-top: 0;
+    background-color: #000;
     touch-action: pan-y pinch-zoom;
 }
 
@@ -323,27 +324,35 @@ input:checked + .slider:before {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center;
+    object-position: top center;
 }
 
-/* لە شاشە گەورەکاندا contain بەکاربهێنە بۆ دیتنی وێنەی تەواو */
-@media (min-width: 769px) {
+/* بۆ مۆبایل - contain بۆ دیتنی تەواوی وێنەکە */
+@media (max-width: 768px) {
     .carousel-bg-img {
         object-fit: contain;
-        background-color: var(--bg-primary);
+        background-color: #000;
     }
+    
     .hero-carousel {
-        background-color: var(--bg-primary);
+        background-color: #000;
     }
 }
 
-/* ناوەڕۆکی سلاید - بەرزکرایەوە بۆ ناوەڕاست و بۆشایی دانرا */
+/* بۆ کۆمپیوتەر و تابلێت */
+@media (min-width: 769px) {
+    .carousel-bg-img {
+        object-fit: cover;
+    }
+}
+
+/* ناوەڕۆکی سلاید */
 .carousel-content {
     position: absolute;
-    bottom: 0;
+    bottom: 5%;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
     padding: 1.5rem 2rem 2rem 2rem;
     text-align: center;
     color: white;
@@ -354,15 +363,12 @@ input:checked + .slider:before {
     gap: 0.75rem;
     z-index: 10;
     pointer-events: none;
-    /* زیادکردنی بۆشایی بۆ دابەزاندنی نوسینەکان */
-    padding-bottom: 3rem;
 }
 
 .carousel-content .carousel-btn {
     pointer-events: auto;
 }
 
-/* ڕیزی سەرەوە: چەشن + ساڵ لە یەک ڕیزدا */
 .carousel-meta-row {
     display: flex;
     flex-wrap: wrap;
@@ -372,7 +378,6 @@ input:checked + .slider:before {
     margin-bottom: 0.25rem;
 }
 
-/* چەشنەکان (genres) */
 .carousel-genres {
     display: flex;
     flex-wrap: wrap;
@@ -388,7 +393,6 @@ input:checked + .slider:before {
     font-weight: normal;
 }
 
-/* ساڵ */
 .carousel-year {
     font-size: 1rem;
     opacity: 0.9;
@@ -397,7 +401,6 @@ input:checked + .slider:before {
     border-radius: 20px;
 }
 
-/* کورتە */
 .carousel-desc {
     font-size: 1rem;
     max-width: 80%;
@@ -405,7 +408,6 @@ input:checked + .slider:before {
     line-height: 1.5;
 }
 
-/* دوگمەکان */
 .carousel-buttons {
     display: flex;
     gap: 1rem;
@@ -861,11 +863,9 @@ footer {
         height: 100vh;
     }
     
-    /* سایزی فۆنت گەورەتر کراوە بە 10px (~0.625rem) زیاتر */
     .carousel-content {
         padding: 1rem 1rem 1.8rem 1rem;
         gap: 0.8rem;
-        /* دانانی نوسینەکان لە 10% بەشی خوارەوەی وێنەکە */
         bottom: 5%;
     }
     
@@ -883,16 +883,11 @@ footer {
         font-size: 1.1rem;
         max-width: 95%;
         margin: 0.4rem 0;
-        line-height: 1.5;
     }
     
     .carousel-btn {
         padding: 0.5rem 1.2rem;
         font-size: 1rem;
-    }
-    
-    .carousel-meta-row {
-        gap: 0.6rem 1rem;
     }
     
     .section-header h2 a {
