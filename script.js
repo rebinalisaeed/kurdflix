@@ -109,11 +109,10 @@ function renderCarousel() {
         });
     });
     
-    // زیادکردنی ڕووداوەکانی تەچ بۆ گۆڕینی سلاید بە پەنجە
     initTouchEvents();
 }
 
-// ========== دەستکاری سلاید بە پەنجە (Touch Events) ==========
+// ========== گۆڕینی سلاید بە پەنجە ==========
 function initTouchEvents() {
     const carousel = document.querySelector('.hero-carousel');
     if (!carousel) return;
@@ -135,14 +134,11 @@ function handleSwipe() {
     if (Math.abs(diff) < swipeThreshold) return;
     
     if (diff > 0) {
-        // swipe left - بڕۆ بۆ سلایدی دواتر
         goToSlide(currentCarouselIndex + 1);
     } else {
-        // swipe right - بڕۆ بۆ سلایدی پێشتر
         goToSlide(currentCarouselIndex - 1);
     }
     
-    // نوێکردنەوەی تایمەری ئۆتۆپلەی
     resetCarouselAutoPlay();
 }
 
@@ -153,7 +149,6 @@ function resetCarouselAutoPlay() {
     }
 }
 
-// گۆڕینی وێنەی سلاید کاتێک شاشە قەبارەی گۆڕا
 window.addEventListener('resize', () => {
     if (carouselSlides.length > 0 && carouselSlides[0] && carouselSlides[0].images) {
         const slides = document.querySelectorAll('.carousel-slide');
