@@ -29,13 +29,14 @@ async function loadData() {
     }
 }
 
+// ========== داتای نموونەیی بۆ یەکەمجار ==========
 function loadSampleData() {
     allMovies = [
-        { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "https://picsum.photos/200/300?random=1", type: "film", lang: "kurdish", categories: ["kurdish-film"], description: "فیلمێکی کوردی", genres: ["دراما", "ئاکشن"], videoUrl: "https://vidmoly.com/e/example1" },
-        { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "https://picsum.photos/200/300?random=2", type: "series", lang: "turkish", categories: ["turkish-series"], description: "زنجیرەیەکی درامایی", genres: ["دراما", "ڕۆمانسی"], videoUrl: "https://streamsb.com/e/example2" }
+        { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "https://picsum.photos/200/300?random=1", type: "film", lang: "kurdish", categories: ["kurdish-film"], description: "فیلمێکی کوردی سەبارەت بە شەڕ و خۆشەویستی", genres: ["دراما", "ئاکشن"], videoUrl: "https://vidmoly.com/e/example1" },
+        { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "https://picsum.photos/200/300?random=2", type: "series", lang: "turkish", categories: ["turkish-series"], description: "زنجیرەیەکی درامایی خێزانی", genres: ["دراما", "ڕۆمانسی"], videoUrl: "https://streamsb.com/e/example2" }
     ];
     carouselSlides = [
-        { id: 1, title: "ئەفسانەی کوێستان", category: "فیلمی کوردی", year: "2024", description: "فیلمێکی کوردی", images: { mobile: "https://picsum.photos/1080/1920?random=1", tablet: "https://picsum.photos/1080/1920?random=1", desktop: "https://picsum.photos/1080/1920?random=1" }, movieId: 1, genres: ["دراما", "ئاکشن"] }
+        { id: 1, title: "ئەفسانەی کوێستان", category: "فیلمی کوردی", year: "2024", description: "فیلمێکی کوردی سەبارەت بە شەڕ و خۆشەویستی", images: { mobile: "https://picsum.photos/1080/1920?random=1", tablet: "https://picsum.photos/1080/1920?random=1", desktop: "https://picsum.photos/1080/1920?random=1" }, movieId: 1, genres: ["دراما", "ئاکشن"] }
     ];
     renderCarousel();
     startCarouselAutoPlay();
@@ -43,6 +44,7 @@ function loadSampleData() {
     populateSearchIndex();
 }
 
+// ========== هەڵبژاردنی وێنەی گونجاو بە پێی قەبارەی شاشە ==========
 function getResponsiveImage(slide) {
     const width = window.innerWidth;
     if (slide.images) {
@@ -57,6 +59,7 @@ function getResponsiveImage(slide) {
     return slide.poster || "https://picsum.photos/1080/1920";
 }
 
+// ========== سلایدەکان ==========
 function renderCarousel() {
     const container = document.getElementById('carouselContainer');
     const dotsContainer = document.getElementById('carouselDots');
@@ -70,6 +73,7 @@ function renderCarousel() {
         slideDiv.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
         const imageUrl = getResponsiveImage(slide);
         
+        // دروستکردنی تاگەکانی چەشن (genres)
         const genresHtml = slide.genres && slide.genres.length > 0 
             ? `<div class="carousel-genres">${slide.genres.slice(0, 3).map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>` 
             : '';
@@ -77,9 +81,10 @@ function renderCarousel() {
         slideDiv.innerHTML = `
             <img src="${imageUrl}" alt="${slide.title}" class="carousel-bg-img">
             <div class="carousel-content">
-                ${slide.category ? `<span class="carousel-category">${slide.category}</span>` : ''}
-                ${slide.year ? `<span class="carousel-year">${slide.year}</span>` : ''}
-                ${genresHtml}
+                <div class="carousel-meta-row">
+                    ${genresHtml}
+                    ${slide.year ? `<span class="carousel-year">${slide.year}</span>` : ''}
+                </div>
                 <p class="carousel-desc">${slide.description || ''}</p>
                 <div class="carousel-buttons">
                     <button class="carousel-btn trailer" data-id="${slide.movieId}">🎬 سەیرکردن</button>
@@ -104,6 +109,7 @@ function renderCarousel() {
     });
 }
 
+// گۆڕینی وێنەی سلاید کاتێک شاشە قەبارەی گۆڕا
 window.addEventListener('resize', () => {
     if (carouselSlides.length > 0 && carouselSlides[0] && carouselSlides[0].images) {
         const slides = document.querySelectorAll('.carousel-slide');
@@ -142,6 +148,7 @@ function startCarouselAutoPlay() {
     }, 6000);
 }
 
+// ========== هەموو بەشەکانی سلایدەر ==========
 function renderSlider(containerId, movies) {
     const slider = document.getElementById(containerId);
     if (!slider) return;
@@ -173,6 +180,7 @@ function renderAllSections() {
     renderSlider('turkishSlider', allMovies.filter(m => m.lang === 'turkish').slice(0, 20));
 }
 
+// ========== گەڕان ==========
 let searchIndex = [];
 function populateSearchIndex() {
     searchIndex = allMovies.map(m => ({ id: m.id, title: m.title, type: m.type }));
@@ -197,6 +205,17 @@ function displaySearchResults(results) {
         item.textContent = `${result.title} (${result.type === 'film' ? 'فیلم' : 'زنجیرە'})`;
         item.onclick = () => window.location.href = `movie.html?id=${result.id}`;
         resultsDiv.appendChild(item);
+    });
+}
+
+// ========== Initialize Functions ==========
+function initCategoryFilters() {
+    document.querySelectorAll('.dropdown-menu a, .mobile-dropdown-menu a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const category = link.dataset.category;
+            if (category) window.location.href = `all-movies.html?category=${category}`;
+        });
     });
 }
 
@@ -365,6 +384,7 @@ function initNavbarScroll() {
     });
 }
 
+// ========== DOM Content Loaded ==========
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
     initSliderControls();
