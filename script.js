@@ -47,7 +47,7 @@ let sliderItems = JSON.parse(localStorage.getItem('kurdflix_slider')) || [
         genre: "دراما",
         year: "2025",
         description: "چیرۆکی خێزانێکی کوردی لە کاتی قەیراندا",
-        bgImage: "https://via.placeholder.com/1920x800?text=Slider+1",
+        bgImage: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1920&h=800",
         videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
     },
     {
@@ -55,7 +55,7 @@ let sliderItems = JSON.parse(localStorage.getItem('kurdflix_slider')) || [
         genre: "مێژوویی",
         year: "2020",
         description: "درامایەکی مێژوویی تورکی",
-        bgImage: "https://via.placeholder.com/1920x800?text=Slider+2",
+        bgImage: "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=1920&h=800",
         videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
     }
 ];
@@ -74,6 +74,7 @@ function openVideoModal(url, title) {
     iframe.src = url;
     titleEl.innerText = title;
     modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeVideoModal() {
@@ -82,6 +83,7 @@ function closeVideoModal() {
     if(!modal || !iframe) return;
     iframe.src = '';
     modal.classList.remove('active');
+    document.body.style.overflow = '';
 }
 
 function createMovieCard(item) {
@@ -115,7 +117,12 @@ function renderGrid(elementId, items) {
     const grid = document.getElementById(elementId);
     if(!grid) return;
     grid.innerHTML = '';
-    items.slice(0, 20).forEach(item => {
+    const itemsToShow = items.slice(0, 20);
+    if(itemsToShow.length === 0) {
+        grid.innerHTML = '<div style="text-align:center; padding:2rem; color:#666;">هیچ بەرهەمێک نییە</div>';
+        return;
+    }
+    itemsToShow.forEach(item => {
         grid.appendChild(createMovieCard(item));
     });
 }
@@ -144,22 +151,42 @@ const sliderContainer = document.getElementById('sliderContainer');
 const dotsContainer = document.getElementById('sliderDots');
 
 function buildSlider() {
-    if(!sliderContainer || !dotsContainer) return;
+    if(!sliderContainer || !dotsContainer) {
+        console.log("sliderContainer یان dotsContainer نەدۆزرایەوە");
+        return;
+    }
+    
     sliderContainer.innerHTML = '';
     dotsContainer.innerHTML = '';
+    
+    if(!sliderItems || sliderItems.length === 0) {
+        sliderContainer.innerHTML = '<div class="slide" style="background:#333; display:flex; align-items:center; justify-content:center;"><div class="slide-content"><h2>هیچ سلایدێک نییە</h2></div></div>';
+        return;
+    }
     
     sliderItems.forEach((slide, idx) => {
         const slideDiv = document.createElement('div');
         slideDiv.className = 'slide';
-        slideDiv.style.backgroundImage = `url('${slide.bgImage}')`;
+        
+        // چارەسەری وێنە
+        let bgImageUrl = slide.bgImage;
+        if(!bgImageUrl || bgImageUrl === "") {
+            bgImageUrl = "https://via.placeholder.com/1920x800?text=No+Image";
+        }
+        
+        slideDiv.style.backgroundImage = `url('${bgImageUrl}')`;
+        slideDiv.style.backgroundSize = "cover";
+        slideDiv.style.backgroundPosition = "center 30%";
+        slideDiv.style.backgroundRepeat = "no-repeat";
+        
         slideDiv.innerHTML = `
             <div class="slide-content">
-                <div class="slide-genre">${slide.genre}</div>
-                <div class="slide-year">${slide.year}</div>
-                <h2 class="slide-title">${slide.title}</h2>
-                <p class="slide-desc">${slide.description}</p>
+                <div class="slide-genre">${slide.genre || "دراما"}</div>
+                <div class="slide-year">${slide.year || "2025"}</div>
+                <h2 class="slide-title">${slide.title || "بێ ناونیشان"}</h2>
+                <p class="slide-desc">${slide.description || "زانیاری نییە"}</p>
                 <div class="slide-buttons">
-                    <button class="watch-btn" data-video="${slide.videoLink}" data-title="${slide.title}">▶ سەیر کردن</button>
+                    <button class="watch-btn" data-video="${slide.videoLink || ""}" data-title="${slide.title || ""}">▶ سەیر کردن</button>
                     <button class="watchlist-btn">❤️ + لیستی دڵخواز</button>
                 </div>
             </div>
@@ -178,16 +205,22 @@ function buildSlider() {
 }
 
 function attachSliderEvents() {
-    document.querySelectorAll('.slide .watch-btn').forEach(btn => {
+    const watchBtns = document.querySelectorAll('.slide .watch-btn');
+    watchBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             const video = btn.getAttribute('data-video');
             const title = btn.getAttribute('data-title');
-            openVideoModal(video, title);
+            if(video && video !== "") {
+                openVideoModal(video, title);
+            } else {
+                alert("لینکی ڤیدیۆ بۆ ئەم سلایدە دیاری نەکراوە");
+            }
         });
     });
     
-    document.querySelectorAll('.slide .watchlist-btn').forEach(btn => {
+    const watchlistBtns = document.querySelectorAll('.slide .watchlist-btn');
+    watchlistBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             alert('زیادکرا بۆ لیستی دڵخواز (ئەمە لە وەشانی داهاتوودا کاردەکات)');
@@ -207,8 +240,10 @@ function updateSliderDots() {
 }
 
 function goToSlide(index) {
-    currentSlide = index;
-    updateSliderDots();
+    if(index >= 0 && index < sliderItems.length) {
+        currentSlide = index;
+        updateSliderDots();
+    }
 }
 
 function nextSlide() {
@@ -235,8 +270,10 @@ function handleTouchEnd(e) {
     const diff = touchEndX - touchStartX;
     if(Math.abs(diff) > 50) {
         if(diff > 0) {
+            // swipe right -> previous slide
             currentSlide = (currentSlide - 1 + sliderItems.length) % sliderItems.length;
         } else {
+            // swipe left -> next slide
             currentSlide = (currentSlide + 1) % sliderItems.length;
         }
         updateSliderDots();
@@ -268,11 +305,13 @@ const closeMenu = document.getElementById('closeMenu');
 function openMenu() {
     if(menuPanel) menuPanel.classList.add('open');
     if(menuOverlay) menuOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeMenuPanel() {
     if(menuPanel) menuPanel.classList.remove('open');
     if(menuOverlay) menuOverlay.classList.remove('active');
+    document.body.style.overflow = '';
 }
 
 if(menuIcon) menuIcon.addEventListener('click', openMenu);
@@ -290,6 +329,7 @@ function openSearchModal() {
     if(searchModal) {
         searchModal.classList.add('active');
         if(globalSearchInput) globalSearchInput.focus();
+        document.body.style.overflow = 'hidden';
     }
 }
 
@@ -297,6 +337,7 @@ function closeSearchModal() {
     if(searchModal) searchModal.classList.remove('active');
     if(searchResultsDiv) searchResultsDiv.innerHTML = '';
     if(globalSearchInput) globalSearchInput.value = '';
+    document.body.style.overflow = '';
 }
 
 if(searchIcon) searchIcon.addEventListener('click', openSearchModal);
@@ -329,6 +370,17 @@ if(globalSearchInput) {
     });
 }
 
+// ==================== بینینی هەموو ====================
+document.querySelectorAll('.view-all').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const href = link.getAttribute('href');
+        if(href && href !== "#") {
+            window.location.href = href;
+        }
+    });
+});
+
 // ==================== داخستنی مۆدالی ڤیدیۆ ====================
 const closeVideoBtn = document.getElementById('closeVideoModal');
 if(closeVideoBtn) closeVideoBtn.addEventListener('click', closeVideoModal);
@@ -340,6 +392,15 @@ if(videoModal) {
     });
 }
 
-// ==================== Load کردن ====================
-buildSlider();
-renderAllSections();
+// ==================== دەستپێکردن ====================
+function init() {
+    buildSlider();
+    renderAllSections();
+}
+
+// چاوەڕوانی DOM تا تەواو باربێت
+if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
