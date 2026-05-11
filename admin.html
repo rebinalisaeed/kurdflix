@@ -2,48 +2,126 @@
 <html lang="ckb">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Kurdflix</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .admin-container { max-width: 800px; margin: 100px auto; background: #1e1e1e; padding: 30px; border-radius: 12px; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; background: #333; color: white; border: none; }
-        button { background: #e50914; color: white; padding: 12px 24px; border: none; cursor: pointer; }
+        .admin-container {
+            max-width: 900px;
+            margin: 100px auto;
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 16px;
+            direction: rtl;
+        }
+        h1, h2, h3 {
+            font-family: 'NRT-Bold', sans-serif;
+            color: #e50914;
+        }
+        .admin-form input, .admin-form select, .admin-form textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #2a2a2a;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+        .admin-form button {
+            background: #e50914;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .toolbar button {
+            background: #333;
+            padding: 8px 16px;
+        }
+        #movieListAdmin {
+            margin-top: 30px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        hr {
+            border-color: #444;
+            margin: 20px 0;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #54b9d4;
+            text-decoration: none;
+        }
     </style>
 </head>
 <body>
+
 <div class="admin-container">
+    <a href="index.html" class="back-link">← گەڕانەوە بۆ پەڕەی سەرەکی</a>
+    
     <h1>✨ ئەدمین پەنێلی کوردفلێکس</h1>
-    <form id="adminForm">
-        <input type="text" id="title" placeholder="ناوی بەرهەم" required>
+    <p>لێرە دەتوانی بەرهەمەکان زیاد، سڕ و دەستکاری بکەیت</p>
+    
+    <hr>
+    
+    <h2>➕ زیادکردنی بەرهەمی نوێ</h2>
+    <form id="adminForm" class="admin-form">
+        <input type="text" id="title" placeholder="ناوی بەرهەم (پێویست)" required>
+        
         <select id="category">
-            <option>فیلم</option><option>زنجیرە</option><option>کوردی</option>
-            <option>تورکی</option><option>عەرەبی</option><option>فارسی</option>
+            <option value="فیلم">فیلم</option>
+            <option value="زنجیرە">زنجیرە</option>
+            <option value="کوردی">کوردی</option>
+            <option value="تورکی">تورکی</option>
+            <option value="عەرەبی">عەرەبی</option>
+            <option value="فارسی">فارسی</option>
+            <option value="کۆری">کۆری</option>
+            <option value="هیندی">هیندی</option>
+            <option value="منداڵان">منداڵان</option>
         </select>
-        <input type="text" id="year" placeholder="ساڵ">
-        <textarea id="desc" placeholder="کورتە"></textarea>
-        <input type="text" id="poster" placeholder="لینکی پۆستەر">
-        <input type="text" id="videoLink" placeholder="لینکی ڤیدیۆ">
-        <button type="submit">زیادکردنی بەرهەم</button>
+        
+        <select id="genre">
+            <option>تاوانکاری</option><option>زانستی خەیاڵی</option><option>سەرکێشی</option>
+            <option>ئاکشن</option><option>کۆمیدی</option><option>ئەنیمەیشن</option>
+            <option>دراما</option><option>ڕۆمانسی</option><option>ترسناک</option>
+            <option>جەنگ</option><option>مێژوویی</option>
+        </select>
+        
+        <select id="type">
+            <option value="movie">فیلم</option>
+            <option value="series">زنجیرە</option>
+        </select>
+        
+        <input type="text" id="year" placeholder="ساڵی دەرچوون (وێنە: 2024)">
+        <textarea id="desc" rows="3" placeholder="کورتەیەک لەسەر بەرهەمەکە..."></textarea>
+        <input type="url" id="poster" placeholder="لینکی وێنەی پۆستەر (پێویست)">
+        <input type="url" id="videoLink" placeholder="لینکی ڤیدیۆ (گووگڵ درایڤ / یوتیوب)">
+        
+        <button type="submit">📀 زیادکردنی بەرهەم</button>
     </form>
+    
+    <hr>
+    
+    <div class="toolbar">
+        <button id="exportBtn" style="background:#28a745;">📥 دابەزاندنی بەکئەپ (JSON)</button>
+        <label for="importInput" style="background:#17a2b8; padding:8px 16px; border-radius:8px; cursor:pointer;">📤 هاوردەکردنی فایل</label>
+        <input type="file" id="importInput" accept=".json" style="display:none;">
+    </div>
+    
+    <div id="movieListAdmin"></div>
 </div>
-<script src="js/data.js"></script>
-<script>
-    document.getElementById('adminForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const newMovie = {
-            id: Date.now(),
-            title: document.getElementById('title').value,
-            category: document.getElementById('category').value,
-            year: document.getElementById('year').value,
-            desc: document.getElementById('desc').value,
-            poster: document.getElementById('poster').value,
-            videoLink: document.getElementById('videoLink').value
-        };
-        movies.push(newMovie);
-        localStorage.setItem('kurdflix_movies', JSON.stringify(movies));
-        alert('بەرهەمەکە زیاد کرا!');
-        e.target.reset();
-    });
-</script>
+
+<script src="js/admin.js"></script>
 </body>
 </html>
