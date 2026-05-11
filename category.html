@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ckb">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurdflix - هەموو بەرهەمەکان</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .category-header {
+            padding: 2rem 1rem 1rem;
+            text-align: center;
+        }
+        .category-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+        }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        .filter-btn {
+            background: #1F1F1F;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-family: 'NRT Regular', sans-serif;
+        }
+        .filter-btn.active {
+            background: #E50914;
+        }
+        .back-home {
+            display: inline-block;
+            margin: 1rem;
+            color: #E50914;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="header scrolled" id="mainHeader">
+        <div class="header-container">
+            <div class="menu-left"><a href="index.html" style="color:white; text-decoration:none;">← گەڕانەوە</a></div>
+            <div class="logo-center"><h1>Kurd<span>flix</span></h1></div>
+            <div class="search-right"><button class="search-icon" id="searchIcon">🔍</button></div>
+        </div>
+    </header>
+
+    <div class="category-header">
+        <h1 id="pageTitle">هەموو بەرهەمەکان</h1>
+        <div class="filter-bar" id="filterBar"></div>
+    </div>
+
+    <div class="container">
+        <div class="movies-grid" id="categoryGrid"></div>
+    </div>
+
+    <footer class="footer"><div class="container"><p>© 2026 Kurdflix</p></div></footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Category page specific logic
+        const urlParams = new URLSearchParams(window.location.search);
+        const typeParam = urlParams.get('type');
+        const languageParam = urlParams.get('language');
+        const categoryParam = urlParams.get('category');
+
+        let filteredItems = [];
+        
+        function loadCategory() {
+            const all = JSON.parse(localStorage.getItem('kurdflix_content')) || [];
+            if(typeParam === 'film') {
+                document.getElementById('pageTitle').innerText = 'هەموو فیلمەکان';
+                filteredItems = all.filter(i => i.type === 'film');
+            } else if(typeParam === 'series') {
+                document.getElementById('pageTitle').innerText = 'هەموو زنجیرەکان';
+                filteredItems = all.filter(i => i.type === 'series');
+            } else if(languageParam) {
+                const langNames = {kurdish:'کوردی', turkish:'تورکی', arabic:'عەرەبی', persian:'فارسی', korean:'کۆری', indian:'هیندی', kids:'منداڵان'};
+                document.getElementById('pageTitle').innerText = `هەموو بەرهەمە ${langNames[languageParam] || languageParam}یەکان`;
+                filteredItems = all.filter(i => i.language === languageParam);
+            } else {
+                filteredItems = all;
+            }
+            renderCategoryGrid();
+        }
+        
+        function renderCategoryGrid() {
+            const grid = document.getElementById('categoryGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            const sorted = [...filteredItems].sort((a,b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+            sorted.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.innerHTML = `<img src="${item.poster}" class="movie-poster"><div class="movie-info"><h3>${item.title}</h3><p>${item.year}</p></div>`;
+                card.addEventListener('click', () => {
+                    const modal = document.getElementById('videoModal');
+                    document.getElementById('videoIframe').src = item.embedLink;
+                    document.getElementById('videoTitle').innerText = item.title;
+                    modal.classList.add('active');
+                });
+                grid.appendChild(card);
+            });
+        }
+        
+        loadCategory();
+    </script>
+</body>
+</html>
