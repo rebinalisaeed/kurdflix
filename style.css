@@ -3,14 +3,12 @@
     font-family: 'NRT Bold';
     src: url('fonts/NRT-Bd.ttf') format('truetype');
     font-weight: bold;
-    font-display: swap;
 }
 
 @font-face {
     font-family: 'NRT Regular';
     src: url('fonts/NRT-Reg.ttf') format('truetype');
     font-weight: normal;
-    font-display: swap;
 }
 
 * {
@@ -20,112 +18,140 @@
 }
 
 body {
-    font-family: 'NRT Regular', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'NRT Regular', 'Segoe UI', sans-serif;
     background: #0F0F0F;
     color: #FFFFFF;
     line-height: 1.6;
     direction: rtl;
 }
 
-h1, h2, h3, h4, h5, h6, .logo, .nav a, .slider-title, .view-all {
-    font-family: 'NRT Bold', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
+    font-family: 'NRT Bold', sans-serif;
 }
 
-/* هێدەر */
+/* ========== هێدەری گۆڕاو ========== */
 .header {
-    background: #0A0A0A;
     position: sticky;
     top: 0;
-    z-index: 1000;
-    border-bottom: 1px solid #E50914;
-    padding: 0.8rem 0;
+    z-index: 100;
+    background: transparent;
+    transition: background 0.3s ease;
+    padding: 0.8rem 1rem;
 }
 
-.header .container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 2rem;
+.header.scrolled {
+    background: #333333;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-.logo h1 {
-    font-size: 1.8rem;
-    color: #FFFFFF;
-}
-
-.logo span {
-    color: #E50914;
-}
-
-.nav ul {
-    display: flex;
-    list-style: none;
-    gap: 2rem;
-}
-
-.nav a {
-    color: #FFFFFF;
-    text-decoration: none;
-    font-size: 1rem;
-    transition: color 0.3s;
-}
-
-.nav a:hover, .nav a.active {
-    color: #E50914;
-}
-
-.admin-link {
-    background: #E50914;
-    padding: 0.3rem 1rem;
-    border-radius: 5px;
-}
-
-.admin-link:hover {
-    background: #B00710;
-    color: white !important;
-}
-
-.search-box {
-    display: flex;
-    gap: 0;
-}
-
-.search-box input {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 5px 0 0 5px;
-    background: #1F1F1F;
-    color: white;
-    font-family: 'NRT Regular', sans-serif;
-    width: 200px;
-}
-
-.search-box button {
-    padding: 0.5rem 1rem;
-    background: #E50914;
-    border: none;
-    border-radius: 0 5px 5px 0;
-    color: white;
-    cursor: pointer;
-}
-
-.mobile-menu-btn {
-    display: none;
+.menu-icon, .search-icon {
     background: none;
     border: none;
     color: white;
     font-size: 1.8rem;
     cursor: pointer;
+    padding: 0.5rem;
 }
 
-/* سلایدەر */
+.logo-center h1 {
+    font-size: 1.6rem;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.logo-center span {
+    color: #E50914;
+}
+
+/* ========== مێنوی مۆبایل (پەنەری لای ڕاست) ========== */
+.mobile-menu-panel {
+    position: fixed;
+    top: 0;
+    right: -280px;
+    width: 280px;
+    height: 100%;
+    background: #1A1A1A;
+    z-index: 1000;
+    transition: right 0.3s ease;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.5);
+}
+
+.mobile-menu-panel.open {
+    right: 0;
+}
+
+.panel-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.panel-logo span {
+    color: #E50914;
+}
+
+.close-menu {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.panel-nav {
+    list-style: none;
+    padding: 2rem 1.5rem;
+}
+
+.panel-nav li {
+    margin-bottom: 1.5rem;
+}
+
+.panel-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: block;
+}
+
+.panel-nav a.active {
+    color: #E50914;
+}
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 999;
+    display: none;
+}
+
+.menu-overlay.active {
+    display: block;
+}
+
+/* ========== سلایدەر - بەرزی زیاد کراوە ========== */
 .hero-slider {
     position: relative;
-    margin: 1rem 0 2rem 0;
+    margin-top: -70px;
     overflow: hidden;
 }
 
@@ -137,81 +163,115 @@ h1, h2, h3, h4, h5, h6, .logo, .nav a, .slider-title, .view-all {
 .slide {
     min-width: 100%;
     position: relative;
-    height: 500px;
+    height: 85vh;
+    min-height: 550px;
     background-size: cover;
-    background-position: center;
+    background-position: center 30%;
     display: flex;
-    align-items: flex-end;
-    padding: 3rem;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ڕێژەی 6% سەرەوە وێنە، 3% ناوەڕۆک، 1% خوارەوە بەتاڵ */
+.slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.1) 0%,
+        rgba(0,0,0,0.1) 60%,
+        rgba(0,0,0,0.7) 85%,
+        rgba(0,0,0,0.9) 100%
+    );
 }
 
 .slide-content {
-    background: linear-gradient(0deg, rgba(0,0,0,0.8), transparent);
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 85%;
     padding: 2rem;
-    border-radius: 10px;
-    max-width: 600px;
+    background: rgba(0,0,0,0.5);
+    border-radius: 15px;
+    backdrop-filter: blur(8px);
 }
 
-.slide-title {
-    font-size: 2.5rem;
+.slide-genre {
+    font-size: 0.9rem;
+    color: #E50914;
+    letter-spacing: 1px;
     margin-bottom: 0.5rem;
 }
 
-.slide-desc {
-    font-size: 1rem;
-    margin-bottom: 1rem;
-    opacity: 0.9;
+.slide-year {
+    font-size: 0.9rem;
+    color: #FFD700;
+    margin-bottom: 0.5rem;
 }
 
-.watch-btn {
-    background: #E50914;
+.slide-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.slide-desc {
+    font-size: 0.8rem;
+    margin-bottom: 1.2rem;
+    opacity: 0.9;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.slide-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.watch-btn, .watchlist-btn {
     border: none;
-    padding: 0.7rem 2rem;
-    color: white;
+    padding: 0.6rem 1.5rem;
     font-family: 'NRT Bold', sans-serif;
     border-radius: 5px;
     cursor: pointer;
     transition: transform 0.2s;
+    font-size: 0.9rem;
 }
 
-.watch-btn:hover {
-    transform: scale(1.05);
-}
-
-.slider-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(0,0,0,0.6);
+.watch-btn {
+    background: #E50914;
     color: white;
-    border: none;
-    font-size: 2rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    z-index: 10;
-    border-radius: 5px;
 }
 
-.prev {
-    left: 10px;
+.watchlist-btn {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    border: 1px solid white;
 }
 
-.next {
-    right: 10px;
+.watch-btn:hover, .watchlist-btn:hover {
+    transform: scale(1.05);
 }
 
 .slider-dots {
     position: absolute;
-    bottom: 20px;
+    bottom: 15px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     gap: 10px;
+    z-index: 5;
 }
 
 .dot {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     background: rgba(255,255,255,0.5);
     border-radius: 50%;
     cursor: pointer;
@@ -221,7 +281,7 @@ h1, h2, h3, h4, h5, h6, .logo, .nav a, .slider-title, .view-all {
     background: #E50914;
 }
 
-/* تۆڕی فیلمەکان */
+/* ========== تۆڕی بەرهەمەکان ========== */
 .main-content {
     padding: 2rem 0;
 }
@@ -229,25 +289,36 @@ h1, h2, h3, h4, h5, h6, .logo, .nav a, .slider-title, .view-all {
 .container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 1rem;
+}
+
+.section-wrapper {
+    margin-bottom: 2.5rem;
 }
 
 .section-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
+    align-items: baseline;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.section-header h2 {
+    font-size: 1.2rem;
+    color: #FFFFFF;
 }
 
 .view-all {
     color: #E50914;
     text-decoration: none;
+    font-size: 0.85rem;
 }
 
 .movies-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
 }
 
 .movie-card {
@@ -264,74 +335,231 @@ h1, h2, h3, h4, h5, h6, .logo, .nav a, .slider-title, .view-all {
 
 .movie-poster {
     width: 100%;
-    height: 280px;
+    height: 200px;
     object-fit: cover;
 }
 
 .movie-info {
-    padding: 0.8rem;
+    padding: 0.6rem;
 }
 
 .movie-title {
-    font-size: 1rem;
-    margin-bottom: 0.3rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
 }
 
 .movie-year {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     color: #E50914;
 }
 
-/* فووتەر */
+/* ========== فووتەر ========== */
 .footer {
     background: #0A0A0A;
     text-align: center;
-    padding: 2rem;
-    margin-top: 3rem;
+    padding: 2rem 1rem;
+    margin-top: 2rem;
     border-top: 1px solid #222;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .nav {
+.footer-logo h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.footer-logo span {
+    color: #E50914;
+}
+
+.footer-tagline {
+    font-size: 0.85rem;
+    color: #aaa;
+    margin-bottom: 1rem;
+}
+
+.copyright {
+    font-size: 0.7rem;
+    color: #666;
+}
+
+/* ========== مۆدالی گەڕان ========== */
+.search-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 2000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-modal.active {
+    display: flex;
+}
+
+.search-modal-content {
+    width: 90%;
+    max-width: 500px;
+    background: #1A1A1A;
+    padding: 1.5rem;
+    border-radius: 15px;
+}
+
+.search-modal-content input {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: none;
+    background: #333;
+    color: white;
+    font-family: 'NRT Regular', sans-serif;
+    margin-bottom: 1rem;
+}
+
+#searchResults {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.search-result-item {
+    padding: 0.8rem;
+    border-bottom: 1px solid #333;
+    cursor: pointer;
+}
+.search-result-item:hover {
+    background: #E50914;
+}
+
+.close-search {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.7rem;
+    background: #E50914;
+    border: none;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* ========== مۆدالی ڤیدیۆ ========== */
+.video-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    z-index: 3000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-modal.active {
+    display: flex;
+}
+
+.video-modal-content {
+    width: 95%;
+    max-width: 1000px;
+    position: relative;
+}
+
+.close-video {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: #E50914;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#videoTitle {
+    color: white;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+/* ========== Responsive ========== */
+@media (min-width: 768px) {
+    .mobile-menu-panel {
         display: none;
-        width: 100%;
     }
-    .nav.active {
-        display: block;
+    .menu-overlay {
+        display: none !important;
     }
-    .nav ul {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem 0;
-    }
-    .mobile-menu-btn {
-        display: block;
-    }
-    .search-box input {
-        width: 150px;
-    }
-    .slide {
-        height: 350px;
-        padding: 1.5rem;
+    .menu-icon {
+        display: none;
     }
     .slide-title {
-        font-size: 1.5rem;
+        font-size: 2rem;
+    }
+    .slide-desc {
+        font-size: 1rem;
+        max-width: 500px;
     }
     .movies-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-        gap: 1rem;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
     .movie-poster {
-        height: 220px;
-    }
-    .container {
-        padding: 0 1rem;
+        height: 260px;
     }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
+@media (max-width: 767px) {
+    .logo-center h1 {
+        font-size: 1.3rem;
+    }
+    .slide {
+        height: 70vh;
+        min-height: 500px;
+    }
+    .slide-content {
+        padding: 1rem;
+        width: 90%;
+    }
+    .slide-title {
+        font-size: 1.1rem;
+    }
+    .slide-desc {
+        font-size: 0.7rem;
+    }
+    .watch-btn, .watchlist-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+    }
+    .section-header h2 {
+        font-size: 1rem;
+    }
     .movies-grid {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 0.8rem;
+    }
+    .movie-poster {
+        height: 160px;
+    }
+    .movie-title {
+        font-size: 0.7rem;
     }
 }
