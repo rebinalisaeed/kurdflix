@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ckb" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KurdFlix - ستافی کوردفلێکس</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .staff-container {
+            max-width: 1200px;
+            margin: 100px auto 2rem auto;
+            padding: 0 1rem;
+        }
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .staff-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            text-align: center;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            transition: transform 0.3s;
+        }
+        .staff-card:hover {
+            transform: translateY(-5px);
+        }
+        .staff-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 3px solid var(--accent);
+        }
+        .staff-name {
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+        .staff-role {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .staff-bio {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        .back-btn {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        @media (max-width: 768px) {
+            .staff-container {
+                margin-top: 80px;
+            }
+            .staff-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></div>
+            <div class="logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
+                    <defs><path id="arcPath" d="M 10,168 Q 450,100 890,168" /></defs>
+                    <text font-family="'Arial Black'" font-size="148" font-weight="900" font-style="italic" fill="#E50914" letter-spacing="-3">
+                        <textPath href="#arcPath" startOffset="50%" text-anchor="middle">KURDFLIX</textPath>
+                    </text>
+                </svg>
+            </div>
+            <div class="mobile-search-icon" id="mobileSearchIcon"><i class="fas fa-search"></i></div>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html">گەڕانەوە بۆ پەڕەی سەرەکی</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div class="search-icon" id="searchIcon"><i class="fas fa-search"></i></div>
+                <div class="login-icon" id="loginIcon"><i class="fas fa-user"></i></div>
+                <button class="vip-btn" id="vipBtn">VIP</button>
+                <div class="theme-toggle">
+                    <i class="fas fa-sun"></i>
+                    <label class="switch"><input type="checkbox" id="theme-switch"><span class="slider round"></span></label>
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+        <div class="search-form" id="searchForm" style="display: none;">
+            <input type="text" id="searchInput" placeholder="گەڕان بە ناوی فیلم یان زنجیرە...">
+            <button id="searchClose"><i class="fas fa-times"></i></button>
+            <div id="searchResults" class="search-results"></div>
+        </div>
+    </nav>
+
+    <div class="staff-container">
+        <button class="back-btn" onclick="window.location.href='index.html'">← گەڕانەوە بۆ پەڕەی سەرەکی</button>
+        <h1 style="margin-top: 1rem;">🧑‍💻 ستافی کوردفلێکس</h1>
+        <p>ئەو تیمەی کە بۆ خزمەتکردنتان کۆشش دەکەن</p>
+        
+        <div class="staff-grid">
+            <div class="staff-card">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Staff" class="staff-avatar">
+                <h3 class="staff-name">ڕێباز محەمەد</h3>
+                <p class="staff-role">دامەزرێنەر و بەڕێوەبەری گشتی</p>
+                <p class="staff-bio">خاوەن بیرۆکەی کوردفلێکس، ئامانجمان گەیاندنی بەرهەمی کوردییە بە هەمووان</p>
+            </div>
+            <div class="staff-card">
+                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Staff" class="staff-avatar">
+                <h3 class="staff-name">شەیلان حەسەن</h3>
+                <p class="staff-role">بەڕێوەبەری دۆبلاژ و وەرگێڕان</p>
+                <p class="staff-bio">بەرپرسیار لە کوالیتی دۆبلاژ و ژێرنوسە کوردییەکان</p>
+            </div>
+            <div class="staff-card">
+                <img src="https://randomuser.me/api/portraits/men/75.jpg" alt="Staff" class="staff-avatar">
+                <h3 class="staff-name">ئاوات کەریم</h3>
+                <p class="staff-role">بەڕێوەبەری تەکنیکال</p>
+                <p class="staff-bio">پارێزگاری لە کارکردنی سەلامەتی سایت و پلەیرەکان</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 KurdFlix - هەموو فیلمەکان بە دۆبلاژی کوردین</p>
+    </footer>
+
+    <script>
+        function initTheme() {
+            const themeSwitch = document.getElementById('theme-switch');
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                if (themeSwitch) themeSwitch.checked = true;
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                if (themeSwitch) themeSwitch.checked = false;
+            }
+            if (themeSwitch) {
+                themeSwitch.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        document.body.setAttribute('data-theme', 'light');
+                        localStorage.setItem('theme', 'light');
+                    } else {
+                        document.body.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                    }
+                });
+            }
+        }
+        
+        function initNavbarScroll() {
+            const navbar = document.querySelector('.navbar');
+            if (!navbar) return;
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) navbar.classList.add('scrolled');
+                else navbar.classList.remove('scrolled');
+            });
+        }
+        
+        function initHamburger() {
+            const hamburger = document.getElementById('hamburgerBtn');
+            const navMenu = document.getElementById('navMenu');
+            if (hamburger && navMenu) {
+                hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            initNavbarScroll();
+            initHamburger();
+        });
+    </script>
+</body>
+</html>
