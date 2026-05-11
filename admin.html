@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ckb">
+<head>
+    <meta charset="UTF-8">
+    <title>Kurdflix - پەڕەی بەڕێوەبەری</title>
+    <link rel="stylesheet" href="admin-style.css">
+</head>
+<body>
+    <div class="admin-container">
+        <h1>پەڕەی بەڕێوەبەری <span>Kurdflix</span></h1>
+        
+        <div class="admin-tabs">
+            <button class="tab-btn active" data-tab="movies">فیلمەکان</button>
+            <button class="tab-btn" data-tab="slider">سلایدەر</button>
+        </div>
+
+        <!-- بەشی فیلمەکان -->
+        <div id="moviesTab" class="tab-content active">
+            <h2>بەڕێوەبردنی فیلم و دراما</h2>
+            <form id="movieForm">
+                <input type="hidden" id="movieId">
+                <input type="text" id="movieTitle" placeholder="ناوی فیلم" required>
+                <input type="text" id="movieYear" placeholder="ساڵ">
+                <input type="url" id="moviePoster" placeholder="لینکی پۆستەر" required>
+                <input type="url" id="movieEmbed" placeholder="لینکی ڤیدیۆ (YouTube, Dailymotion...)" required>
+                <button type="submit">زیادکردن/نوێکردنەوە</button>
+            </form>
+            <div id="moviesList"></div>
+        </div>
+
+        <!-- بەشی سلایدەر -->
+        <div id="sliderTab" class="tab-content">
+            <h2>بەڕێوەبردنی سلایدەر</h2>
+            <form id="sliderForm">
+                <input type="hidden" id="sliderIndex">
+                <input type="text" id="sliderTitle" placeholder="ناونیشانی سلاید" required>
+                <input type="text" id="sliderDesc" placeholder="تێبینی کورت">
+                <input type="url" id="sliderImage" placeholder="لینکی وێنەی پاشبنەما" required>
+                <input type="url" id="sliderVideo" placeholder="لینکی ڤیدیۆ" required>
+                <button type="submit">زیادکردن/نوێکردنەوە</button>
+            </form>
+            <div id="sliderList"></div>
+        </div>
+    </div>
+    <script src="admin-script.js"></script>
+</body>
+</html>
