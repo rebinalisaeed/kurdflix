@@ -37,7 +37,7 @@ function loadSampleData() {
         { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "https://picsum.photos/200/300?random=2", type: "series", lang: "turkish", categories: ["turkish-series"], description: "زنجیرەیەکی درامایی", genres: ["دراما", "ڕۆمانسی"], videoUrl: "https://streamsb.com/e/example2" }
     ];
     carouselSlides = [
-        { id: 1, title: "ئەفسانەی کوێستان", year: "2024", description: "فیلمێکی کوردی", images: { mobile: "https://picsum.photos/1920/800?random=1", tablet: "https://picsum.photos/1920/800?random=1", desktop: "https://picsum.photos/1920/800?random=1" }, movieId: 1, genres: ["دراما", "ئاکشن"] }
+        { id: 1, title: "ئەفسانەی کوێستان", year: "2024", description: "فیلمێکی کوردی", images: { mobile: "https://picsum.photos/1080/1920?random=1", tablet: "https://picsum.photos/1200/1600?random=1", desktop: "https://picsum.photos/1920/1080?random=1" }, movieId: 1, genres: ["دراما", "ئاکشن"] }
     ];
     renderCarousel();
     startCarouselAutoPlay();
@@ -52,7 +52,7 @@ function getResponsiveImage(slide) {
         else if (width <= 1024) return slide.images.tablet || slide.images.mobile || slide.images.desktop;
         else return slide.images.desktop || slide.images.mobile;
     }
-    return slide.poster || "https://picsum.photos/1920/800";
+    return slide.poster || "https://picsum.photos/1920/1080";
 }
 
 function renderCarousel() {
@@ -155,8 +155,10 @@ function renderSlider(containerId, movies) {
     if (movies.length === 0) { slider.innerHTML = '<div style="padding: 2rem; text-align: center;">هیچ بەرهەمێک نەدۆزرایەوە</div>'; return; }
     slider.innerHTML = movies.map(movie => `
         <div class="movie-card" onclick="location.href='movie.html?id=${movie.id}'">
-            <img src="${movie.poster}" class="movie-poster" onerror="this.src='https://picsum.photos/200/300'">
-            <div class="movie-info"><h3 class="movie-title">${movie.title}</h3></div>
+            <img src="${movie.poster}" class="movie-poster" onerror="this.src='https://picsum.photos/200/300?random=1'">
+            <div class="movie-info">
+                <h3 class="movie-title">${movie.title}</h3>
+            </div>
         </div>
     `).join('');
 }
@@ -247,20 +249,21 @@ function initHamburger() {
     const mobileMenu = document.getElementById('mobileMenu');
     const overlay = document.getElementById('mobileMenuOverlay');
     if (!hamburger || !mobileMenu || !overlay) return;
-    hamburger.addEventListener('click', () => {
+    function openMenu() {
         mobileMenu.classList.add('active');
         overlay.style.display = 'block';
         document.body.style.overflow = 'hidden';
         const icon = hamburger.querySelector('i');
         if (icon) { icon.classList.remove('fa-bars'); icon.classList.add('fa-times'); }
-    });
-    const closeMenu = () => {
+    }
+    function closeMenu() {
         mobileMenu.classList.remove('active');
         overlay.style.display = 'none';
         document.body.style.overflow = '';
         const icon = hamburger.querySelector('i');
         if (icon) { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); }
-    };
+    }
+    hamburger.addEventListener('click', openMenu);
     if (closeBtn) closeBtn.addEventListener('click', closeMenu);
     overlay.addEventListener('click', closeMenu);
 }
