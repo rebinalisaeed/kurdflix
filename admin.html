@@ -184,6 +184,12 @@
             .admin-container { margin-top: 80px; }
             .form-row, .form-row-3 { grid-template-columns: 1fr; }
             .item-card { flex-direction: column; text-align: center; }
+            /* گەورەکردنی سایزی نوسین لە مۆبایلدا */
+            .tab-btn { font-size: 0.9rem; padding: 0.6rem 1rem; }
+            .form-group label { font-size: 0.95rem; }
+            .btn { font-size: 0.9rem; }
+            .item-title { font-size: 1rem; }
+            .item-meta { font-size: 0.9rem; }
         }
         
         #adminAuth {
@@ -294,7 +300,7 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group"><label>جۆر *</label><select id="movieType"><option value="film">فیلم</option><option value="series">زنجیرە</option></select></div>
-                            <div class="form-group"><label>زمان / وڵات *</label><select id="movieLang"><option value="kurdish">کوردی</option><option value="turkish">تورکی</option><option value="persian">فارسی</option><option value="arabic">عەرەبی</option><option value="english">ئینگلیزی</option><option value="other">دیکە</option></select></div>
+                            <div class="form-group"><label>زمان / وڵات *</label><select id="movieLang"><option value="kurdish">کوردی</option><option value="turkish">تورکی</option><option value="persian">فارسی</option><option value="arabic">عەرەبی</option><option value="english">ئینگلیزی</option><option value="korean">کۆری</option><option value="spanish">ئیسپانی</option><option value="indian">هیندی</option><option value="other">دیکە</option></select></div>
                         </div>
                         <div class="form-row">
                             <div class="form-group"><label>لینکی پۆستەر</label><input type="url" id="moviePoster" placeholder="https://example.com/poster.jpg"></div>
@@ -329,9 +335,9 @@
                         </div>
                         <div class="form-group">
                             <label>وێنەکانی سلاید</label>
-                            <div class="image-input-group"><h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل</h4><input type="url" id="slideImageMobile" placeholder="1920x800"><small>قەبارە: 1920x800</small></div>
-                            <div class="image-input-group"><h4><i class="fas fa-tablet-alt"></i> وێنەی تابلێت</h4><input type="url" id="slideImageTablet" placeholder="1920x800"><small>قەبارە: 1920x800</small></div>
-                            <div class="image-input-group"><h4><i class="fas fa-desktop"></i> وێنەی کۆمپیوتەر</h4><input type="url" id="slideImageDesktop" placeholder="1920x800"><small>قەبارە: 1920x800</small></div>
+                            <div class="image-input-group"><h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل</h4><input type="url" id="slideImageMobile" placeholder="1080x1920"><small>قەبارە: 1080x1920</small></div>
+                            <div class="image-input-group"><h4><i class="fas fa-tablet-alt"></i> وێنەی تابلێت</h4><input type="url" id="slideImageTablet" placeholder="1200x1600"><small>قەبارە: 1200x1600</small></div>
+                            <div class="image-input-group"><h4><i class="fas fa-desktop"></i> وێنەی کۆمپیوتەر</h4><input type="url" id="slideImageDesktop" placeholder="1920x1080"><small>قەبارە: 1920x1080</small></div>
                         </div>
                         <div class="form-group"><label>کورتە</label><textarea id="slideDescription" rows="2"></textarea></div>
                         <div class="form-group"><label>چەشنەکان</label><div class="checkbox-group" id="slideGenresCheckbox"></div></div>
