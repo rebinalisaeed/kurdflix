@@ -34,9 +34,9 @@
             "year": "2026",
             "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان، بەو هیوایەی پلانی ئەو دزییە چەندین ملیۆن دۆلارییەیان پووچەڵ بکاتەوە.",
             "images": {
-                "mobile": "assets/slides/slide_mobile.jpg",
-                "tablet": "assets/slides/slide_tablet.jpg",
-                "desktop": "assets/slides/slide_desktop.jpg"
+                "mobile": "assets/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
+                "tablet": "assets/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
+                "desktop": "assets/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg"
             },
             "movieId": 1,
             "genres": ["تاوانکاری", "هەستبزوێن", "دراما"]
@@ -47,9 +47,9 @@
             "year": "2026",
             "description": "دەستەیەک لە ئیسپانیا گروپێکی دروست دەکەن و هەڵدەکورنە سەر بانکی نێودەوڵەتی ئیسپانیا",
             "images": {
-                "mobile": "assets/slides/slide2_mobile.jpg",
-                "tablet": "assets/slides/slide2_tablet.jpg",
-                "desktop": "assets/slides/slide2_desktop.jpg"
+                "mobile": "assets/slides/imresizer-1080x1920-money-heist.jpg",
+                "tablet": "assets/slides/imresizer-1080x1920-money-heist.jpg",
+                "desktop": "assets/slides/imresizer-1080x1920-money-heist.jpg"
             },
             "movieId": 2,
             "genres": ["تاوانکاری", "سەرکێشی", "دراما", "هەستبزوێن"]
