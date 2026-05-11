@@ -1,5 +1,4 @@
-// ==================== داتا (ئەمە لە Admin Panel--ەوە بەڕێوە دەچێت) ====================
-
+// ==================== داتا ====================
 let allContent = JSON.parse(localStorage.getItem('kurdflix_content')) || [
     {
         id: 1,
@@ -11,7 +10,7 @@ let allContent = JSON.parse(localStorage.getItem('kurdflix_content')) || [
         embedLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
         type: "film",
         language: "kurdish",
-        dateAdded: "2026-05-01",
+        dateAdded: new Date().toISOString().split('T')[0],
         isSeries: false
     },
     {
@@ -24,7 +23,7 @@ let allContent = JSON.parse(localStorage.getItem('kurdflix_content')) || [
         embedLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
         type: "series",
         language: "kurdish",
-        dateAdded: "2026-05-05",
+        dateAdded: new Date().toISOString().split('T')[0],
         isSeries: true
     },
     {
@@ -37,12 +36,11 @@ let allContent = JSON.parse(localStorage.getItem('kurdflix_content')) || [
         embedLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
         type: "series",
         language: "turkish",
-        dateAdded: "2026-05-03",
+        dateAdded: new Date().toISOString().split('T')[0],
         isSeries: true
     }
 ];
 
-// سلایدەر داتا
 let sliderItems = JSON.parse(localStorage.getItem('kurdflix_slider')) || [
     {
         title: "ئاگرەکانی باکوور",
@@ -62,16 +60,17 @@ let sliderItems = JSON.parse(localStorage.getItem('kurdflix_slider')) || [
     }
 ];
 
+// ==================== فەنکشنە یارمەتیدەرەکان ====================
 function saveToLocal() {
     localStorage.setItem('kurdflix_content', JSON.stringify(allContent));
     localStorage.setItem('kurdflix_slider', JSON.stringify(sliderItems));
 }
 
-// ==================== هاوکارەکان ====================
 function openVideoModal(url, title) {
     const modal = document.getElementById('videoModal');
     const iframe = document.getElementById('videoIframe');
     const titleEl = document.getElementById('videoTitle');
+    if(!modal || !iframe || !titleEl) return;
     iframe.src = url;
     titleEl.innerText = title;
     modal.classList.add('active');
@@ -80,18 +79,18 @@ function openVideoModal(url, title) {
 function closeVideoModal() {
     const modal = document.getElementById('videoModal');
     const iframe = document.getElementById('videoIframe');
+    if(!modal || !iframe) return;
     iframe.src = '';
     modal.classList.remove('active');
 }
 
-// کارتی فیلم دروست بکە
 function createMovieCard(item) {
     const card = document.createElement('div');
     card.className = 'movie-card';
     card.innerHTML = `
         <img src="${item.poster}" alt="${item.title}" class="movie-poster" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
         <div class="movie-info">
-            <h3 class="movie-title">${item.title}</h3>
+            <h3 class="movie-title">${item.title.substring(0, 30)}</h3>
             <p class="movie-year">${item.year}</p>
         </div>
     `;
@@ -99,8 +98,7 @@ function createMovieCard(item) {
     return card;
 }
 
-// بەپێی پۆلێن فلتەر بکە
-function filterByType(items, type) { // type: 'film', 'series'
+function filterByType(items, type) {
     return items.filter(i => i.type === type);
 }
 
@@ -108,53 +106,48 @@ function filterByLanguage(items, lang) {
     return items.filter(i => i.language === lang);
 }
 
-// ڕیزکردن بەپێی بەروار (نوێترین یەکەم)
 function sortByDate(items) {
-    return [...items].sort((a,b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+    return [...items].sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
 }
 
-// ==================== ڕێندرکردنی بەشەکان ====================
-function renderAllSections() {
-    const sorted = sortByDate(allContent);
-    const latest20 = sorted.slice(0,20);
-    const films = filterByType(sorted, 'film');
-    const series = filterByType(sorted, 'series');
-    
-    // 1. نوێترین بەرهەمەکان
-    renderGrid('latestAllGrid', latest20.slice(0,20));
-    // 2. نوێترین فیلمەکان
-    renderGrid('latestMoviesGrid', sortByDate(films).slice(0,20));
-    // 3. نوێترین زنجیرەکان
-    renderGrid('latestSeriesGrid', sortByDate(series).slice(0,20));
-    
-    // بەشەکانی زمان
-    renderGrid('kurdishGrid', sortByDate(filterByLanguage(sorted, 'kurdish')).slice(0,20));
-    renderGrid('turkishGrid', sortByDate(filterByLanguage(sorted, 'turkish')).slice(0,20));
-    renderGrid('arabicGrid', sortByDate(filterByLanguage(sorted, 'arabic')).slice(0,20));
-    renderGrid('persianGrid', sortByDate(filterByLanguage(sorted, 'persian')).slice(0,20));
-    renderGrid('koreanGrid', sortByDate(filterByLanguage(sorted, 'korean')).slice(0,20));
-    renderGrid('indianGrid', sortByDate(filterByLanguage(sorted, 'indian')).slice(0,20));
-    renderGrid('kidsGrid', sortByDate(filterByLanguage(sorted, 'kids')).slice(0,20));
-}
-
+// ==================== ڕێندرکردنی تۆڕەکان ====================
 function renderGrid(elementId, items) {
     const grid = document.getElementById(elementId);
     if(!grid) return;
     grid.innerHTML = '';
-    items.forEach(item => {
+    items.slice(0, 20).forEach(item => {
         grid.appendChild(createMovieCard(item));
     });
 }
 
+function renderAllSections() {
+    const sorted = sortByDate(allContent);
+    const films = filterByType(sorted, 'film');
+    const series = filterByType(sorted, 'series');
+    
+    renderGrid('latestAllGrid', sorted);
+    renderGrid('latestMoviesGrid', films);
+    renderGrid('latestSeriesGrid', series);
+    renderGrid('kurdishGrid', filterByLanguage(sorted, 'kurdish'));
+    renderGrid('turkishGrid', filterByLanguage(sorted, 'turkish'));
+    renderGrid('arabicGrid', filterByLanguage(sorted, 'arabic'));
+    renderGrid('persianGrid', filterByLanguage(sorted, 'persian'));
+    renderGrid('koreanGrid', filterByLanguage(sorted, 'korean'));
+    renderGrid('indianGrid', filterByLanguage(sorted, 'indian'));
+    renderGrid('kidsGrid', filterByLanguage(sorted, 'kids'));
+}
+
 // ==================== سلایدەر ====================
 let currentSlide = 0;
+let autoInterval;
 const sliderContainer = document.getElementById('sliderContainer');
 const dotsContainer = document.getElementById('sliderDots');
 
 function buildSlider() {
-    if(!sliderContainer) return;
+    if(!sliderContainer || !dotsContainer) return;
     sliderContainer.innerHTML = '';
     dotsContainer.innerHTML = '';
+    
     sliderItems.forEach((slide, idx) => {
         const slideDiv = document.createElement('div');
         slideDiv.className = 'slide';
@@ -178,6 +171,7 @@ function buildSlider() {
         dot.addEventListener('click', () => goToSlide(idx));
         dotsContainer.appendChild(dot);
     });
+    
     attachSliderEvents();
     updateSliderDots();
     startAutoSlide();
@@ -192,6 +186,7 @@ function attachSliderEvents() {
             openVideoModal(video, title);
         });
     });
+    
     document.querySelectorAll('.slide .watchlist-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -222,15 +217,41 @@ function nextSlide() {
     updateSliderDots();
 }
 
-let autoInterval;
 function startAutoSlide() {
     if(autoInterval) clearInterval(autoInterval);
     autoInterval = setInterval(nextSlide, 6000);
 }
 
+// ==================== سوایپ بە پەنجە بۆ سلایدەر ====================
+let touchStartX = 0;
+let touchEndX = 0;
+
+function handleTouchStart(e) {
+    touchStartX = e.changedTouches[0].screenX;
+}
+
+function handleTouchEnd(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchEndX - touchStartX;
+    if(Math.abs(diff) > 50) {
+        if(diff > 0) {
+            currentSlide = (currentSlide - 1 + sliderItems.length) % sliderItems.length;
+        } else {
+            currentSlide = (currentSlide + 1) % sliderItems.length;
+        }
+        updateSliderDots();
+    }
+}
+
+if(sliderContainer) {
+    sliderContainer.addEventListener('touchstart', handleTouchStart);
+    sliderContainer.addEventListener('touchend', handleTouchEnd);
+}
+
 // ==================== هێدەری گۆڕاو ====================
 window.addEventListener('scroll', () => {
     const header = document.getElementById('mainHeader');
+    if(!header) return;
     if(window.scrollY > 50) {
         header.classList.add('scrolled');
     } else {
@@ -245,13 +266,13 @@ const menuOverlay = document.getElementById('menuOverlay');
 const closeMenu = document.getElementById('closeMenu');
 
 function openMenu() {
-    menuPanel.classList.add('open');
-    menuOverlay.classList.add('active');
+    if(menuPanel) menuPanel.classList.add('open');
+    if(menuOverlay) menuOverlay.classList.add('active');
 }
 
 function closeMenuPanel() {
-    menuPanel.classList.remove('open');
-    menuOverlay.classList.remove('active');
+    if(menuPanel) menuPanel.classList.remove('open');
+    if(menuOverlay) menuOverlay.classList.remove('active');
 }
 
 if(menuIcon) menuIcon.addEventListener('click', openMenu);
@@ -266,57 +287,59 @@ const globalSearchInput = document.getElementById('globalSearchInput');
 const searchResultsDiv = document.getElementById('searchResults');
 
 function openSearchModal() {
-    searchModal.classList.add('active');
-    globalSearchInput.focus();
+    if(searchModal) {
+        searchModal.classList.add('active');
+        if(globalSearchInput) globalSearchInput.focus();
+    }
 }
+
 function closeSearchModal() {
-    searchModal.classList.remove('active');
-    searchResultsDiv.innerHTML = '';
-    globalSearchInput.value = '';
+    if(searchModal) searchModal.classList.remove('active');
+    if(searchResultsDiv) searchResultsDiv.innerHTML = '';
+    if(globalSearchInput) globalSearchInput.value = '';
 }
 
 if(searchIcon) searchIcon.addEventListener('click', openSearchModal);
 if(closeSearch) closeSearch.addEventListener('click', closeSearchModal);
 
-globalSearchInput.addEventListener('input', (e) => {
-    const term = e.target.value.toLowerCase();
-    if(term.length < 2) {
-        searchResultsDiv.innerHTML = '';
-        return;
-    }
-    const filtered = allContent.filter(item => 
-        item.title.toLowerCase().includes(term) || 
-        item.genre.toLowerCase().includes(term)
-    );
-    searchResultsDiv.innerHTML = '';
-    filtered.slice(0,15).forEach(item => {
-        const div = document.createElement('div');
-        div.className = 'search-result-item';
-        div.innerHTML = `${item.title} (${item.year}) - ${item.genre}`;
-        div.addEventListener('click', () => {
-            closeSearchModal();
-            openVideoModal(item.embedLink, item.title);
-        });
-        searchResultsDiv.appendChild(div);
+if(globalSearchInput) {
+    globalSearchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase();
+        if(term.length < 2) {
+            if(searchResultsDiv) searchResultsDiv.innerHTML = '';
+            return;
+        }
+        const filtered = allContent.filter(item => 
+            item.title.toLowerCase().includes(term) || 
+            item.genre.toLowerCase().includes(term)
+        );
+        if(searchResultsDiv) {
+            searchResultsDiv.innerHTML = '';
+            filtered.slice(0, 15).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.innerHTML = `${item.title} (${item.year}) - ${item.genre}`;
+                div.addEventListener('click', () => {
+                    closeSearchModal();
+                    openVideoModal(item.embedLink, item.title);
+                });
+                searchResultsDiv.appendChild(div);
+            });
+        }
     });
-});
+}
 
-// بینینی هەموو
-document.querySelectorAll('.view-all').forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const category = link.getAttribute('data-category');
-        alert(`پەڕەی تەواوی ${category} لە وەشانی داهاتوودا کاردەکات`);
-    });
-});
-
-// داخستنی مۆدالی ڤیدیۆ
+// ==================== داخستنی مۆدالی ڤیدیۆ ====================
 const closeVideoBtn = document.getElementById('closeVideoModal');
 if(closeVideoBtn) closeVideoBtn.addEventListener('click', closeVideoModal);
-document.getElementById('videoModal')?.addEventListener('click', (e) => {
-    if(e.target === document.getElementById('videoModal')) closeVideoModal();
-});
 
-// ==================== Load ====================
+const videoModal = document.getElementById('videoModal');
+if(videoModal) {
+    videoModal.addEventListener('click', (e) => {
+        if(e.target === videoModal) closeVideoModal();
+    });
+}
+
+// ==================== Load کردن ====================
 buildSlider();
 renderAllSections();
