@@ -1,16 +1,19 @@
-/* فۆنتەکان */
+/* ==================== فۆنتەکان ==================== */
 @font-face {
     font-family: 'NRT Bold';
     src: url('fonts/NRT-Bd.ttf') format('truetype');
     font-weight: bold;
+    font-display: swap;
 }
 
 @font-face {
     font-family: 'NRT Regular';
     src: url('fonts/NRT-Reg.ttf') format('truetype');
     font-weight: normal;
+    font-display: swap;
 }
 
+/* ==================== ڕێکخستنە بنەڕەتییەکان ==================== */
 * {
     margin: 0;
     padding: 0;
@@ -18,18 +21,18 @@
 }
 
 body {
-    font-family: 'NRT Regular', 'Segoe UI', sans-serif;
+    font-family: 'NRT Regular', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: #0F0F0F;
     color: #FFFFFF;
     line-height: 1.6;
     direction: rtl;
 }
 
-h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
-    font-family: 'NRT Bold', sans-serif;
+h1, h2, h3, h4, .logo, .nav a, .slide-genre, .slide-year, .view-all, .filter-btn {
+    font-family: 'NRT Bold', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ========== هێدەری گۆڕاو ========== */
+/* ==================== هێدەری گۆڕاو ==================== */
 .header {
     position: sticky;
     top: 0;
@@ -52,13 +55,35 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     margin: 0 auto;
 }
 
+.menu-left, .search-right {
+    width: 50px;
+}
+
 .menu-icon, .search-icon {
     background: none;
     border: none;
-    color: white;
-    font-size: 1.8rem;
     cursor: pointer;
     padding: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-icon {
+    color: white;
+    font-size: 1.8rem;
+}
+
+.search-icon svg {
+    stroke: white;
+    fill: none;
+    width: 22px;
+    height: 22px;
+}
+
+.logo-center {
+    flex: 1;
+    text-align: center;
 }
 
 .logo-center h1 {
@@ -71,11 +96,11 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     color: #E50914;
 }
 
-/* ========== مێنوی مۆبایل (پەنەری لای ڕاست) ========== */
+/* ==================== مێنوی مۆبایل (پەنەری لای ڕاست) ==================== */
 .mobile-menu-panel {
     position: fixed;
     top: 0;
-    right: -280px;
+    right: -300px;
     width: 280px;
     height: 100%;
     background: #1A1A1A;
@@ -127,9 +152,10 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     text-decoration: none;
     font-size: 1.1rem;
     display: block;
+    transition: color 0.3s;
 }
 
-.panel-nav a.active {
+.panel-nav a:hover, .panel-nav a.active {
     color: #E50914;
 }
 
@@ -148,7 +174,7 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     display: block;
 }
 
-/* ========== سلایدەر - بەرزی زیاد کراوە ========== */
+/* ==================== سلایدەر ==================== */
 .hero-slider {
     position: relative;
     margin-top: -70px;
@@ -157,7 +183,12 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
 
 .slider-container {
     display: flex;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.4s ease-out;
+    cursor: grab;
+}
+
+.slider-container:active {
+    cursor: grabbing;
 }
 
 .slide {
@@ -168,11 +199,10 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     background-size: cover;
     background-position: center 30%;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
 }
 
-/* ڕێژەی 6% سەرەوە وێنە، 3% ناوەڕۆک، 1% خوارەوە بەتاڵ */
 .slide::before {
     content: '';
     position: absolute;
@@ -182,8 +212,8 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     height: 100%;
     background: linear-gradient(
         to bottom,
-        rgba(0,0,0,0.1) 0%,
-        rgba(0,0,0,0.1) 60%,
+        rgba(0,0,0,0.2) 0%,
+        rgba(0,0,0,0.2) 60%,
         rgba(0,0,0,0.7) 85%,
         rgba(0,0,0,0.9) 100%
     );
@@ -194,27 +224,29 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     z-index: 2;
     text-align: center;
     max-width: 85%;
-    padding: 2rem;
-    background: rgba(0,0,0,0.5);
+    padding: 1.5rem;
+    background: rgba(0,0,0,0.6);
     border-radius: 15px;
     backdrop-filter: blur(8px);
+    margin-bottom: 8%;
+    transform: translateY(20px);
 }
 
 .slide-genre {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #E50914;
     letter-spacing: 1px;
     margin-bottom: 0.5rem;
 }
 
 .slide-year {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: #FFD700;
     margin-bottom: 0.5rem;
 }
 
 .slide-title {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     margin-bottom: 0.8rem;
 }
 
@@ -225,6 +257,7 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     max-width: 400px;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.5;
 }
 
 .slide-buttons {
@@ -275,13 +308,14 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     background: rgba(255,255,255,0.5);
     border-radius: 50%;
     cursor: pointer;
+    transition: background 0.3s;
 }
 
 .dot.active {
     background: #E50914;
 }
 
-/* ========== تۆڕی بەرهەمەکان ========== */
+/* ==================== ناوەڕۆکی سەرەکی ==================== */
 .main-content {
     padding: 2rem 0;
 }
@@ -313,8 +347,14 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     color: #E50914;
     text-decoration: none;
     font-size: 0.85rem;
+    transition: opacity 0.3s;
 }
 
+.view-all:hover {
+    opacity: 0.8;
+}
+
+/* ==================== تۆڕی کارتەکان ==================== */
 .movies-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -325,12 +365,13 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     background: #1A1A1A;
     border-radius: 10px;
     overflow: hidden;
-    transition: transform 0.3s;
+    transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
 }
 
 .movie-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(229,9,20,0.3);
 }
 
 .movie-poster {
@@ -346,6 +387,7 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
 .movie-title {
     font-size: 0.85rem;
     margin-bottom: 0.2rem;
+    font-family: 'NRT Bold', sans-serif;
 }
 
 .movie-year {
@@ -353,7 +395,7 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     color: #E50914;
 }
 
-/* ========== فووتەر ========== */
+/* ==================== فووتەر ==================== */
 .footer {
     background: #0A0A0A;
     text-align: center;
@@ -382,7 +424,7 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     color: #666;
 }
 
-/* ========== مۆدالی گەڕان ========== */
+/* ==================== مۆدالی گەڕان ==================== */
 .search-modal {
     position: fixed;
     top: 0;
@@ -417,6 +459,11 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     color: white;
     font-family: 'NRT Regular', sans-serif;
     margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.search-modal-content input::placeholder {
+    color: #aaa;
 }
 
 #searchResults {
@@ -428,7 +475,9 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     padding: 0.8rem;
     border-bottom: 1px solid #333;
     cursor: pointer;
+    transition: background 0.3s;
 }
+
 .search-result-item:hover {
     background: #E50914;
 }
@@ -442,9 +491,11 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     color: white;
     border-radius: 8px;
     cursor: pointer;
+    font-family: 'NRT Regular', sans-serif;
+    font-size: 1rem;
 }
 
-/* ========== مۆدالی ڤیدیۆ ========== */
+/* ==================== مۆدالی ڤیدیۆ ==================== */
 .video-modal {
     position: fixed;
     top: 0;
@@ -493,16 +544,67 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     left: 0;
     width: 100%;
     height: 100%;
+    border-radius: 10px;
 }
 
 #videoTitle {
     color: white;
     margin-bottom: 0.5rem;
     text-align: center;
+    font-size: 1.1rem;
 }
 
-/* ========== Responsive ========== */
-@media (min-width: 768px) {
+/* ==================== Responsive - مۆبایل ==================== */
+@media (max-width: 767px) {
+    .logo-center h1 {
+        font-size: 1.3rem;
+    }
+    
+    .slide {
+        height: 70vh;
+        min-height: 500px;
+    }
+    
+    .slide-content {
+        padding: 1rem;
+        width: 90%;
+        margin-bottom: 12%;
+    }
+    
+    .slide-title {
+        font-size: 1.1rem;
+    }
+    
+    .slide-desc {
+        font-size: 0.7rem;
+        max-width: 280px;
+    }
+    
+    .watch-btn, .watchlist-btn {
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1rem;
+    }
+    
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+        gap: 0.8rem;
+    }
+    
+    .movie-poster {
+        height: 160px;
+    }
+    
+    .movie-title {
+        font-size: 0.7rem;
+    }
+}
+
+/* ==================== Responsive - تابلێت ==================== */
+@media (min-width: 768px) and (max-width: 1024px) {
     .mobile-menu-panel {
         display: none;
     }
@@ -512,54 +614,100 @@ h1, h2, h3, h4, .view-all, .slide-genre, .slide-year {
     .menu-icon {
         display: none;
     }
+    
     .slide-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
+    
     .slide-desc {
-        font-size: 1rem;
+        font-size: 0.9rem;
         max-width: 500px;
     }
+    
     .movies-grid {
         grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     }
+    
     .movie-poster {
         height: 260px;
     }
 }
 
-@media (max-width: 767px) {
-    .logo-center h1 {
-        font-size: 1.3rem;
+/* ==================== Responsive - کۆمپیوتەر ==================== */
+@media (min-width: 1025px) {
+    .mobile-menu-panel {
+        display: none;
     }
-    .slide {
-        height: 70vh;
-        min-height: 500px;
+    .menu-overlay {
+        display: none !important;
     }
-    .slide-content {
-        padding: 1rem;
-        width: 90%;
+    .menu-icon {
+        display: none;
     }
+    
     .slide-title {
-        font-size: 1.1rem;
+        font-size: 2.2rem;
     }
+    
     .slide-desc {
-        font-size: 0.7rem;
-    }
-    .watch-btn, .watchlist-btn {
-        padding: 0.4rem 1rem;
-        font-size: 0.8rem;
-    }
-    .section-header h2 {
         font-size: 1rem;
+        max-width: 550px;
     }
+    
     .movies-grid {
-        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-        gap: 0.8rem;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
     }
+    
     .movie-poster {
-        height: 160px;
+        height: 280px;
     }
-    .movie-title {
-        font-size: 0.7rem;
+    
+    .container {
+        padding: 0 2rem;
     }
+}
+
+/* ==================== پەڕەی کاتێگۆری ==================== */
+.category-header {
+    padding: 2rem 1rem 1rem;
+    text-align: center;
+}
+
+.category-header h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.filter-btn {
+    background: #1F1F1F;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.filter-btn:hover {
+    background: #E50914;
+}
+
+.filter-btn.active {
+    background: #E50914;
+}
+
+.back-home {
+    display: inline-block;
+    margin: 1rem;
+    color: #E50914;
+    text-decoration: none;
 }
