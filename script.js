@@ -1,186 +1,322 @@
-// داتای سلایدەر (پێویستە لە Admin--ەوە نوێ بکرێتەوە)
-let sliderData = [
-    {
-        title: "پشووی بەهاری",
-        desc: "کۆمیدیایەکی کوردی خۆش",
-        bgImage: "https://via.placeholder.com/1920x500?text=Kurdflix+Slide+1",
-        videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-    },
-    {
-        title: "خەونەکانی کوردستان",
-        desc: "درامایەکی کۆمەڵایەتی",
-        bgImage: "https://via.placeholder.com/1920x500?text=Kurdflix+Slide+2",
-        videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
-    }
-];
+// ==================== داتا (ئەمە لە Admin Panel--ەوە بەڕێوە دەچێت) ====================
 
-// داتای فیلمەکان
-let moviesData = [
+let allContent = JSON.parse(localStorage.getItem('kurdflix_content')) || [
     {
         id: 1,
-        title: "فیلمی یەکەم",
+        title: "ئاگرەکانی باکوور",
+        genre: "دراما",
         year: "2025",
-        poster: "https://via.placeholder.com/300x450?text=Film+1",
-        embedLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        description: "چیرۆکی خێزانێکی کوردی لە کاتی قەیراندا",
+        poster: "https://via.placeholder.com/300x450?text=Agarekani+Bakur",
+        embedLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        type: "film",
+        language: "kurdish",
+        dateAdded: "2026-05-01",
+        isSeries: false
     },
     {
         id: 2,
-        title: "فیلمی دووەم",
+        title: "خەونەکانی مەهاباد",
+        genre: "سەرکێشی",
         year: "2024",
-        poster: "https://via.placeholder.com/300x450?text=Film+2",
-        embedLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+        description: "گەشتێک بۆ ڕابردوو",
+        poster: "https://via.placeholder.com/300x450?text=Xewnekani+Mehabad",
+        embedLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        type: "series",
+        language: "kurdish",
+        dateAdded: "2026-05-05",
+        isSeries: true
+    },
+    {
+        id: 3,
+        title: "Diriliş Ertuğrul",
+        genre: "مێژوویی",
+        year: "2020",
+        description: "درامایەکی مێژوویی تورکی",
+        poster: "https://via.placeholder.com/300x450?text=Ertugrul",
+        embedLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        type: "series",
+        language: "turkish",
+        dateAdded: "2026-05-03",
+        isSeries: true
     }
 ];
 
-// سلایدەر بنیات بنێ
+// سلایدەر داتا
+let sliderItems = JSON.parse(localStorage.getItem('kurdflix_slider')) || [
+    {
+        title: "ئاگرەکانی باکوور",
+        genre: "دراما",
+        year: "2025",
+        description: "چیرۆکی خێزانێکی کوردی لە کاتی قەیراندا",
+        bgImage: "https://via.placeholder.com/1920x800?text=Slider+1",
+        videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    },
+    {
+        title: "Diriliş Ertuğrul",
+        genre: "مێژوویی",
+        year: "2020",
+        description: "درامایەکی مێژوویی تورکی",
+        bgImage: "https://via.placeholder.com/1920x800?text=Slider+2",
+        videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    }
+];
+
+function saveToLocal() {
+    localStorage.setItem('kurdflix_content', JSON.stringify(allContent));
+    localStorage.setItem('kurdflix_slider', JSON.stringify(sliderItems));
+}
+
+// ==================== هاوکارەکان ====================
+function openVideoModal(url, title) {
+    const modal = document.getElementById('videoModal');
+    const iframe = document.getElementById('videoIframe');
+    const titleEl = document.getElementById('videoTitle');
+    iframe.src = url;
+    titleEl.innerText = title;
+    modal.classList.add('active');
+}
+
+function closeVideoModal() {
+    const modal = document.getElementById('videoModal');
+    const iframe = document.getElementById('videoIframe');
+    iframe.src = '';
+    modal.classList.remove('active');
+}
+
+// کارتی فیلم دروست بکە
+function createMovieCard(item) {
+    const card = document.createElement('div');
+    card.className = 'movie-card';
+    card.innerHTML = `
+        <img src="${item.poster}" alt="${item.title}" class="movie-poster" onerror="this.src='https://via.placeholder.com/300x450?text=No+Image'">
+        <div class="movie-info">
+            <h3 class="movie-title">${item.title}</h3>
+            <p class="movie-year">${item.year}</p>
+        </div>
+    `;
+    card.addEventListener('click', () => openVideoModal(item.embedLink, item.title));
+    return card;
+}
+
+// بەپێی پۆلێن فلتەر بکە
+function filterByType(items, type) { // type: 'film', 'series'
+    return items.filter(i => i.type === type);
+}
+
+function filterByLanguage(items, lang) {
+    return items.filter(i => i.language === lang);
+}
+
+// ڕیزکردن بەپێی بەروار (نوێترین یەکەم)
+function sortByDate(items) {
+    return [...items].sort((a,b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+}
+
+// ==================== ڕێندرکردنی بەشەکان ====================
+function renderAllSections() {
+    const sorted = sortByDate(allContent);
+    const latest20 = sorted.slice(0,20);
+    const films = filterByType(sorted, 'film');
+    const series = filterByType(sorted, 'series');
+    
+    // 1. نوێترین بەرهەمەکان
+    renderGrid('latestAllGrid', latest20.slice(0,20));
+    // 2. نوێترین فیلمەکان
+    renderGrid('latestMoviesGrid', sortByDate(films).slice(0,20));
+    // 3. نوێترین زنجیرەکان
+    renderGrid('latestSeriesGrid', sortByDate(series).slice(0,20));
+    
+    // بەشەکانی زمان
+    renderGrid('kurdishGrid', sortByDate(filterByLanguage(sorted, 'kurdish')).slice(0,20));
+    renderGrid('turkishGrid', sortByDate(filterByLanguage(sorted, 'turkish')).slice(0,20));
+    renderGrid('arabicGrid', sortByDate(filterByLanguage(sorted, 'arabic')).slice(0,20));
+    renderGrid('persianGrid', sortByDate(filterByLanguage(sorted, 'persian')).slice(0,20));
+    renderGrid('koreanGrid', sortByDate(filterByLanguage(sorted, 'korean')).slice(0,20));
+    renderGrid('indianGrid', sortByDate(filterByLanguage(sorted, 'indian')).slice(0,20));
+    renderGrid('kidsGrid', sortByDate(filterByLanguage(sorted, 'kids')).slice(0,20));
+}
+
+function renderGrid(elementId, items) {
+    const grid = document.getElementById(elementId);
+    if(!grid) return;
+    grid.innerHTML = '';
+    items.forEach(item => {
+        grid.appendChild(createMovieCard(item));
+    });
+}
+
+// ==================== سلایدەر ====================
 let currentSlide = 0;
 const sliderContainer = document.getElementById('sliderContainer');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
 const dotsContainer = document.getElementById('sliderDots');
 
 function buildSlider() {
+    if(!sliderContainer) return;
     sliderContainer.innerHTML = '';
     dotsContainer.innerHTML = '';
-    sliderData.forEach((slide, index) => {
+    sliderItems.forEach((slide, idx) => {
         const slideDiv = document.createElement('div');
         slideDiv.className = 'slide';
-        slideDiv.style.backgroundImage = `linear-gradient(0deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3)), url('${slide.bgImage}')`;
+        slideDiv.style.backgroundImage = `url('${slide.bgImage}')`;
         slideDiv.innerHTML = `
             <div class="slide-content">
+                <div class="slide-genre">${slide.genre}</div>
+                <div class="slide-year">${slide.year}</div>
                 <h2 class="slide-title">${slide.title}</h2>
-                <p class="slide-desc">${slide.desc}</p>
-                <button class="watch-btn" data-video="${slide.videoLink}">بینەرە</button>
+                <p class="slide-desc">${slide.description}</p>
+                <div class="slide-buttons">
+                    <button class="watch-btn" data-video="${slide.videoLink}" data-title="${slide.title}">▶ سەیر کردن</button>
+                    <button class="watchlist-btn">❤️ + لیستی دڵخواز</button>
+                </div>
             </div>
         `;
         sliderContainer.appendChild(slideDiv);
         
         const dot = document.createElement('div');
         dot.className = 'dot';
-        dot.addEventListener('click', () => goToSlide(index));
+        dot.addEventListener('click', () => goToSlide(idx));
         dotsContainer.appendChild(dot);
     });
-    updateDots();
-    attachWatchButtons();
+    attachSliderEvents();
+    updateSliderDots();
+    startAutoSlide();
 }
 
-function updateDots() {
+function attachSliderEvents() {
+    document.querySelectorAll('.slide .watch-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const video = btn.getAttribute('data-video');
+            const title = btn.getAttribute('data-title');
+            openVideoModal(video, title);
+        });
+    });
+    document.querySelectorAll('.slide .watchlist-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            alert('زیادکرا بۆ لیستی دڵخواز (ئەمە لە وەشانی داهاتوودا کاردەکات)');
+        });
+    });
+}
+
+function updateSliderDots() {
     const dots = document.querySelectorAll('.dot');
     dots.forEach((dot, i) => {
         if(i === currentSlide) dot.classList.add('active');
         else dot.classList.remove('active');
     });
-    sliderContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+    if(sliderContainer) {
+        sliderContainer.style.transform = `translateX(-${currentSlide * 100}%)`;
+    }
 }
 
 function goToSlide(index) {
     currentSlide = index;
-    updateDots();
+    updateSliderDots();
 }
 
 function nextSlide() {
-    currentSlide = (currentSlide + 1) % sliderData.length;
-    updateDots();
+    if(sliderItems.length === 0) return;
+    currentSlide = (currentSlide + 1) % sliderItems.length;
+    updateSliderDots();
 }
 
-function prevSlide() {
-    currentSlide = (currentSlide - 1 + sliderData.length) % sliderData.length;
-    updateDots();
+let autoInterval;
+function startAutoSlide() {
+    if(autoInterval) clearInterval(autoInterval);
+    autoInterval = setInterval(nextSlide, 6000);
 }
 
-if(prevBtn && nextBtn) {
-    nextBtn.addEventListener('click', nextSlide);
-    prevBtn.addEventListener('click', prevSlide);
+// ==================== هێدەری گۆڕاو ====================
+window.addEventListener('scroll', () => {
+    const header = document.getElementById('mainHeader');
+    if(window.scrollY > 50) {
+        header.classList.add('scrolled');
+    } else {
+        header.classList.remove('scrolled');
+    }
+});
+
+// ==================== مێنوی مۆبایل ====================
+const menuIcon = document.getElementById('menuIcon');
+const menuPanel = document.getElementById('mobileMenuPanel');
+const menuOverlay = document.getElementById('menuOverlay');
+const closeMenu = document.getElementById('closeMenu');
+
+function openMenu() {
+    menuPanel.classList.add('open');
+    menuOverlay.classList.add('active');
 }
 
-// فیلمەکان نمایش بکە
-function renderMovies() {
-    const grid = document.getElementById('moviesGrid');
-    if(!grid) return;
-    grid.innerHTML = '';
-    moviesData.forEach(movie => {
-        const card = document.createElement('div');
-        card.className = 'movie-card';
-        card.innerHTML = `
-            <img src="${movie.poster}" alt="${movie.title}" class="movie-poster">
-            <div class="movie-info">
-                <h3 class="movie-title">${movie.title}</h3>
-                <p class="movie-year">${movie.year}</p>
-            </div>
-        `;
-        card.addEventListener('click', () => {
-            openVideoModal(movie.embedLink, movie.title);
+function closeMenuPanel() {
+    menuPanel.classList.remove('open');
+    menuOverlay.classList.remove('active');
+}
+
+if(menuIcon) menuIcon.addEventListener('click', openMenu);
+if(closeMenu) closeMenu.addEventListener('click', closeMenuPanel);
+if(menuOverlay) menuOverlay.addEventListener('click', closeMenuPanel);
+
+// ==================== مۆدالی گەڕان ====================
+const searchIcon = document.getElementById('searchIcon');
+const searchModal = document.getElementById('searchModal');
+const closeSearch = document.getElementById('closeSearch');
+const globalSearchInput = document.getElementById('globalSearchInput');
+const searchResultsDiv = document.getElementById('searchResults');
+
+function openSearchModal() {
+    searchModal.classList.add('active');
+    globalSearchInput.focus();
+}
+function closeSearchModal() {
+    searchModal.classList.remove('active');
+    searchResultsDiv.innerHTML = '';
+    globalSearchInput.value = '';
+}
+
+if(searchIcon) searchIcon.addEventListener('click', openSearchModal);
+if(closeSearch) closeSearch.addEventListener('click', closeSearchModal);
+
+globalSearchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    if(term.length < 2) {
+        searchResultsDiv.innerHTML = '';
+        return;
+    }
+    const filtered = allContent.filter(item => 
+        item.title.toLowerCase().includes(term) || 
+        item.genre.toLowerCase().includes(term)
+    );
+    searchResultsDiv.innerHTML = '';
+    filtered.slice(0,15).forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'search-result-item';
+        div.innerHTML = `${item.title} (${item.year}) - ${item.genre}`;
+        div.addEventListener('click', () => {
+            closeSearchModal();
+            openVideoModal(item.embedLink, item.title);
         });
-        grid.appendChild(card);
+        searchResultsDiv.appendChild(div);
     });
-}
+});
 
-// Modal بۆ بینینی ڤیدیۆ
-function openVideoModal(videoUrl, title) {
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = '0';
-    modal.style.left = '0';
-    modal.style.width = '100%';
-    modal.style.height = '100%';
-    modal.style.backgroundColor = 'rgba(0,0,0,0.95)';
-    modal.style.zIndex = '2000';
-    modal.style.display = 'flex';
-    modal.style.flexDirection = 'column';
-    modal.style.justifyContent = 'center';
-    modal.style.alignItems = 'center';
-    modal.innerHTML = `
-        <button style="position:absolute;top:20px;right:20px;background:#E50914;border:none;color:white;font-size:1.5rem;padding:0.5rem 1rem;cursor:pointer;border-radius:5px;">× داخستن</button>
-        <h3 style="color:white;margin-bottom:1rem;">${title}</h3>
-        <div style="width:90%;max-width:1000px;aspect-ratio:16/9;">
-            <iframe src="${videoUrl}" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>
-        </div>
-    `;
-    modal.querySelector('button').addEventListener('click', () => modal.remove());
-    document.body.appendChild(modal);
-}
-
-function attachWatchButtons() {
-    document.querySelectorAll('.watch-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const video = btn.getAttribute('data-video');
-            const title = btn.closest('.slide').querySelector('.slide-title').innerText;
-            openVideoModal(video, title);
-        });
+// بینینی هەموو
+document.querySelectorAll('.view-all').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const category = link.getAttribute('data-category');
+        alert(`پەڕەی تەواوی ${category} لە وەشانی داهاتوودا کاردەکات`);
     });
-}
+});
 
-// مێنیووی مۆبایل
-const mobileBtn = document.getElementById('mobileMenuBtn');
-const nav = document.querySelector('.nav');
-if(mobileBtn) {
-    mobileBtn.addEventListener('click', () => {
-        nav.classList.toggle('active');
-    });
-}
+// داخستنی مۆدالی ڤیدیۆ
+const closeVideoBtn = document.getElementById('closeVideoModal');
+if(closeVideoBtn) closeVideoBtn.addEventListener('click', closeVideoModal);
+document.getElementById('videoModal')?.addEventListener('click', (e) => {
+    if(e.target === document.getElementById('videoModal')) closeVideoModal();
+});
 
-// گەڕان
-const searchInput = document.getElementById('searchInput');
-if(searchInput) {
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = moviesData.filter(m => m.title.toLowerCase().includes(term));
-        const grid = document.getElementById('moviesGrid');
-        if(grid) {
-            grid.innerHTML = '';
-            filtered.forEach(movie => {
-                // هەمان کارتی سەرەوە زیاد بکە
-                const card = document.createElement('div');
-                card.className = 'movie-card';
-                card.innerHTML = `<img src="${movie.poster}" class="movie-poster"><div class="movie-info"><h3>${movie.title}</h3><p>${movie.year}</p></div>`;
-                card.addEventListener('click', () => openVideoModal(movie.embedLink, movie.title));
-                grid.appendChild(card);
-            });
-        }
-    });
-}
-
-// Load کردن
+// ==================== Load ====================
 buildSlider();
-renderMovies();
-setInterval(nextSlide, 5000);
+renderAllSections();
