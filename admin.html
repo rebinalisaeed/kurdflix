@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ckb">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Kurdflix</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .admin-container { max-width: 800px; margin: 100px auto; background: #1e1e1e; padding: 30px; border-radius: 12px; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 10px 0; background: #333; color: white; border: none; }
+        button { background: #e50914; color: white; padding: 12px 24px; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+<div class="admin-container">
+    <h1>✨ ئەدمین پەنێلی کوردفلێکس</h1>
+    <form id="adminForm">
+        <input type="text" id="title" placeholder="ناوی بەرهەم" required>
+        <select id="category">
+            <option>فیلم</option><option>زنجیرە</option><option>کوردی</option>
+            <option>تورکی</option><option>عەرەبی</option><option>فارسی</option>
+        </select>
+        <input type="text" id="year" placeholder="ساڵ">
+        <textarea id="desc" placeholder="کورتە"></textarea>
+        <input type="text" id="poster" placeholder="لینکی پۆستەر">
+        <input type="text" id="videoLink" placeholder="لینکی ڤیدیۆ">
+        <button type="submit">زیادکردنی بەرهەم</button>
+    </form>
+</div>
+<script src="js/data.js"></script>
+<script>
+    document.getElementById('adminForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const newMovie = {
+            id: Date.now(),
+            title: document.getElementById('title').value,
+            category: document.getElementById('category').value,
+            year: document.getElementById('year').value,
+            desc: document.getElementById('desc').value,
+            poster: document.getElementById('poster').value,
+            videoLink: document.getElementById('videoLink').value
+        };
+        movies.push(newMovie);
+        localStorage.setItem('kurdflix_movies', JSON.stringify(movies));
+        alert('بەرهەمەکە زیاد کرا!');
+        e.target.reset();
+    });
+</script>
+</body>
+</html>
