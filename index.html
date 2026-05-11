@@ -8,48 +8,129 @@
 </head>
 <body>
 
-    <!-- هێدەر -->
-    <header class="header">
-        <div class="container">
-            <div class="logo">
+    <!-- بانەری سەرەوە کە پاشە ڕەنگی دەگۆڕێت -->
+    <header class="header" id="mainHeader">
+        <div class="header-container">
+            <div class="menu-left">
+                <button class="menu-icon" id="menuIcon">☰</button>
+            </div>
+            <div class="logo-center">
                 <h1>Kurd<span>flix</span></h1>
             </div>
-            <nav class="nav">
-                <ul>
-                    <li><a href="#" class="active">سەرەکی</a></li>
-                    <li><a href="#">فیلمەکان</a></li>
-                    <li><a href="#">دراماکان</a></li>
-                    <li><a href="#">زنجیرەکان</a></li>
-                    <li><a href="admin.html" class="admin-link">Admin</a></li>
-                </ul>
-            </nav>
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="گەڕان بۆ فیلم یان دراما...">
-                <button>🔍</button>
+            <div class="search-right">
+                <button class="search-icon" id="searchIcon">🔍</button>
             </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         </div>
+        <!-- مێنوی مۆبایل -- پەنەری لای ڕاست -->
+        <div class="mobile-menu-panel" id="mobileMenuPanel">
+            <div class="panel-header">
+                <button class="close-menu" id="closeMenu">✕</button>
+                <div class="panel-logo">Kurd<span>flix</span></div>
+            </div>
+            <ul class="panel-nav">
+                <li><a href="#" class="active">سەرەکی</a></li>
+                <li><a href="#">فیلمەکان</a></li>
+                <li><a href="#">زنجیرەکان</a></li>
+                <li><a href="#">دراماکان</a></li>
+                <li><a href="admin.html">Admin Panel</a></li>
+            </ul>
+        </div>
+        <!-- ئۆڤەرلەی بۆ داخستنی پەنەر -->
+        <div class="menu-overlay" id="menuOverlay"></div>
     </header>
 
     <!-- سلایدەر (Hero Slider) -->
     <section class="hero-slider" id="heroSlider">
-        <div class="slider-container" id="sliderContainer">
-            <!-- سلایدەکان لە JS--ەوە زیاد دەکرێن -->
-        </div>
-        <button class="slider-btn prev" id="prevBtn">❮</button>
-        <button class="slider-btn next" id="nextBtn">❯</button>
+        <div class="slider-container" id="sliderContainer"></div>
+        <!-- دوگمەکانی سلایدەر لابراون -->
         <div class="slider-dots" id="sliderDots"></div>
     </section>
 
-    <!-- بەشی فیلمەکان -->
+    <!-- ناوەڕۆکی سەرەکی -->
     <main class="main-content">
         <div class="container">
-            <div class="section-header">
-                <h2>فیلمە هەرە نوێیەکان</h2>
-                <a href="#" class="view-all">هەموویان ببینە →</a>
+            <!-- نوێترین بەرهەمەکان -->
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>🔥 نوێترین بەرهەمەکان</h2>
+                    <a href="#" class="view-all" data-category="all">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="latestAllGrid"></div>
             </div>
-            <div class="movies-grid" id="moviesGrid">
-                <!-- کارتەکان لە JS--ەوە زیاد دەکرێن -->
+
+            <!-- نوێترین فیلمەکان -->
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>🎬 نوێترین فیلمەکان</h2>
+                    <a href="#" class="view-all" data-category="film">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="latestMoviesGrid"></div>
+            </div>
+
+            <!-- نوێترین زنجیرەکان -->
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>📺 نوێترین زنجیرەکان</h2>
+                    <a href="#" class="view-all" data-category="series">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="latestSeriesGrid"></div>
+            </div>
+
+            <!-- بەشە جیاوازەکان بەپێی زمان/ناوچە -->
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>🏴 نوێترین بەرهەمی کوردی</h2>
+                    <a href="#" class="view-all" data-category="kurdish">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="kurdishGrid"></div>
+            </div>
+
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>🇹🇷 نوێترین بەرهەمی تورکی</h2>
+                    <a href="#" class="view-all" data-category="turkish">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="turkishGrid"></div>
+            </div>
+
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>🇸🇦 نوێترین بەرهەمی عەرەبی</h2>
+                    <a href="#" class="view-all" data-category="arabic">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="arabicGrid"></div>
+            </div>
+
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>🇮🇷 نوێترین بەرهەمی فارسی</h2>
+                    <a href="#" class="view-all" data-category="persian">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="persianGrid"></div>
+            </div>
+
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>🇰🇷 نوێترین بەرهەمی کۆری</h2>
+                    <a href="#" class="view-all" data-category="korean">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="koreanGrid"></div>
+            </div>
+
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>🇮🇳 نوێترین بەرهەمی هیندی</h2>
+                    <a href="#" class="view-all" data-category="indian">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="indianGrid"></div>
+            </div>
+
+            <div class="section-wrapper">
+                <div class="section-header">
+                    <h2>🧸 نوێترین بەرهەمی منداڵان</h2>
+                    <a href="#" class="view-all" data-category="kids">بینینی هەموو →</a>
+                </div>
+                <div class="movies-grid" id="kidsGrid"></div>
             </div>
         </div>
     </main>
@@ -57,9 +138,33 @@
     <!-- فووتەر -->
     <footer class="footer">
         <div class="container">
-            <p>© 2026 Kurdflix - هەموو مافەکان پارێزراون</p>
+            <div class="footer-logo">
+                <h2>Kurd<span>flix</span></h2>
+            </div>
+            <p class="footer-tagline">سەکۆیەک بۆ گەیاندنی نوێترین بەرهەمەکان</p>
+            <p class="copyright">© 2026 Kurdflix - هەموو مافەکان پارێزراون</p>
         </div>
     </footer>
+
+    <!-- مۆدالی گەڕان -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-modal-content">
+            <input type="text" id="globalSearchInput" placeholder="گەڕان بۆ فیلم یان دراما...">
+            <div id="searchResults"></div>
+            <button class="close-search" id="closeSearch">داخستن</button>
+        </div>
+    </div>
+
+    <!-- مۆدالی ڤیدیۆ -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-modal-content">
+            <button class="close-video" id="closeVideoModal">✕</button>
+            <h3 id="videoTitle"></h3>
+            <div class="video-wrapper">
+                <iframe id="videoIframe" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
