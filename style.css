@@ -289,11 +289,11 @@ input:checked + .slider:before {
 .hero-carousel {
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 75vh;
+    min-height: 450px;
     overflow: hidden;
     margin-top: 0;
     background-color: #000;
-    touch-action: pan-y pinch-zoom;
 }
 
 .carousel-container {
@@ -326,21 +326,20 @@ input:checked + .slider:before {
     object-position: center;
 }
 
-/* ناوەڕۆکی سلاید */
 .carousel-content {
     position: absolute;
-    bottom: 5%;
+    bottom: 0;
     left: 0;
     right: 0;
     background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
-    padding: 1.5rem 2rem 2rem 2rem;
+    padding: 2rem 2rem 2.5rem 2rem;
     text-align: center;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
+    gap: 0.5rem;
     z-index: 10;
     pointer-events: none;
 }
@@ -367,25 +366,28 @@ input:checked + .slider:before {
 
 .genre-tag {
     background-color: rgba(255,255,255,0.2);
-    padding: 0.2rem 0.7rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
+    padding: 0.3rem 0.9rem;
+    border-radius: 25px;
+    font-size: 0.8rem;
     font-weight: normal;
+    backdrop-filter: blur(4px);
 }
 
 .carousel-year {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     opacity: 0.9;
-    background-color: rgba(0,0,0,0.5);
-    padding: 0.2rem 0.7rem;
-    border-radius: 20px;
+    background-color: rgba(0,0,0,0.6);
+    padding: 0.3rem 0.9rem;
+    border-radius: 25px;
+    backdrop-filter: blur(4px);
 }
 
 .carousel-desc {
     font-size: 0.9rem;
-    max-width: 80%;
+    max-width: 70%;
     margin: 0.25rem 0;
     line-height: 1.5;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
 .carousel-buttons {
@@ -395,9 +397,9 @@ input:checked + .slider:before {
 }
 
 .carousel-btn {
-    padding: 0.6rem 1.5rem;
+    padding: 0.6rem 1.8rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 40px;
     cursor: pointer;
     font-size: 0.9rem;
     font-family: 'NRT', sans-serif;
@@ -413,6 +415,7 @@ input:checked + .slider:before {
 .carousel-btn.info {
     background-color: rgba(255,255,255,0.2);
     color: white;
+    backdrop-filter: blur(4px);
 }
 
 .carousel-btn.trailer:hover, .carousel-btn.info:hover {
@@ -421,7 +424,7 @@ input:checked + .slider:before {
 
 .carousel-dots {
     position: absolute;
-    bottom: 15px;
+    bottom: 20px;
     left: 0;
     right: 0;
     display: flex;
@@ -813,12 +816,6 @@ footer {
 }
 
 /* ========== Responsive ========== */
-@media (max-width: 1024px) {
-    .hero-carousel {
-        height: 100vh;
-    }
-}
-
 @media (max-width: 768px) {
     .navbar {
         padding: 0.5rem 1rem;
@@ -840,34 +837,37 @@ footer {
     }
     
     .hero-carousel {
-        height: 100vh;
+        height: 60vh;
+        min-height: 400px;
     }
     
     .carousel-content {
-        padding: 1rem 1rem 1.8rem 1rem;
-        gap: 0.8rem;
-        bottom: 5%;
+        padding: 1rem 1rem 1.5rem 1rem;
+        gap: 0.5rem;
     }
     
     .genre-tag {
-        font-size: 1rem;
-        padding: 0.3rem 0.9rem;
+        font-size: 0.7rem;
+        padding: 0.2rem 0.7rem;
     }
     
     .carousel-year {
-        font-size: 1rem;
-        padding: 0.3rem 0.9rem;
+        font-size: 0.7rem;
+        padding: 0.2rem 0.7rem;
     }
     
     .carousel-desc {
-        font-size: 1rem;
-        max-width: 95%;
-        margin: 0.4rem 0;
+        font-size: 0.75rem;
+        max-width: 90%;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     
     .carousel-btn {
-        padding: 0.5rem 1.2rem;
-        font-size: 0.9rem;
+        padding: 0.4rem 1.2rem;
+        font-size: 0.8rem;
     }
     
     .section-header h2 a {
@@ -901,35 +901,25 @@ footer {
     }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 769px) and (max-width: 1024px) {
     .hero-carousel {
-        height: 100vh;
-    }
-    
-    .carousel-content {
-        padding: 0.8rem 0.8rem 1.5rem 0.8rem;
-        gap: 0.6rem;
-        bottom: 5%;
-    }
-    
-    .genre-tag {
-        font-size: 0.9rem;
-        padding: 0.25rem 0.8rem;
-    }
-    
-    .carousel-year {
-        font-size: 0.9rem;
-        padding: 0.25rem 0.8rem;
+        height: 65vh;
+        min-height: 480px;
     }
     
     .carousel-desc {
-        font-size: 0.9rem;
-        margin: 0.3rem 0;
+        max-width: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-carousel {
+        height: 60vh;
+        min-height: 350px;
     }
     
-    .carousel-btn {
-        padding: 0.4rem 1rem;
-        font-size: 0.85rem;
+    .carousel-desc {
+        font-size: 0.7rem;
     }
     
     .movie-card {
