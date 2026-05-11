@@ -4,7 +4,7 @@
             "id": 1,
             "title": "ئەفسانەی کوێستان",
             "year": "2024",
-            "poster": "assets/poster1.jpg",
+            "poster": "assets/posters/poster1.jpg",
             "type": "film",
             "lang": "kurdish",
             "categories": ["kurdish-film", "all-films"],
@@ -17,7 +17,7 @@
             "id": 2,
             "title": "قەڵای خەونەکان",
             "year": "2023",
-            "poster": "assets/poster2.jpg",
+            "poster": "assets/posters/poster2.jpg",
             "type": "series",
             "lang": "turkish",
             "categories": ["turkish-series", "all-series"],
@@ -34,9 +34,9 @@
             "year": "2026",
             "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان، بەو هیوایەی پلانی ئەو دزییە چەندین ملیۆن دۆلارییەیان پووچەڵ بکاتەوە.",
             "images": {
-                "mobile": "https://i.ibb.co/KkkXHS1/1080x1920-CAN-Style-C-V1-Crime101-RGB.jpg",
-                "tablet": "https://i.ibb.co/KkkXHS1/1080x1920-CAN-Style-C-V1-Crime101-RGB.jpg",
-                "desktop": "https://i.ibb.co/KkkXHS1/1080x1920-CAN-Style-C-V1-Crime101-RGB.jpg"
+                "mobile": "assets/slides/slide_mobile.jpg",
+                "tablet": "assets/slides/slide_tablet.jpg",
+                "desktop": "assets/slides/slide_desktop.jpg"
             },
             "movieId": 1,
             "genres": ["تاوانکاری", "هەستبزوێن", "دراما"]
@@ -47,9 +47,9 @@
             "year": "2026",
             "description": "دەستەیەک لە ئیسپانیا گروپێکی دروست دەکەن و هەڵدەکورنە سەر بانکی نێودەوڵەتی ئیسپانیا",
             "images": {
-                "mobile": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp",
-                "tablet": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp",
-                "desktop": "https://i.ibb.co/Ps1Y37yD/1080x1920-money-heist-berlin-with-gun-ulw4razikbbvvx1y.webp"
+                "mobile": "assets/slides/slide2_mobile.jpg",
+                "tablet": "assets/slides/slide2_tablet.jpg",
+                "desktop": "assets/slides/slide2_desktop.jpg"
             },
             "movieId": 2,
             "genres": ["تاوانکاری", "سەرکێشی", "دراما", "هەستبزوێن"]
