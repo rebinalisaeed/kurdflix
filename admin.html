@@ -1,127 +1,365 @@
 <!DOCTYPE html>
-<html lang="ckb">
+<html lang="ckb" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Kurdflix</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>KurdFlix - پەڕەی بەڕێوەبردنی کۆنتێنت</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         .admin-container {
-            max-width: 900px;
-            margin: 100px auto;
-            background: #1e1e1e;
-            padding: 30px;
-            border-radius: 16px;
-            direction: rtl;
+            max-width: 1400px;
+            margin: 100px auto 2rem auto;
+            padding: 0 1rem;
         }
-        h1, h2, h3 {
-            font-family: 'NRT-Bold', sans-serif;
-            color: #e50914;
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
-        .admin-form input, .admin-form select, .admin-form textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: #2a2a2a;
-            color: white;
-            border: 1px solid #444;
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-secondary);
             border-radius: 8px;
-            font-family: inherit;
         }
-        .admin-form button {
-            background: #e50914;
+        .tab-btn.active {
+            background-color: var(--accent);
             color: white;
-            padding: 12px 24px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            padding: 1rem;
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .checkbox-item input {
+            width: auto;
+        }
+        .btn {
+            padding: 0.8rem 1.5rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 1rem;
             font-weight: bold;
-            margin-top: 10px;
         }
-        .toolbar {
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+        .btn-secondary {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        .btn-warning {
+            background-color: #ffc107;
+            color: #1A1A1A;
+        }
+        .items-list {
+            margin-top: 2rem;
+        }
+        .item-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
             display: flex;
-            gap: 15px;
-            margin: 20px 0;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .item-info {
+            flex: 1;
+        }
+        .item-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .item-meta {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .search-filter {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
             flex-wrap: wrap;
         }
-        .toolbar button {
-            background: #333;
-            padding: 8px 16px;
+        .search-filter input, .search-filter select {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
         }
-        #movieListAdmin {
-            margin-top: 30px;
-            max-height: 500px;
-            overflow-y: auto;
+        .success-msg, .error-msg {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: fadeOut 3s ease forwards;
         }
-        hr {
-            border-color: #444;
-            margin: 20px 0;
+        .success-msg { background-color: #28a745; color: white; }
+        .error-msg { background-color: #dc3545; color: white; }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
         }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 20px;
-            color: #54b9d4;
-            text-decoration: none;
+        @media (max-width: 768px) {
+            .admin-container { margin-top: 80px; }
+            .form-row, .form-row-3 { grid-template-columns: 1fr; }
+            .item-card { flex-direction: column; text-align: center; }
+        }
+        
+        #adminAuth {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-primary);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #adminAuth .auth-box {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        #adminAuth .auth-box input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        .site-data-section {
+            background-color: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .image-input-group {
+            background-color: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        .image-input-group h4 {
+            margin-bottom: 0.8rem;
+            color: var(--accent);
         }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
-<div class="admin-container">
-    <a href="index.html" class="back-link">← گەڕانەوە بۆ پەڕەی سەرەکی</a>
-    
-    <h1>✨ ئەدمین پەنێلی کوردفلێکس</h1>
-    <p>لێرە دەتوانی بەرهەمەکان زیاد، سڕ و دەستکاری بکەیت</p>
-    
-    <hr>
-    
-    <h2>➕ زیادکردنی بەرهەمی نوێ</h2>
-    <form id="adminForm" class="admin-form">
-        <input type="text" id="title" placeholder="ناوی بەرهەم (پێویست)" required>
-        
-        <select id="category">
-            <option value="فیلم">فیلم</option>
-            <option value="زنجیرە">زنجیرە</option>
-            <option value="کوردی">کوردی</option>
-            <option value="تورکی">تورکی</option>
-            <option value="عەرەبی">عەرەبی</option>
-            <option value="فارسی">فارسی</option>
-            <option value="کۆری">کۆری</option>
-            <option value="هیندی">هیندی</option>
-            <option value="منداڵان">منداڵان</option>
-        </select>
-        
-        <select id="genre">
-            <option>تاوانکاری</option><option>زانستی خەیاڵی</option><option>سەرکێشی</option>
-            <option>ئاکشن</option><option>کۆمیدی</option><option>ئەنیمەیشن</option>
-            <option>دراما</option><option>ڕۆمانسی</option><option>ترسناک</option>
-            <option>جەنگ</option><option>مێژوویی</option>
-        </select>
-        
-        <select id="type">
-            <option value="movie">فیلم</option>
-            <option value="series">زنجیرە</option>
-        </select>
-        
-        <input type="text" id="year" placeholder="ساڵی دەرچوون (وێنە: 2024)">
-        <textarea id="desc" rows="3" placeholder="کورتەیەک لەسەر بەرهەمەکە..."></textarea>
-        <input type="url" id="poster" placeholder="لینکی وێنەی پۆستەر (پێویست)">
-        <input type="url" id="videoLink" placeholder="لینکی ڤیدیۆ (گووگڵ درایڤ / یوتیوب)">
-        
-        <button type="submit">📀 زیادکردنی بەرهەم</button>
-    </form>
-    
-    <hr>
-    
-    <div class="toolbar">
-        <button id="exportBtn" style="background:#28a745;">📥 دابەزاندنی بەکئەپ (JSON)</button>
-        <label for="importInput" style="background:#17a2b8; padding:8px 16px; border-radius:8px; cursor:pointer;">📤 هاوردەکردنی فایل</label>
-        <input type="file" id="importInput" accept=".json" style="display:none;">
+    <div id="adminAuth">
+        <div class="auth-box">
+            <h2><i class="fas fa-lock"></i> پەڕەی بەڕێوەبردن</h2>
+            <p>تکایە ناوی بەکارهێنەر و پاسیۆردەکە داخل بکە</p>
+            <input type="text" id="adminUsername" placeholder="ناوی بەکارهێنەر">
+            <input type="password" id="adminPassword" placeholder="پاسیۆرد">
+            <button id="authSubmitBtn" class="btn btn-primary" style="width:100%; margin-top:0.5rem;">چوونە ژوورەوە</button>
+            <p id="authError" style="color:#E50914; margin-top:1rem; display:none;">ناوی بەکارهێنەر یان پاسیۆرد هەڵەیە!</p>
+        </div>
     </div>
-    
-    <div id="movieListAdmin"></div>
-</div>
 
-<script src="js/admin.js"></script>
+    <div id="adminContent" style="display: none;">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="logo">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
+                        <defs><path id="arcPath" d="M 10,168 Q 450,100 890,168" /></defs>
+                        <text font-family="'Arial Black'" font-size="148" font-weight="900" font-style="italic" fill="#E50914" letter-spacing="-3">
+                            <textPath href="#arcPath" startOffset="50%" text-anchor="middle">KURDFLIX</textPath>
+                        </text>
+                    </svg>
+                </div>
+                <div class="nav-actions">
+                    <a href="index.html" style="color: var(--text-primary);"><i class="fas fa-home"></i> گەڕانەوە</a>
+                    <div class="theme-toggle">
+                        <i class="fas fa-sun"></i>
+                        <label class="switch"><input type="checkbox" id="theme-switch"><span class="slider round"></span></label>
+                        <i class="fas fa-moon"></i>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <div class="admin-container">
+            <div class="admin-header">
+                <h1><i class="fas fa-cog"></i> پەڕەی بەڕێوەبردنی کۆنتێنت</h1>
+                <button id="saveAllBtn" class="btn btn-success"><i class="fas fa-save"></i> پاشەکەوتی هەموو گۆڕانکارییەکان</button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="tab-btn active" data-tab="movies-tab">فیلم و زنجیرەکان</button>
+                <button class="tab-btn" data-tab="carousel-tab">سلایدەکان</button>
+                <button class="tab-btn" data-tab="site-tab">داتای سایت</button>
+                <button class="tab-btn" data-tab="stats-tab">ئامارەکان</button>
+            </div>
+            
+            <div id="movies-tab" class="tab-content active">
+                <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h3><i class="fas fa-plus-circle"></i> زیادکردنی فیلم/زنجیرەی نوێ</h3>
+                    <form id="addMovieForm">
+                        <div class="form-row">
+                            <div class="form-group"><label>ناونیشان *</label><input type="text" id="movieTitle" required placeholder="ناوی فیلم یان زنجیرە..."></div>
+                            <div class="form-group"><label>ساڵ *</label><input type="text" id="movieYear" required placeholder="2024"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>جۆر *</label><select id="movieType"><option value="film">فیلم</option><option value="series">زنجیرە</option></select></div>
+                            <div class="form-group"><label>زمان / وڵات *</label><select id="movieLang"><option value="kurdish">کوردی</option><option value="turkish">تورکی</option><option value="persian">فارسی</option><option value="arabic">عەرەبی</option><option value="english">ئینگلیزی</option><option value="other">دیکە</option></select></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>لینکی پۆستەر</label><input type="url" id="moviePoster" placeholder="https://example.com/poster.jpg"></div>
+                            <div class="form-group"><label>لینکی ڤیدیۆ</label><input type="url" id="movieVideoUrl" placeholder="https://vidmoly.com/e/..."></div>
+                        </div>
+                        <div class="form-group"><label>لینکی ترایلەر</label><input type="url" id="movieTrailerUrl" placeholder="https://www.youtube.com/embed/..."></div>
+                        <div class="form-group"><label>کورتە</label><textarea id="movieDescription" rows="3"></textarea></div>
+                        <div class="form-group"><label>چەشنەکان</label><div class="checkbox-group" id="genresCheckbox"></div></div>
+                        <div class="form-group"><label>پۆلە تایبەتییەکان</label><div class="checkbox-group" id="categoriesCheckbox"><label class="checkbox-item"><input type="checkbox" value="kids"> بەرهەمی منداڵان</label><label class="checkbox-item"><input type="checkbox" value="top250"> Top 250</label></div></div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> زیادکردن</button>
+                    </form>
+                </div>
+                
+                <div>
+                    <h3><i class="fas fa-list"></i> لیستی فیلم و زنجیرەکان</h3>
+                    <div class="search-filter"><input type="text" id="searchMovies" placeholder="گەڕان بە ناو..."><select id="filterType"><option value="all">هەموو</option><option value="film">فیلم</option><option value="series">زنجیرە</option></select></div>
+                    <div id="moviesList" class="items-list"></div>
+                </div>
+            </div>
+            
+            <div id="carousel-tab" class="tab-content">
+                <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h3><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
+                    <form id="addSlideForm">
+                        <div class="form-row">
+                            <div class="form-group"><label>ناونیشان *</label><input type="text" id="slideTitle" required></div>
+                            <div class="form-group"><label>ساڵ</label><input type="text" id="slideYear" placeholder="2024"></div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>پەیوەندی بە فیلم (ID)</label><select id="slideMovieId"><option value="">-- هەڵبژێرە --</option></select></div>
+                            <div class="form-group"><label>چەشن (Category)</label><input type="text" id="slideCategory" placeholder="فیلمی کوردی، ..."></div>
+                        </div>
+                        <div class="form-group">
+                            <label>وێنەکانی سلاید</label>
+                            <div class="image-input-group"><h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل</h4><input type="url" id="slideImageMobile" placeholder="1920x800"><small>قەبارە: 1920x800</small></div>
+                            <div class="image-input-group"><h4><i class="fas fa-tablet-alt"></i> وێنەی تابلێت</h4><input type="url" id="slideImageTablet" placeholder="1920x800"><small>قەبارە: 1920x800</small></div>
+                            <div class="image-input-group"><h4><i class="fas fa-desktop"></i> وێنەی کۆمپیوتەر</h4><input type="url" id="slideImageDesktop" placeholder="1920x800"><small>قەبارە: 1920x800</small></div>
+                        </div>
+                        <div class="form-group"><label>کورتە</label><textarea id="slideDescription" rows="2"></textarea></div>
+                        <div class="form-group"><label>چەشنەکان</label><div class="checkbox-group" id="slideGenresCheckbox"></div></div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> زیادکردنی سلاید</button>
+                    </form>
+                </div>
+                <div><h3><i class="fas fa-images"></i> لیستی سلایدەکان</h3><div id="slidesList" class="items-list"></div></div>
+            </div>
+            
+            <div id="site-tab" class="tab-content">
+                <div class="site-data-section"><h3>دەربارە</h3><textarea id="aboutTextEdit" rows="4"></textarea></div>
+                <div class="site-data-section"><h3>کۆپی‌ڕایت</h3><input type="text" id="copyrightTextEdit" placeholder="kurdflix.com 2026 ©"></div>
+                <div class="site-data-section"><h3>ژمارەی بەرهەم لە هەر پەڕەیەک</h3><input type="number" id="itemsPerPage" min="5" max="50" value="20"></div>
+            </div>
+            
+            <div id="stats-tab" class="tab-content">
+                <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px;">
+                    <h3><i class="fas fa-chart-bar"></i> ئامارەکان</h3>
+                    <div id="statsInfo"></div>
+                    <hr>
+                    <button id="exportDataBtn" class="btn btn-secondary"><i class="fas fa-download"></i> دابەزاندنی data.json</button>
+                    <label for="importFile" class="btn btn-secondary" style="display: inline-block; cursor: pointer;"><i class="fas fa-upload"></i> هێنانی data.json</label>
+                    <input type="file" id="importFile" style="display: none;" accept=".json">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
 </body>
 </html>
