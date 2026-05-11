@@ -2,46 +2,179 @@
 <html lang="ckb">
 <head>
     <meta charset="UTF-8">
-    <title>Kurdflix - پەڕەی بەڕێوەبەری</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kurdflix - Admin Panel</title>
     <link rel="stylesheet" href="admin-style.css">
 </head>
 <body>
     <div class="admin-container">
-        <h1>پەڕەی بەڕێوەبەری <span>Kurdflix</span></h1>
+        <div class="admin-header">
+            <a href="index.html" class="back-home">← گەڕانەوە بۆ سەرەکی</a>
+            <h1>🎬 Kurdflix <span>Admin Panel</span></h1>
+            <p>بەڕێوەبردنی فیلم، زنجیرە و سلایدەر</p>
+        </div>
         
         <div class="admin-tabs">
-            <button class="tab-btn active" data-tab="movies">فیلمەکان</button>
-            <button class="tab-btn" data-tab="slider">سلایدەر</button>
+            <button class="tab-btn active" data-tab="movies">📽 فیلم و زنجیرەکان</button>
+            <button class="tab-btn" data-tab="slider">🎞 سلایدەر</button>
         </div>
 
-        <!-- بەشی فیلمەکان -->
+        <!-- ==================== بەشی بەرهەمەکان ==================== -->
         <div id="moviesTab" class="tab-content active">
-            <h2>بەڕێوەبردنی فیلم و دراما</h2>
-            <form id="movieForm">
-                <input type="hidden" id="movieId">
-                <input type="text" id="movieTitle" placeholder="ناوی فیلم" required>
-                <input type="text" id="movieYear" placeholder="ساڵ">
-                <input type="url" id="moviePoster" placeholder="لینکی پۆستەر" required>
-                <input type="url" id="movieEmbed" placeholder="لینکی ڤیدیۆ (YouTube, Dailymotion...)" required>
-                <button type="submit">زیادکردن/نوێکردنەوە</button>
+            <h2>➕ زیادکردن / دەستکاری بەرهەم</h2>
+            <form id="contentForm" class="admin-form">
+                <input type="hidden" id="contentId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ناوی بەرهەم</label>
+                        <input type="text" id="contentTitle" placeholder="ناوی فیلم یان زنجیرە" required>
+                    </div>
+                    <div class="form-group">
+                        <label>چەشن</label>
+                        <select id="contentGenre" required>
+                            <option value="تاوانکاری">تاوانکاری</option>
+                            <option value="زانستی خەیاڵی">زانستی خەیاڵی</option>
+                            <option value="سەرکێشی">سەرکێشی</option>
+                            <option value="ئاکشن">ئاکشن</option>
+                            <option value="کۆمیدی">کۆمیدی</option>
+                            <option value="ئەنیمەیشن">ئەنیمەیشن</option>
+                            <option value="موزیکی">موزیکی</option>
+                            <option value="بایۆگرافی">بایۆگرافی</option>
+                            <option value="دۆکیۆمێنتاری">دۆکیۆمێنتاری</option>
+                            <option value="رۆژئاوایی">رۆژئاوایی</option>
+                            <option value="وەرزشی">وەرزشی</option>
+                            <option value="سایکۆلۆژی">سایکۆلۆژی</option>
+                            <option value="کۆمەڵایەتی">کۆمەڵایەتی</option>
+                            <option value="دراما" selected>دراما</option>
+                            <option value="هەستبزوێن">هەستبزوێن</option>
+                            <option value="نهێنی ئامێز">نهێنی ئامێز</option>
+                            <option value="خەیاڵی">خەیاڵی</option>
+                            <option value="خێزانی">خێزانی</option>
+                            <option value="ڕۆمانسی">ڕۆمانسی</option>
+                            <option value="مێژوویی">مێژوویی</option>
+                            <option value="ترسناک">ترسناک</option>
+                            <option value="جەنگ">جەنگ</option>
+                            <option value="پزیشکی">پزیشکی</option>
+                            <option value="کورتە">کورتە</option>
+                            <option value="تراژیدی">تراژیدی</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>ساڵ</label>
+                        <input type="text" id="contentYear" placeholder="٢٠٢٥" required>
+                    </div>
+                    <div class="form-group">
+                        <label>بەرواری زیادکردن</label>
+                        <input type="date" id="contentDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>کورتە</label>
+                    <textarea id="contentDesc" placeholder="کورتەیەک لەسەر بەرهەمەکە..." rows="3"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>لینکی پۆستەر</label>
+                        <input type="url" id="contentPoster" placeholder="https://..." required>
+                    </div>
+                    <div class="form-group">
+                        <label>لینکی ڤیدیۆ</label>
+                        <input type="url" id="contentEmbed" placeholder="https://... (iframe link)" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>جۆری بەرهەم</label>
+                        <select id="contentType" required>
+                            <option value="film">فیلم</option>
+                            <option value="series">زنجیرە / دراما</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>زمان / ناوچە</label>
+                        <select id="contentLanguage" required>
+                            <option value="kurdish">کوردی</option>
+                            <option value="turkish">تورکی</option>
+                            <option value="arabic">عەرەبی</option>
+                            <option value="persian">فارسی</option>
+                            <option value="korean">کۆری</option>
+                            <option value="indian">هیندی</option>
+                            <option value="kids">منداڵان</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">💾 پاشەکەوت کردن</button>
             </form>
-            <div id="moviesList"></div>
+
+            <div class="content-list-header">
+                <h3>📋 لیستی بەرهەمەکان</h3>
+                <button id="clearAllContent" class="danger-btn">🗑 سڕینەوەی هەموو</button>
+            </div>
+            <div id="contentList" class="content-list"></div>
         </div>
 
-        <!-- بەشی سلایدەر -->
+        <!-- ==================== بەشی سلایدەر ==================== -->
         <div id="sliderTab" class="tab-content">
-            <h2>بەڕێوەبردنی سلایدەر</h2>
-            <form id="sliderForm">
+            <h2>➕ زیادکردن / دەستکاری سلایدەر</h2>
+            <form id="sliderFormAdmin" class="admin-form">
                 <input type="hidden" id="sliderIndex">
-                <input type="text" id="sliderTitle" placeholder="ناونیشانی سلاید" required>
-                <input type="text" id="sliderDesc" placeholder="تێبینی کورت">
-                <input type="url" id="sliderImage" placeholder="لینکی وێنەی پاشبنەما" required>
-                <input type="url" id="sliderVideo" placeholder="لینکی ڤیدیۆ" required>
-                <button type="submit">زیادکردن/نوێکردنەوە</button>
+                
+                <div class="form-group">
+                    <label>ناونیشان</label>
+                    <input type="text" id="sliderTitle" placeholder="ناوی بەرهەم بۆ سلاید" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>چەشن</label>
+                        <select id="sliderGenre">
+                            <option value="دراما">دراما</option>
+                            <option value="ئاکشن">ئاکشن</option>
+                            <option value="کۆمیدی">کۆمیدی</option>
+                            <option value="سەرکێشی">سەرکێشی</option>
+                            <option value="مێژوویی">مێژوویی</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ساڵ</label>
+                        <input type="text" id="sliderYear" placeholder="٢٠٢٥">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>تێبینی</label>
+                    <textarea id="sliderDesc" placeholder="کورتەیەک بۆ سلاید" rows="2"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>لینکی وێنەی سلاید (1920x800)</label>
+                    <input type="url" id="sliderImage" placeholder="https://..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>لینکی ڤیدیۆ</label>
+                    <input type="url" id="sliderVideo" placeholder="https://..." required>
+                </div>
+
+                <button type="submit" class="submit-btn">💾 پاشەکەوت / نوێکردنەوە</button>
             </form>
-            <div id="sliderList"></div>
+
+            <div class="content-list-header">
+                <h3>📸 لیستی سلایدەر</h3>
+                <button id="clearAllSliders" class="danger-btn">🗑 سڕینەوەی هەموو</button>
+            </div>
+            <div id="sliderListAdmin" class="content-list"></div>
         </div>
     </div>
+
     <script src="admin-script.js"></script>
 </body>
 </html>
