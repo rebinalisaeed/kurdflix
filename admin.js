@@ -77,7 +77,6 @@ async function loadAdminData() {
     }
 }
 
-// ========== چەشنەکان ==========
 function renderGenresCheckbox() {
     const container = document.getElementById('genresCheckbox');
     if (container) {
@@ -113,7 +112,6 @@ function setSelectedCategories(categories) {
     });
 }
 
-// ========== زیادکردن و دەستکاری فیلم ==========
 document.getElementById('addMovieForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const movieData = {
@@ -217,7 +215,6 @@ function renderMoviesList() {
     });
 }
 
-// ========== سلایدەکان ==========
 document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const slideData = {
@@ -325,7 +322,6 @@ function updateSlideMovieSelect() {
     });
 }
 
-// ========== داتای سایت ==========
 function loadSiteDataToForm() {
     document.getElementById('aboutTextEdit').value = currentData.siteData?.aboutText || '';
     document.getElementById('copyrightTextEdit').value = currentData.siteData?.copyrightText || 'kurdflix.com 2026 ©';
@@ -339,7 +335,6 @@ function saveSiteData() {
     currentData.siteData.itemsPerPage = parseInt(document.getElementById('itemsPerPage')?.value) || 20;
 }
 
-// ========== پاشەکەوتکردن ==========
 async function saveAllData() {
     saveSiteData();
     try {
@@ -403,7 +398,6 @@ function showMessage(msg, type) {
     setTimeout(() => div.remove(), 3000);
 }
 
-// ========== فیلتەر و تابات و Initialize ==========
 document.getElementById('searchMovies')?.addEventListener('input', () => renderMoviesList());
 document.getElementById('filterType')?.addEventListener('change', () => renderMoviesList());
 
