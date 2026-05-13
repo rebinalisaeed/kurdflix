@@ -91,7 +91,6 @@
     height: 100%;
     object-fit: contain;
     display: block;
-    /* Prevent zoom on video itself */
     transform: scale(1);
   }
 
@@ -205,7 +204,7 @@
     pointer-events: none;
   }
 
-  /* Progress Bar */
+  /* Progress Bar - Ultra precise */
   .progress-area {
     position: relative;
     height: 32px;
@@ -222,7 +221,7 @@
     height: 5px;
     background: var(--bg-progress-track);
     border-radius: 3px;
-    overflow: hidden;
+    overflow: visible;
     transition: height 0.15s;
   }
   .progress-area:hover .progress-track { height: 7px; }
@@ -284,7 +283,19 @@
     align-items: center;
     gap: 12px;
     flex-wrap: nowrap;
-    justify-content: flex-end;
+    justify-content: space-between;
+  }
+
+  .left-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .right-controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
 
   .ctrl-btn {
@@ -304,21 +315,22 @@
   .ctrl-btn:hover { background: var(--control-hover); }
   .ctrl-btn:active { transform: scale(0.95); }
   
-  /* Desktop icons 2x larger */
-  @media (min-width: 769px) {
-    .ctrl-btn svg { width: 44px !important; height: 44px !important; }
-    .ctrl-btn { padding: 12px; }
-    .time-display { font-size: 18px; }
-  }
-  
   .ctrl-btn svg { width: 32px; height: 32px; fill: currentColor; }
+
+  /* Desktop specific */
+  @media (min-width: 769px) {
+    .ctrl-btn svg { width: 40px !important; height: 40px !important; }
+    .ctrl-btn { padding: 12px; }
+    .time-display { font-size: 24px !important; } /* 6px larger than before (18->24) */
+    .left-controls { gap: 16px; }
+    .right-controls { gap: 16px; }
+  }
 
   /* Volume Group */
   .volume-group {
     display: flex;
     align-items: center;
     gap: 0;
-    margin-right: auto;
   }
 
   .volume-slider-wrap {
@@ -354,22 +366,13 @@
   }
 
   .time-display {
-    font-size: 15px;
+    font-size: 16px;
     color: var(--text-secondary);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
     padding: 0 6px;
     font-family: monospace;
     letter-spacing: 0.5px;
-    order: 4;
-  }
-
-  /* Right side items order: Fullscreen, Quality, CC, Time */
-  .right-group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    order: 2;
   }
 
   /* Popup Menus */
@@ -446,14 +449,6 @@
     display: none !important;
   }
 
-  /* Desktop play/pause/seek buttons */
-  .desktop-play-seek {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-right: auto;
-  }
-
   /* Mobile Center Controls */
   .mobile-center-controls {
     display: none;
@@ -517,13 +512,17 @@
 
   /* ====== MOBILE STYLES ====== */
   @media (max-width: 768px) {
-    .desktop-only, .desktop-play-seek { display: none !important; }
+    .desktop-only { display: none !important; }
     .mobile-only { display: flex !important; }
     
     body { overflow: hidden; }
     .player-wrapper { height: 100vh; border-radius: 0; }
     
-    .ctrl-btn svg { width: 34px !important; height: 34px !important; }
+    .ctrl-btn svg { width: 36px !important; height: 36px !important; }
+    .time-display { font-size: 20px !important; } /* 4px larger */
+    
+    /* Volume icon 4px larger on mobile */
+    .volume-group .ctrl-btn svg { width: 44px !important; height: 44px !important; }
     
     .progress-track { height: 6px; }
     .progress-area { height: 28px; }
@@ -541,13 +540,15 @@
     .mobile-play-btn svg { width: 55px; height: 55px; }
     
     .control-row { gap: 8px; }
-    .time-display { font-size: 13px; order: 3; }
     
-    /* Mobile order: Fullscreen, Quality, CC, Time */
-    #fsBtn { order: 1; }
-    #settingsBtn { order: 2; }
+    /* Mobile order: Time, Fullscreen, CC, Quality */
+    .time-display { order: 1; }
+    #fsBtn { order: 2; }
     #ccBtn { order: 3; }
-    .time-display { order: 4; }
+    #settingsBtn { order: 4; }
+    
+    .left-controls { gap: 10px; }
+    .right-controls { gap: 10px; }
   }
 
   /* Fullscreen */
@@ -561,12 +562,11 @@
     height: 100%;
   }
   
-  /* No zoom - prevent UI scaling */
+  /* No zoom */
   * {
     touch-action: manipulation;
   }
   
-  /* Prevent zoom on desktop via keyboard/mouse */
   body {
     overflow: hidden;
     position: fixed;
@@ -597,7 +597,7 @@
       <svg id="centerIconSvg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     </div>
 
-    <!-- Mobile Seek Overlays (without number 10) -->
+    <!-- Mobile Seek Overlays -->
     <div class="mobile-seek-overlay mobile-seek-left mobile-only" id="mobileSeekLeft">
       <button class="mobile-seek-btn" id="mobileSeekBackBtn">
         <svg viewBox="0 0 24 24">
@@ -626,7 +626,8 @@
            onmousedown="startScrub(event)"
            ontouchstart="startScrub(event)"
            onmousemove="hoverProgress(event)"
-           onmouseleave="leaveProgress()">
+           onmouseleave="leaveProgress()"
+           onclick="handleProgressClick(event)">
         <div class="progress-track" id="progressTrack">
           <div class="progress-buffer" id="progressBuffer"></div>
           <div class="progress-fill" id="progressFill"></div>
@@ -636,79 +637,74 @@
       </div>
 
       <div class="control-row">
-        <!-- Volume (left side) -->
-        <div class="volume-group" id="volumeGroup">
-          <button class="ctrl-btn" id="muteBtn">
-            <svg id="volIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-          </button>
-          <div class="volume-slider-wrap" id="volumeSliderWrap">
-            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
-          </div>
-        </div>
-
-        <!-- Desktop: Play/Pause and Seek buttons -->
-        <div class="desktop-play-seek">
-          <button class="ctrl-btn" id="playBtn">
+        <!-- Left side: Play/Seek buttons + Volume -->
+        <div class="left-controls">
+          <button class="ctrl-btn desktop-only" id="playBtn">
             <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           </button>
-          <button class="ctrl-btn" id="desktopRewindBtn">
+          <button class="ctrl-btn desktop-only" id="desktopRewindBtn">
             <svg viewBox="0 0 24 24">
               <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
               <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
             </svg>
           </button>
-          <button class="ctrl-btn" id="desktopFwdBtn">
+          <button class="ctrl-btn desktop-only" id="desktopFwdBtn">
             <svg viewBox="0 0 24 24">
               <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/>
               <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
             </svg>
           </button>
-        </div>
-
-        <div class="spacer"></div>
-
-        <!-- Right side items order: Fullscreen, Quality, CC, Time -->
-        <button class="ctrl-btn" id="fsBtn">
-          <svg id="fsIcon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-        </button>
-
-        <div style="position:relative">
-          <button class="ctrl-btn" id="settingsBtn">
-            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-          </button>
-          <div class="popup-menu" id="settingsMenu">
-            <div class="popup-section-label">Video Quality</div>
-            <div class="popup-item active" data-quality="auto"><span>Auto</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            <div class="popup-item" data-quality="1080"><span>1080p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            <div class="popup-item" data-quality="720"><span>720p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            <div class="popup-item" data-quality="480"><span>480p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            <div class="popup-item" data-quality="360"><span>360p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-          </div>
-        </div>
-
-        <div style="position:relative">
-          <button class="ctrl-btn" id="ccBtn">
-            <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-9 9H9.5v-.5h-2v3h2V15H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V15H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z"/></svg>
-          </button>
-          <div class="popup-menu two-column-menu" id="ccMenu">
-            <div class="menu-column">
-              <div class="popup-section-label">Subtitles</div>
-              <div class="popup-item active" data-cc="off"><span>Off</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              <div class="popup-item" data-cc="ku"><span>Kurdish</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              <div class="popup-item" data-cc="en"><span>English</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              <div class="popup-item" data-cc="ar"><span>Arabic</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              <div class="popup-item" data-cc="fa"><span>Persian</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            </div>
-            <div class="menu-column">
-              <div class="popup-section-label">Audio Track</div>
-              <div class="popup-item active" data-audio="original"><span>Original</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              <div class="popup-item" data-audio="ku"><span>Kurdish</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              <div class="popup-item" data-audio="en"><span>English</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+          <div class="volume-group" id="volumeGroup">
+            <button class="ctrl-btn" id="muteBtn">
+              <svg id="volIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            </button>
+            <div class="volume-slider-wrap" id="volumeSliderWrap">
+              <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
             </div>
           </div>
         </div>
 
-        <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+        <!-- Right side: Time, Fullscreen, CC, Quality (order changed: Time first, then Fullscreen, then CC, then Quality) -->
+        <div class="right-controls">
+          <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+          <button class="ctrl-btn" id="fsBtn">
+            <svg id="fsIcon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          </button>
+          <div style="position:relative">
+            <button class="ctrl-btn" id="ccBtn">
+              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-9 9H9.5v-.5h-2v3h2V15H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V15H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z"/></svg>
+            </button>
+            <div class="popup-menu two-column-menu" id="ccMenu">
+              <div class="menu-column">
+                <div class="popup-section-label">Subtitles</div>
+                <div class="popup-item active" data-cc="off"><span>Off</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                <div class="popup-item" data-cc="ku"><span>Kurdish</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                <div class="popup-item" data-cc="en"><span>English</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                <div class="popup-item" data-cc="ar"><span>Arabic</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                <div class="popup-item" data-cc="fa"><span>Persian</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+              </div>
+              <div class="menu-column">
+                <div class="popup-section-label">Audio Track</div>
+                <div class="popup-item active" data-audio="original"><span>Original</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                <div class="popup-item" data-audio="ku"><span>Kurdish</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                <div class="popup-item" data-audio="en"><span>English</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+              </div>
+            </div>
+          </div>
+          <div style="position:relative">
+            <button class="ctrl-btn" id="settingsBtn">
+              <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            </button>
+            <div class="popup-menu" id="settingsMenu">
+              <div class="popup-section-label">Video Quality</div>
+              <div class="popup-item active" data-quality="auto"><span>Auto</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+              <div class="popup-item" data-quality="1080"><span>1080p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+              <div class="popup-item" data-quality="720"><span>720p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+              <div class="popup-item" data-quality="480"><span>480p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+              <div class="popup-item" data-quality="360"><span>360p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -872,7 +868,7 @@ function setPlayIcon(playing) {
   if(mobileIcon) mobileIcon.querySelector('path').setAttribute('d', d);
 }
 
-// Volume - ONLY controls volume
+// Volume
 function handleVolumeIconClick() {
   if (!volumeVisible) showVolumeSlider();
   else { 
@@ -946,11 +942,72 @@ function closeAllMenus() {
   document.querySelectorAll('.popup-menu').forEach(m => m.classList.remove('open')); 
 }
 
-// Progress scrubbing
-function startScrub(e) { isScrubbing = true; scrub(e); const move = (ev) => scrub(ev); const up = () => { isScrubbing = false; document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move); document.removeEventListener('mouseup', up); document.removeEventListener('touchend', up); endScrub(); }; document.addEventListener('mousemove', move); document.addEventListener('touchmove', move, { passive: false }); document.addEventListener('mouseup', up); document.addEventListener('touchend', up); e.preventDefault(); }
-function scrub(e) { const rect = progressArea.getBoundingClientRect(); const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left; const pct = Math.max(0, Math.min(1, x / rect.width)); progressFill.style.width = (pct * 100) + '%'; progressThumb.style.left = (pct * 100) + '%'; }
-function endScrub() { const pct = parseFloat(progressFill.style.width) / 100; const targetTime = pct * totalDuration; seekToGlobal(targetTime); }
-function hoverProgress(e) { const rect = progressArea.getBoundingClientRect(); const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left; const pct = Math.max(0, Math.min(1, x / rect.width)); progressTooltip.textContent = formatTime(pct * totalDuration); progressTooltip.style.right = (rect.width - x) + 'px'; progressTooltip.style.left = 'auto'; }
+// Ultra precise progress handling
+function getProgressPercentFromEvent(e) {
+  const rect = progressArea.getBoundingClientRect();
+  let clientX;
+  if (e.touches) {
+    clientX = e.touches[0].clientX;
+  } else if (e.clientX !== undefined) {
+    clientX = e.clientX;
+  } else {
+    clientX = e.pageX;
+  }
+  let x = clientX - rect.left;
+  x = Math.max(0, Math.min(rect.width, x));
+  return x / rect.width;
+}
+
+function handleProgressClick(e) {
+  const percent = getProgressPercentFromEvent(e);
+  const targetTime = percent * totalDuration;
+  seekToGlobal(targetTime);
+  e.stopPropagation();
+}
+
+function startScrub(e) { 
+  isScrubbing = true; 
+  const percent = getProgressPercentFromEvent(e);
+  progressFill.style.width = (percent * 100) + '%';
+  progressThumb.style.left = (percent * 100) + '%';
+  
+  const move = (ev) => { 
+    if (!isScrubbing) return;
+    const pct = getProgressPercentFromEvent(ev);
+    progressFill.style.width = (pct * 100) + '%';
+    progressThumb.style.left = (pct * 100) + '%';
+  };
+  
+  const up = () => { 
+    if (isScrubbing) {
+      const pct = parseFloat(progressFill.style.width) / 100;
+      const targetTime = pct * totalDuration;
+      seekToGlobal(targetTime);
+    }
+    isScrubbing = false; 
+    document.removeEventListener('mousemove', move); 
+    document.removeEventListener('touchmove', move); 
+    document.removeEventListener('mouseup', up); 
+    document.removeEventListener('touchend', up); 
+  };
+  
+  document.addEventListener('mousemove', move); 
+  document.addEventListener('touchmove', move, { passive: false }); 
+  document.addEventListener('mouseup', up); 
+  document.addEventListener('touchend', up); 
+  e.preventDefault(); 
+}
+
+function hoverProgress(e) { 
+  const percent = getProgressPercentFromEvent(e);
+  progressTooltip.textContent = formatTime(percent * totalDuration); 
+  const rect = progressArea.getBoundingClientRect();
+  let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  let x = clientX - rect.left;
+  progressTooltip.style.right = (rect.width - x) + 'px'; 
+  progressTooltip.style.left = 'auto'; 
+}
+
 function leaveProgress() {}
 
 // Controls auto-hide
@@ -988,6 +1045,11 @@ video.addEventListener('waiting', () => setLoading(true));
 video.addEventListener('canplay', () => setLoading(false));
 video.addEventListener('playing', () => setLoading(false));
 video.addEventListener('progress', updateProgress);
+video.addEventListener('loadedmetadata', () => {
+  if (chunkStartTimes.length > 0 && chunkStartTimes[currentChunkIndex] !== undefined) {
+    updateProgress();
+  }
+});
 
 function setLoading(b) { loadingOverlay.classList.toggle('active', b); }
 
@@ -1055,7 +1117,7 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.popup-menu') && !e.target.closest('#settingsBtn') && !e.target.closest('#ccBtn')) closeAllMenus(); 
 });
 
-// Prevent zoom on desktop (Ctrl + / Cmd +)
+// Prevent zoom
 document.addEventListener('wheel', (e) => {
   if (e.ctrlKey) {
     e.preventDefault();
