@@ -1,739 +1,1072 @@
 <!DOCTYPE html>
-<html lang="ckb">
+<html lang="ckb" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>پلەیەری پیشەیی - فیلم و دراما</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ڤیدیۆ پلەیەر</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
-            font-family: 'Roboto', sans-serif;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
+  :root {
+    --bg-page: #0f0f0f;
+    --bg-player: #000;
+    --bg-controls: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+    --bg-progress-track: rgba(255,255,255,0.2);
+    --bg-progress-buffer: rgba(255,255,255,0.35);
+    --accent: #ff0000;
+    --accent-hover: #cc0000;
+    --text-primary: #fff;
+    --text-secondary: rgba(255,255,255,0.75);
+    --text-muted: rgba(255,255,255,0.45);
+    --control-bg: rgba(255,255,255,0.08);
+    --control-hover: rgba(255,255,255,0.15);
+    --tooltip-bg: rgba(28,28,28,0.95);
+    --radius: 8px;
+    --font: 'Noto Naskh Arabic', 'Segoe UI', sans-serif;
+  }
 
-        .premium-player-container {
-            max-width: 1400px;
-            width: 100%;
-            background: #000;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-            position: relative;
-        }
+  body {
+    font-family: var(--font);
+    background: var(--bg-page);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
 
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            background: #000;
-        }
+  /* ====== PLAYER WRAPPER ====== */
+  .player-wrapper {
+    width: 100%;
+    max-width: 900px;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+    font-family: var(--font);
+  }
 
-        video {
-            width: 100%;
-            display: block;
-            cursor: pointer;
-            object-fit: contain;
-        }
+  /* ====== VIDEO CONTAINER ====== */
+  .video-container {
+    position: relative;
+    width: 100%;
+    background: #000;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    cursor: none;
+  }
 
-        .custom-controls {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
-            padding: 20px 16px 12px 16px;
-            transition: opacity 0.3s ease;
-            opacity: 1;
-            z-index: 10;
-        }
+  .video-container.show-cursor { cursor: default; }
+  .video-container.fullscreen { aspect-ratio: unset; height: 100vh; border-radius: 0; }
 
-        .progress-bar-container {
-            width: 100%;
-            cursor: pointer;
-            padding: 8px 0;
-            margin-bottom: 12px;
-        }
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
 
-        .progress-track {
-            background-color: rgba(255, 255, 255, 0.3);
-            height: 6px;
-            border-radius: 3px;
-            position: relative;
-            transition: height 0.2s;
-        }
+  /* ====== POSTER / THUMBNAIL ====== */
+  .poster-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    transition: opacity 0.3s;
+    z-index: 5;
+  }
+  .poster-overlay.hidden { opacity: 0; pointer-events: none; }
 
-        .progress-track:hover {
-            height: 8px;
-        }
+  .poster-title {
+    font-size: clamp(16px, 3vw, 26px);
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+    text-align: center;
+    padding: 0 20px;
+  }
+  .poster-play-btn {
+    width: clamp(56px, 8vw, 72px);
+    height: clamp(56px, 8vw, 72px);
+    background: var(--accent);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 8px 32px rgba(255,0,0,0.35);
+  }
+  .poster-play-btn:hover { transform: scale(1.1); background: var(--accent-hover); }
+  .poster-play-btn svg { width: 28px; height: 28px; fill: #fff; margin-right: -3px; }
 
-        .progress-fill {
-            background-color: #ff0000;
-            height: 100%;
-            width: 0%;
-            border-radius: 3px;
-            position: relative;
-        }
+  /* ====== LOADING SPINNER ====== */
+  .loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .loading-overlay.active { opacity: 1; pointer-events: all; }
 
-        .progress-handle {
-            width: 14px;
-            height: 14px;
-            background-color: #ff0000;
-            border-radius: 50%;
-            position: absolute;
-            right: -7px;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
+  .spinner {
+    width: 44px;
+    height: 44px;
+    border: 3px solid rgba(255,255,255,0.15);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-        .progress-track:hover .progress-handle {
-            opacity: 1;
-        }
+  /* ====== PLAY/PAUSE CENTER RIPPLE ====== */
+  .click-ripple {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    width: 80px; height: 80px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 8;
+    opacity: 0;
+  }
+  .click-ripple.animate {
+    animation: ripple 0.4s ease-out forwards;
+  }
+  @keyframes ripple {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.5); opacity: 0; }
+  }
 
-        .controls-main-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
+  .center-icon {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(0,0,0,0.5);
+    border-radius: 50%;
+    width: 68px; height: 68px;
+    display: flex; align-items: center; justify-content: center;
+    pointer-events: none;
+    z-index: 9;
+    opacity: 0;
+  }
+  .center-icon.animate {
+    animation: pop 0.4s ease-out forwards;
+  }
+  @keyframes pop {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+    60% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+  }
+  .center-icon svg { width: 32px; height: 32px; fill: #fff; }
 
-        .controls-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+  /* ====== CONTROLS OVERLAY ====== */
+  .controls-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: var(--bg-controls);
+    padding: 40px 14px 12px;
+    transform: translateY(0);
+    transition: opacity 0.3s, transform 0.3s;
+    z-index: 20;
+  }
+  .controls-overlay.hidden {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
 
-        .controls-right {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+  /* ====== PROGRESS BAR ====== */
+  .progress-area {
+    position: relative;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 8px;
+    padding: 0 2px;
+  }
 
-        .control-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s, opacity 0.2s;
-        }
-        
-        .control-btn:hover {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
+  .progress-track {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background: var(--bg-progress-track);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: height 0.15s;
+  }
+  .progress-area:hover .progress-track { height: 6px; }
 
-        /* ستایلی SVG Seek Buttons - وەک هەموو ئایکۆنەکانی تر گونجاو */
-        .seek-svg-btn {
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .seek-svg-btn svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+  .progress-buffer {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: var(--bg-progress-buffer);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.3s;
+  }
 
-        .time-display {
-            color: white;
-            font-size: 14px;
-            font-family: monospace;
-            background: rgba(0,0,0,0.5);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
+  .progress-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    width: 0%;
+    transition: width 0.05s;
+    z-index: 1;
+  }
 
-        .volume-popup {
-            position: absolute;
-            bottom: 50px;
-            left: 0;
-            background: rgba(28, 28, 28, 0.95);
-            padding: 10px 12px;
-            border-radius: 8px;
-            display: none;
-            align-items: center;
-            gap: 10px;
-            backdrop-filter: blur(8px);
-            z-index: 20;
-        }
+  .progress-thumb {
+    position: absolute;
+    top: 50%;
+    width: 14px; height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.15s;
+    z-index: 2;
+    pointer-events: none;
+    box-shadow: 0 0 6px rgba(0,0,0,0.4);
+  }
+  .progress-area:hover .progress-thumb { transform: translate(-50%, -50%) scale(1); }
 
-        .volume-popup.show {
-            display: flex;
-        }
+  .progress-tooltip {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    transform: translateX(50%);
+    background: var(--tooltip-bg);
+    color: #fff;
+    font-size: 12px;
+    font-family: var(--font);
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 30;
+  }
+  .progress-area:hover .progress-tooltip { opacity: 1; }
 
-        .volume-popup input {
-            width: 100px;
-            height: 4px;
-        }
+  /* Chunk markers on progress */
+  .chunk-marker {
+    position: absolute;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    background: rgba(255,255,255,0.3);
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 3;
+  }
 
-        .quality-menu, .media-menu {
-            position: absolute;
-            bottom: 50px;
-            right: 0;
-            background: rgba(28, 28, 28, 0.95);
-            backdrop-filter: blur(12px);
-            border-radius: 8px;
-            padding: 8px 0;
-            display: none;
-            z-index: 20;
-        }
+  /* ====== CONTROL ROW ====== */
+  .control-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 
-        /* مینیوەی کوالێتی */
-        .quality-menu {
-            min-width: 100px;
-        }
-        
-        .quality-menu.show {
-            display: block;
-        }
+  .ctrl-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .ctrl-btn:hover { background: var(--control-hover); }
+  .ctrl-btn:active { transform: scale(0.92); }
+  .ctrl-btn svg { width: 22px; height: 22px; fill: currentColor; }
+  .ctrl-btn.large svg { width: 28px; height: 28px; }
 
-        .quality-menu div {
-            padding: 8px 16px;
-            color: white;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.2s;
-            text-align: center;
-        }
+  /* Volume slider */
+  .volume-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .volume-slider-wrap {
+    width: 0;
+    overflow: hidden;
+    transition: width 0.2s;
+  }
+  .volume-group:hover .volume-slider-wrap,
+  .volume-group:focus-within .volume-slider-wrap { width: 72px; }
 
-        .quality-menu div:hover {
-            background: #ff0000;
-        }
+  .volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 72px;
+    height: 4px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  .volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: #fff;
+    cursor: pointer;
+    box-shadow: 0 0 4px rgba(0,0,0,0.3);
+  }
 
-        /* مینیوەی ژێرنووس و دەنگ - خشتەی دوو ستونی */
-        .media-menu {
-            min-width: 280px;
-            padding: 12px;
-        }
-        
-        .media-menu.show {
-            display: block;
-        }
-        
-        .media-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        
-        .media-column {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .media-column-title {
-            font-weight: bold;
-            color: #ff0000;
-            padding: 6px 10px;
-            margin-bottom: 8px;
-            border-bottom: 1px solid #444;
-            font-size: 13px;
-            text-align: center;
-        }
-        
-        .media-column div {
-            padding: 8px 12px;
-            color: white;
-            cursor: pointer;
-            font-size: 13px;
-            transition: background 0.2s;
-            border-radius: 6px;
-            text-align: center;
-        }
-        
-        .media-column div:hover {
-            background: #ff0000;
-        }
+  /* Time display */
+  .time-display {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    padding: 0 4px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.5px;
+  }
 
-        .relative-wrapper {
-            position: relative;
-        }
+  .spacer { flex: 1; }
 
-        /* فولسکرین دوگمە */
-        .fullscreen-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            padding: 8px;
-            border-radius: 50%;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
-        }
-        
-        .fullscreen-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-        }
+  /* Quality / Speed popup */
+  .popup-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    right: 0;
+    background: rgba(28,28,28,0.97);
+    border-radius: 8px;
+    min-width: 140px;
+    padding: 6px 0;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 50;
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    transition: opacity 0.2s, transform 0.2s;
+    border: 1px solid rgba(255,255,255,0.08);
+    text-align: right;
+  }
+  .popup-menu.open { opacity: 1; transform: translateY(0); pointer-events: all; }
 
-        /* ========== Desktop ========== */
-        @media (min-width: 769px) {
-            .video-wrapper {
-                min-height: 70vh;
-            }
-            video {
-                max-height: 75vh;
-            }
-            .mobile-center-buttons {
-                display: none;
-            }
-            .control-btn {
-                width: 38px;
-                height: 38px;
-            }
-        }
+  .popup-header {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding: 6px 14px 4px;
+    font-family: var(--font);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    margin-bottom: 4px;
+  }
 
-        /* ========== Mobile ========== */
-        @media (max-width: 768px) {
-            .premium-player-container {
-                border-radius: 0;
-            }
-            video {
-                max-height: 60vh;
-                min-height: 50vh;
-            }
-            .mobile-center-buttons {
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 40px;
-                z-index: 15;
-                pointer-events: none;
-            }
-            .mobile-center-buttons .control-btn {
-                pointer-events: auto;
-                width: 60px;
-                height: 60px;
-                background: rgba(0,0,0,0.6);
-                backdrop-filter: blur(4px);
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            .mobile-center-buttons .seek-svg-btn {
-                width: 48px;
-                height: 48px;
-            }
-            .controls-left .control-btn:not(.volume-wrapper), 
-            .controls-left .seek-svg-btn {
-                display: none;
-            }
-            .custom-controls {
-                padding: 12px 12px 8px 12px;
-            }
-            .controls-main-row {
-                gap: 8px;
-            }
-            .controls-left, .controls-right {
-                gap: 8px;
-            }
-            .time-display {
-                font-size: 11px;
-            }
-            .volume-popup {
-                bottom: 40px;
-                left: -10px;
-            }
-            .volume-popup input {
-                width: 80px;
-            }
-            .media-menu {
-                min-width: 260px;
-                right: 0;
-                left: auto;
-            }
-        }
-    </style>
+  .popup-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.1s, color 0.1s;
+    font-family: var(--font);
+  }
+  .popup-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
+  .popup-item.active { color: var(--accent); }
+  .popup-item .check { width: 14px; height: 14px; fill: var(--accent); opacity: 0; }
+  .popup-item.active .check { opacity: 1; }
+
+  /* Tooltip on buttons */
+  .btn-tooltip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--tooltip-bg);
+    color: #fff;
+    font-size: 11px;
+    font-family: var(--font);
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 60;
+  }
+  .ctrl-btn:hover .btn-tooltip { opacity: 1; }
+
+  /* ====== CHUNK INFO BAR (optional debug) ====== */
+  .chunk-info {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: rgba(0,0,0,0.65);
+    color: rgba(255,255,255,0.6);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-family: monospace;
+    z-index: 15;
+    transition: opacity 0.3s;
+  }
+  .chunk-info.hidden { opacity: 0; }
+
+  /* ====== METADATA PANEL ====== */
+  .meta-panel {
+    background: #181818;
+    padding: 16px 20px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .meta-title {
+    font-size: clamp(15px, 2.5vw, 20px);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .meta-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .meta-dot { width: 3px; height: 3px; background: var(--text-muted); border-radius: 50%; }
+
+  .meta-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .action-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
+    color: var(--text-secondary);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--font);
+    transition: background 0.15s, color 0.15s;
+  }
+  .action-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+  .action-btn svg { width: 16px; height: 16px; fill: currentColor; }
+  .action-btn.liked { color: var(--accent); border-color: var(--accent); }
+
+  /* ====== RESPONSIVE ====== */
+  @media (max-width: 600px) {
+    body { padding: 0; background: #000; }
+    .player-wrapper { border-radius: 0; box-shadow: none; }
+    .meta-panel { padding: 12px 14px; }
+    .action-btn span { display: none; }
+    .action-btn { padding: 7px; border-radius: 50%; }
+    .meta-actions { gap: 4px; }
+    .time-display { font-size: 11px; }
+    .ctrl-btn svg { width: 20px; height: 20px; }
+    .ctrl-btn.large svg { width: 26px; height: 26px; }
+  }
+
+  @media (max-width: 400px) {
+    .volume-group:hover .volume-slider-wrap { width: 52px; }
+    .volume-slider { width: 52px; }
+  }
+
+  /* ====== FULLSCREEN ====== */
+  :fullscreen .player-wrapper,
+  :-webkit-full-screen .player-wrapper {
+    max-width: 100vw;
+    border-radius: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  :fullscreen .video-container,
+  :-webkit-full-screen .video-container {
+    flex: 1;
+    aspect-ratio: unset;
+  }
+  :fullscreen .meta-panel,
+  :-webkit-full-screen .meta-panel { display: none; }
+</style>
 </head>
 <body>
 
-<div class="premium-player-container">
-    <div class="video-wrapper">
-        <video id="mainVideo" poster="https://via.placeholder.com/1280x720/1a1a2e/ffffff?text=ڤیدیۆ"></video>
-        
-        <!-- دوگمە گەورەکانی ناوەڕاست بۆ مۆبایل -->
-        <div class="mobile-center-buttons" id="mobileCenterBtns">
-            <button class="control-btn" id="mobileBackwardBtn">
-                <div class="seek-svg-btn" id="mobileBackwardSvg">${backwardSvg}</div>
-            </button>
-            <button class="control-btn" id="mobilePlayPauseBtn">
-                <i class="fas fa-play" id="mobilePlayIcon" style="font-size: 28px; color: white;"></i>
-            </button>
-            <button class="control-btn" id="mobileForwardBtn">
-                <div class="seek-svg-btn" id="mobileForwardSvg">${forwardSvg}</div>
-            </button>
-        </div>
-        
-        <div class="custom-controls" id="controlsBar">
-            <div class="progress-bar-container" id="progressBar">
-                <div class="progress-track">
-                    <div class="progress-fill" id="progressFill"></div>
-                    <div class="progress-handle"></div>
-                </div>
-            </div>
+<div class="player-wrapper" id="playerWrapper">
 
-            <div class="controls-main-row">
-                <div class="controls-left">
-                    <!-- دوگمەی پلەی/ڕاگرتن (Desktop) -->
-                    <button class="control-btn" id="playPauseBtn">
-                        <i class="fas fa-play" id="playPauseIcon" style="font-size: 18px; color: white;"></i>
-                    </button>
-                    
-                    <!-- 10 چرکە بەرەو دواوە - SVG (Desktop) -->
-                    <button class="control-btn" id="backward10Btn">
-                        <div class="seek-svg-btn" id="backwardSvgContainer"></div>
-                    </button>
-                    
-                    <!-- 10 چرکە بەرەو پێش - SVG (Desktop) -->
-                    <button class="control-btn" id="forward10Btn">
-                        <div class="seek-svg-btn" id="forwardSvgContainer"></div>
-                    </button>
-                    
-                    <!-- دەنگ -->
-                    <div class="relative-wrapper" id="volumeWrapper">
-                        <button class="control-btn" id="volumeBtn">
-                            <i class="fas fa-volume-up" style="font-size: 18px; color: white;"></i>
-                        </button>
-                        <div class="volume-popup" id="volumePopup">
-                            <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
-                        </div>
-                    </div>
-                </div>
+  <!-- VIDEO CONTAINER -->
+  <div class="video-container show-cursor" id="videoContainer">
 
-                <div class="controls-right">
-                    <div class="time-display">
-                        <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
-                    </div>
+    <video id="video" preload="metadata"></video>
 
-                    <!-- ژێرنووس و دەنگ پێکەوە -->
-                    <div class="relative-wrapper" id="mediaWrapper">
-                        <button class="control-btn" id="mediaBtn">
-                            <i class="fas fa-closed-captioning" style="font-size: 18px; color: white;"></i>
-                        </button>
-                        <div class="media-menu" id="mediaMenu">
-                            <div class="media-grid">
-                                <div class="media-column">
-                                    <div class="media-column-title">📺 ژێرنووس</div>
-                                    <div data-sub="off">ناڵێن (لابردن)</div>
-                                    <div data-sub="ku">کوردی</div>
-                                    <div data-sub="en">English</div>
-                                    <div data-sub="ar">العربية</div>
-                                    <div data-sub="fa">فارسی</div>
-                                </div>
-                                <div class="media-column">
-                                    <div class="media-column-title">🎧 دەنگ</div>
-                                    <div data-audio="en">English</div>
-                                    <div data-audio="ku">کوردی</div>
-                                    <div data-audio="ar">العربية</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- کوالێتی -->
-                    <div class="relative-wrapper" id="qualityWrapper">
-                        <button class="control-btn" id="qualityBtn">
-                            <i class="fas fa-gear" style="font-size: 18px; color: white;"></i>
-                        </button>
-                        <div class="quality-menu" id="qualityMenu">
-                            <div data-quality="auto">Auto</div>
-                            <div data-quality="1080">1080p</div>
-                            <div data-quality="720">720p</div>
-                            <div data-quality="480">480p</div>
-                            <div data-quality="360">360p</div>
-                        </div>
-                    </div>
-
-                    <!-- فولسکرین -->
-                    <button class="fullscreen-btn" id="fullscreenBtn">
-                        <i class="fas fa-expand"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
+    <!-- Poster Overlay -->
+    <div class="poster-overlay" id="posterOverlay">
+      <div class="poster-title" id="posterTitle">هەڵبژێرە چی ببینیت</div>
+      <button class="poster-play-btn" id="posterPlayBtn" onclick="startVideo()">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
     </div>
+
+    <!-- Loading -->
+    <div class="loading-overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Center ripple + icon -->
+    <div class="click-ripple" id="clickRipple"></div>
+    <div class="center-icon" id="centerIcon">
+      <svg id="centerIconSvg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </div>
+
+    <!-- Chunk info -->
+    <div class="chunk-info hidden" id="chunkInfo">chunk 0/0</div>
+
+    <!-- Controls -->
+    <div class="controls-overlay" id="controlsOverlay">
+
+      <!-- Progress bar -->
+      <div class="progress-area" id="progressArea"
+           onmousedown="startScrub(event)"
+           ontouchstart="startScrub(event)"
+           onmousemove="hoverProgress(event)"
+           onmouseleave="leaveProgress()">
+        <div class="progress-track" id="progressTrack">
+          <div class="progress-buffer" id="progressBuffer"></div>
+          <div class="progress-fill" id="progressFill"></div>
+          <div class="progress-thumb" id="progressThumb"></div>
+          <!-- Chunk markers injected by JS -->
+        </div>
+        <div class="progress-tooltip" id="progressTooltip">0:00</div>
+      </div>
+
+      <!-- Control row -->
+      <div class="control-row">
+
+        <!-- Play/Pause -->
+        <button class="ctrl-btn large" id="playBtn" onclick="togglePlay()">
+          <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          <span class="btn-tooltip">پلەی / پاوز</span>
+        </button>
+
+        <!-- Prev chunk -->
+        <button class="ctrl-btn" onclick="skipChunk(-1)" title="">
+          <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+          <span class="btn-tooltip">پارچەی پێشوو</span>
+        </button>
+
+        <!-- Next chunk -->
+        <button class="ctrl-btn" onclick="skipChunk(1)">
+          <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+          <span class="btn-tooltip">پارچەی دواتر</span>
+        </button>
+
+        <!-- Volume -->
+        <div class="volume-group">
+          <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">
+            <svg id="volIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
+            <span class="btn-tooltip">دەنگ</span>
+          </button>
+          <div class="volume-slider-wrap">
+            <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100" oninput="setVolume(this.value)">
+          </div>
+        </div>
+
+        <!-- Time -->
+        <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+
+        <div class="spacer"></div>
+
+        <!-- Speed -->
+        <div style="position:relative">
+          <button class="ctrl-btn" id="speedBtn" onclick="toggleMenu('speedMenu')">
+            <span id="speedLabel" style="font-size:13px;font-weight:600;min-width:36px;text-align:center;">1×</span>
+            <span class="btn-tooltip">خێرایی</span>
+          </button>
+          <div class="popup-menu" id="speedMenu">
+            <div class="popup-header">خێرایی</div>
+            <div class="popup-item" onclick="setSpeed(0.5)"><span>0.5×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item" onclick="setSpeed(0.75)"><span>0.75×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item active" onclick="setSpeed(1)"><span>نەرمال</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item" onclick="setSpeed(1.25)"><span>1.25×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item" onclick="setSpeed(1.5)"><span>1.5×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item" onclick="setSpeed(2)"><span>2×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+          </div>
+        </div>
+
+        <!-- Fullscreen -->
+        <button class="ctrl-btn" id="fsBtn" onclick="toggleFullscreen()">
+          <svg id="fsIcon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+          <span class="btn-tooltip">پڕ شاشە</span>
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- META PANEL -->
+  <div class="meta-panel">
+    <div class="meta-title" id="metaTitle">ناوی فیلمەکە / درامەکە</div>
+    <div class="meta-row">
+      <div class="meta-stats">
+        <span id="metaViews">١٢٠،٠٠٠ بینەر</span>
+        <div class="meta-dot"></div>
+        <span id="metaDate">٢ ڕۆژ لەمەوبەر</span>
+        <div class="meta-dot"></div>
+        <span id="metaDuration">٠:٠٠ کاتژمێر</span>
+      </div>
+      <div class="meta-actions">
+        <button class="action-btn" id="likeBtn" onclick="toggleLike()">
+          <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+          <span>خۆشم هات</span>
+        </button>
+        <button class="action-btn" onclick="shareVideo()">
+          <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92S19.61 16.08 18 16.08z"/></svg>
+          <span>بەشکردن</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
-    // SVGی 10 چرکە بەرەو دواوە (پاشتر)
-    const backwardSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="38" height="38">
-      <defs>
-        <linearGradient id="bgGradBack" x1="20%" y1="0%" x2="80%" y2="100%">
-          <stop offset="0%" stop-color="#2d2d44"/>
-          <stop offset="100%" stop-color="#0f0f1e"/>
-        </linearGradient>
-        <linearGradient id="arcGradBack" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#a78bfa"/>
-          <stop offset="100%" stop-color="#60a5fa"/>
-        </linearGradient>
-        <filter id="glowBack">
-          <feGaussianBlur stdDeviation="2" result="blur"/>
-          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-        </filter>
-      </defs>
-      <circle cx="50" cy="50" r="47" fill="url(#bgGradBack)"/>
-      <circle cx="50" cy="50" r="44" fill="none" stroke="#ffffff0d" stroke-width="1"/>
-      <path d="M 50 17 A 33 33 0 1 0 79.5 63" fill="none" stroke="url(#arcGradBack)" stroke-width="6" stroke-linecap="round" filter="url(#glowBack)"/>
-      <g transform="translate(50,17) rotate(-44)">
-        <polygon points="0,-8 -7,5 7,5" fill="#60a5fa"/>
-      </g>
-      <text x="51" y="58" text-anchor="middle" font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="25" font-weight="800" fill="#ffffff" letter-spacing="-1">10</text>
-    </svg>`;
-    
-    // SVGی 10 چرکە بەرەو پێش (پێشتر)
-    const forwardSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="38" height="38">
-      <defs>
-        <linearGradient id="bgGradFor" x1="20%" y1="0%" x2="80%" y2="100%">
-          <stop offset="0%" stop-color="#2d2d44"/>
-          <stop offset="100%" stop-color="#0f0f1e"/>
-        </linearGradient>
-        <linearGradient id="arcGradFor" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#a78bfa"/>
-          <stop offset="100%" stop-color="#60a5fa"/>
-        </linearGradient>
-        <filter id="glowFor">
-          <feGaussianBlur stdDeviation="2" result="blur"/>
-          <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-        </filter>
-      </defs>
-      <circle cx="50" cy="50" r="47" fill="url(#bgGradFor)"/>
-      <circle cx="50" cy="50" r="44" fill="none" stroke="#ffffff0d" stroke-width="1"/>
-      <path d="M 50 17 A 33 33 0 1 1 20.5 63" fill="none" stroke="url(#arcGradFor)" stroke-width="6" stroke-linecap="round" filter="url(#glowFor)"/>
-      <g transform="translate(50,17) rotate(44)">
-        <polygon points="0,-8 7,5 -7,5" fill="#a78bfa"/>
-      </g>
-      <text x="51" y="58" text-anchor="middle" font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="25" font-weight="800" fill="#ffffff" letter-spacing="-1">10</text>
-    </svg>`;
+// ====================================================
+// PLAYER STATE
+// ====================================================
+const video = document.getElementById('video');
+const container = document.getElementById('videoContainer');
+const progressArea = document.getElementById('progressArea');
+const progressFill = document.getElementById('progressFill');
+const progressBuffer = document.getElementById('progressBuffer');
+const progressThumb = document.getElementById('progressThumb');
+const progressTooltip = document.getElementById('progressTooltip');
+const progressTrack = document.getElementById('progressTrack');
+const playIcon = document.getElementById('playIcon');
+const volIcon = document.getElementById('volIcon');
+const timeDisplay = document.getElementById('timeDisplay');
+const controlsOverlay = document.getElementById('controlsOverlay');
+const loadingOverlay = document.getElementById('loadingOverlay');
+const posterOverlay = document.getElementById('posterOverlay');
+const chunkInfo = document.getElementById('chunkInfo');
+const centerIcon = document.getElementById('centerIcon');
+const centerIconSvg = document.getElementById('centerIconSvg');
+const clickRipple = document.getElementById('clickRipple');
 
-    // === گۆڕاوەکان ===
-    const video = document.getElementById('mainVideo');
-    const playPauseBtn = document.getElementById('playPauseBtn');
-    const playPauseIcon = document.getElementById('playPauseIcon');
-    const progressBar = document.getElementById('progressBar');
-    const progressFill = document.getElementById('progressFill');
-    const currentTimeSpan = document.getElementById('currentTime');
-    const durationSpan = document.getElementById('duration');
-    const forward10Btn = document.getElementById('forward10Btn');
-    const backward10Btn = document.getElementById('backward10Btn');
-    const volumeBtn = document.getElementById('volumeBtn');
-    const volumePopup = document.getElementById('volumePopup');
-    const volumeSlider = document.getElementById('volumeSlider');
-    const fullscreenBtn = document.getElementById('fullscreenBtn');
-    const qualityBtn = document.getElementById('qualityBtn');
-    const qualityMenu = document.getElementById('qualityMenu');
-    const mediaBtn = document.getElementById('mediaBtn');
-    const mediaMenu = document.getElementById('mediaMenu');
-    const controlsBar = document.getElementById('controlsBar');
-    
-    // SVGکان دابنێ
-    document.getElementById('backwardSvgContainer').innerHTML = backwardSvg;
-    document.getElementById('forwardSvgContainer').innerHTML = forwardSvg;
-    
-    // مۆبایل SVGکان
-    const mobileBackwardBtn = document.getElementById('mobileBackwardBtn');
-    const mobileForwardBtn = document.getElementById('mobileForwardBtn');
-    if (mobileBackwardBtn) {
-        const mobileBackSvg = backwardSvg.replace('width="38"', 'width="48"').replace('height="38"', 'height="48"');
-        mobileBackwardBtn.innerHTML = `<div class="seek-svg-btn" style="width:48px;height:48px;">${mobileBackSvg}</div>`;
+// ====================================================
+// DEMO CHUNKS — Replace with your real Telegram CDN URLs
+// ====================================================
+const DEMO_CHUNKS = [
+  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
+  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
+  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
+];
+
+// ====================================================
+// REAL USAGE — Call initPlayer() with your config
+// ====================================================
+// initPlayer({
+//   title: 'ناوی فیلمەکە',
+//   chunks: [
+//     { url: 'https://api.telegram.org/file/bot.../file.mp4' },
+//     { url: 'https://api.telegram.org/file/bot.../file.mp4' },
+//     ...
+//   ],
+//   poster: 'https://yourhost.com/poster.jpg',
+//   views: '١٢٠،٠٠٠',
+//   date: '٢ ڕۆژ لەمەوبەر',
+// });
+
+// ====================================================
+// PLAYER LOGIC
+// ====================================================
+let chunks = [];
+let currentChunkIndex = 0;
+let totalDuration = 0;
+let chunkStartTimes = [];
+let isScrubbing = false;
+let controlsTimer = null;
+let isVideoStarted = false;
+let isLiked = false;
+
+function initPlayer(config) {
+  chunks = config.chunks || DEMO_CHUNKS;
+  document.getElementById('metaTitle').textContent = config.title || 'ناوی فیلمەکە';
+  document.getElementById('posterTitle').textContent = config.title || '';
+  document.getElementById('metaViews').textContent = (config.views || '٠') + ' بینەر';
+  document.getElementById('metaDate').textContent = config.date || '';
+  if (config.poster) {
+    posterOverlay.style.backgroundImage = `url(${config.poster})`;
+    posterOverlay.style.backgroundSize = 'cover';
+    posterOverlay.style.backgroundPosition = 'center';
+  }
+  preloadChunkDurations();
+}
+
+async function preloadChunkDurations() {
+  // Calculate cumulative start times for each chunk
+  chunkStartTimes = [0];
+  totalDuration = 0;
+  // Use declared durations if available, otherwise we estimate
+  for (let i = 0; i < chunks.length; i++) {
+    const d = chunks[i].duration || 5;
+    totalDuration += d;
+    chunkStartTimes.push(totalDuration);
+  }
+  drawChunkMarkers();
+}
+
+function drawChunkMarkers() {
+  // Remove old markers
+  progressTrack.querySelectorAll('.chunk-marker').forEach(m => m.remove());
+  if (totalDuration <= 0) return;
+  for (let i = 1; i < chunkStartTimes.length - 1; i++) {
+    const pct = (chunkStartTimes[i] / totalDuration) * 100;
+    const marker = document.createElement('div');
+    marker.className = 'chunk-marker';
+    marker.style.left = pct + '%';
+    progressTrack.appendChild(marker);
+  }
+}
+
+function startVideo() {
+  posterOverlay.classList.add('hidden');
+  isVideoStarted = true;
+  loadChunk(0);
+  video.addEventListener('canplay', () => { video.play(); }, { once: true });
+  showControls();
+  chunkInfo.classList.remove('hidden');
+}
+
+function loadChunk(index) {
+  if (index < 0 || index >= chunks.length) return;
+  currentChunkIndex = index;
+  const savedTime = video.currentTime;
+  video.src = chunks[index].url;
+  video.load();
+  setLoading(true);
+  video.play().catch(() => {});
+  updateChunkInfo();
+}
+
+function onChunkEnd() {
+  if (currentChunkIndex < chunks.length - 1) {
+    loadChunk(currentChunkIndex + 1);
+  } else {
+    // Video ended
+    setPlayIcon(false);
+    posterOverlay.classList.remove('hidden');
+    posterOverlay.style.opacity = '1';
+    isVideoStarted = false;
+  }
+}
+
+function skipChunk(dir) {
+  const newIndex = currentChunkIndex + dir;
+  if (newIndex >= 0 && newIndex < chunks.length) {
+    loadChunk(newIndex);
+  }
+}
+
+// ====================================================
+// CONTROLS
+// ====================================================
+function togglePlay() {
+  if (!isVideoStarted) { startVideo(); return; }
+  if (video.paused) {
+    video.play();
+    showCenterIcon(true);
+  } else {
+    video.pause();
+    showCenterIcon(false);
+  }
+}
+
+function showCenterIcon(isPlay) {
+  const path = isPlay ? 'M8 5v14l11-7z' : 'M6 19h4V5H6v14zm8-14v14h4V5h-4z';
+  centerIconSvg.querySelector('path').setAttribute('d', path);
+  centerIcon.classList.remove('animate');
+  clickRipple.classList.remove('animate');
+  void centerIcon.offsetWidth;
+  centerIcon.classList.add('animate');
+  clickRipple.classList.add('animate');
+}
+
+function setPlayIcon(playing) {
+  playIcon.querySelector('path').setAttribute('d',
+    playing ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z'
+  );
+}
+
+function toggleMute() {
+  video.muted = !video.muted;
+  updateVolIcon();
+}
+
+function setVolume(val) {
+  video.volume = val / 100;
+  video.muted = (val == 0);
+  updateVolIcon();
+}
+
+function updateVolIcon() {
+  const v = video.muted ? 0 : video.volume;
+  let d = '';
+  if (v === 0) d = 'M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z';
+  else if (v < 0.5) d = 'M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z';
+  else d = 'M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z';
+  volIcon.querySelector('path').setAttribute('d', d);
+}
+
+// Speed
+function setSpeed(speed) {
+  video.playbackRate = speed;
+  document.getElementById('speedLabel').textContent = speed === 1 ? '1×' : speed + '×';
+  document.querySelectorAll('#speedMenu .popup-item').forEach(el => {
+    el.classList.toggle('active', parseFloat(el.querySelector('span').textContent) === speed ||
+      (speed === 1 && el.querySelector('span').textContent === 'نەرمال'));
+  });
+  closeAllMenus();
+}
+
+function toggleMenu(id) {
+  const menu = document.getElementById(id);
+  const isOpen = menu.classList.contains('open');
+  closeAllMenus();
+  if (!isOpen) menu.classList.add('open');
+}
+
+function closeAllMenus() {
+  document.querySelectorAll('.popup-menu').forEach(m => m.classList.remove('open'));
+}
+
+// Fullscreen
+function toggleFullscreen() {
+  const wrap = document.getElementById('playerWrapper');
+  if (!document.fullscreenElement) {
+    (wrap.requestFullscreen || wrap.webkitRequestFullscreen || wrap.mozRequestFullScreen).call(wrap);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+  }
+}
+
+document.addEventListener('fullscreenchange', updateFsIcon);
+document.addEventListener('webkitfullscreenchange', updateFsIcon);
+function updateFsIcon() {
+  const isFs = !!document.fullscreenElement;
+  document.getElementById('fsIcon').querySelector('path').setAttribute('d',
+    isFs ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z'
+         : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'
+  );
+}
+
+// ====================================================
+// PROGRESS
+// ====================================================
+function getGlobalTime() {
+  return chunkStartTimes[currentChunkIndex] + video.currentTime;
+}
+
+function updateProgress() {
+  if (isScrubbing || totalDuration === 0) return;
+  const globalTime = getGlobalTime();
+  const pct = (globalTime / totalDuration) * 100;
+  progressFill.style.width = pct + '%';
+  progressThumb.style.left = pct + '%';
+  // Buffer
+  const bufPct = ((chunkStartTimes[currentChunkIndex] + (video.buffered.length ? video.buffered.end(video.buffered.length - 1) : 0)) / totalDuration) * 100;
+  progressBuffer.style.width = Math.min(bufPct, 100) + '%';
+  timeDisplay.textContent = formatTime(globalTime) + ' / ' + formatTime(totalDuration);
+  document.getElementById('metaDuration').textContent = formatTime(totalDuration);
+}
+
+function hoverProgress(e) {
+  const rect = progressArea.getBoundingClientRect();
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  const pct = Math.max(0, Math.min(1, x / rect.width));
+  const t = pct * totalDuration;
+  progressTooltip.textContent = formatTime(t);
+  progressTooltip.style.right = (rect.width - x) + 'px';
+  progressTooltip.style.left = 'auto';
+}
+
+function leaveProgress() {}
+
+function startScrub(e) {
+  isScrubbing = true;
+  scrub(e);
+  const move = (ev) => scrub(ev);
+  const up = () => { isScrubbing = false; document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move); document.removeEventListener('mouseup', up); document.removeEventListener('touchend', up); endScrub(); };
+  document.addEventListener('mousemove', move);
+  document.addEventListener('touchmove', move, { passive: false });
+  document.addEventListener('mouseup', up);
+  document.addEventListener('touchend', up);
+  e.preventDefault();
+}
+
+function scrub(e) {
+  const rect = progressArea.getBoundingClientRect();
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  const pct = Math.max(0, Math.min(1, x / rect.width));
+  progressFill.style.width = (pct * 100) + '%';
+  progressThumb.style.left = (pct * 100) + '%';
+}
+
+function endScrub() {
+  const pct = parseFloat(progressFill.style.width) / 100;
+  const targetTime = pct * totalDuration;
+  // Find which chunk
+  let targetChunk = 0;
+  for (let i = 0; i < chunkStartTimes.length - 1; i++) {
+    if (targetTime >= chunkStartTimes[i] && targetTime < chunkStartTimes[i + 1]) {
+      targetChunk = i;
+      break;
     }
-    if (mobileForwardBtn) {
-        const mobileForSvg = forwardSvg.replace('width="38"', 'width="48"').replace('height="38"', 'height="48"');
-        mobileForwardBtn.innerHTML = `<div class="seek-svg-btn" style="width:48px;height:48px;">${mobileForSvg}</div>`;
-    }
-    
-    const mobilePlayPauseBtn = document.getElementById('mobilePlayPauseBtn');
-    const mobilePlayIcon = document.getElementById('mobilePlayIcon');
-    
-    let controlsTimeout;
-    let hls;
-    let currentQuality = 'auto';
-    
-    // === لینکی ڤیدیۆ - بگۆڕە بۆ لینکی خۆت ===
-    const videoUrl = 'https://your-telegram-bot.com/path/to/your/file.m3u8';
-    
-    function initHLS(url, quality = 'auto') {
-        if (hls) hls.destroy();
-        if (Hls.isSupported()) {
-            hls = new Hls({ debug: false, enableWorker: true });
-            hls.loadSource(url);
-            hls.attachMedia(video);
-            hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                if (quality !== 'auto') {
-                    const levels = hls.levels;
-                    const idx = levels.findIndex(l => l.height === parseInt(quality));
-                    if (idx !== -1) hls.currentLevel = idx;
-                }
-            });
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            video.src = url;
-        } else {
-            alert('براوسەری تۆ پشتیوانی HLS نییە');
-        }
-    }
-    initHLS(videoUrl, currentQuality);
-    
-    function hideControls() { if (!video.paused) controlsBar.style.opacity = '0'; }
-    function showControls() {
-        controlsBar.style.opacity = '1';
-        clearTimeout(controlsTimeout);
-        if (!video.paused) controlsTimeout = setTimeout(hideControls, 5000);
-    }
-    
-    document.querySelector('.video-wrapper').addEventListener('mousemove', showControls);
-    document.querySelector('.video-wrapper').addEventListener('mouseleave', () => {
-        if (!video.paused) controlsBar.style.opacity = '0';
-    });
-    
-    function togglePlay() {
-        if (video.paused) {
-            video.play();
-            playPauseIcon.className = 'fas fa-pause';
-            if (mobilePlayIcon) mobilePlayIcon.className = 'fas fa-pause';
-            showControls();
-        } else {
-            video.pause();
-            playPauseIcon.className = 'fas fa-play';
-            if (mobilePlayIcon) mobilePlayIcon.className = 'fas fa-play';
-            showControls();
-        }
-    }
-    
-    playPauseBtn?.addEventListener('click', togglePlay);
-    video.addEventListener('click', togglePlay);
-    if (mobilePlayPauseBtn) mobilePlayPauseBtn.addEventListener('click', togglePlay);
-    
-    function seekForward() { video.currentTime = Math.min(video.duration, video.currentTime + 10); showControls(); }
-    function seekBackward() { video.currentTime = Math.max(0, video.currentTime - 10); showControls(); }
-    
-    forward10Btn?.addEventListener('click', seekForward);
-    backward10Btn?.addEventListener('click', seekBackward);
-    if (mobileForwardBtn) mobileForwardBtn.addEventListener('click', seekForward);
-    if (mobileBackwardBtn) mobileBackwardBtn.addEventListener('click', seekBackward);
-    
-    video.addEventListener('timeupdate', () => {
-        const percent = (video.currentTime / video.duration) * 100;
-        progressFill.style.width = `${percent}%`;
-        currentTimeSpan.textContent = formatTime(video.currentTime);
-    });
-    video.addEventListener('loadedmetadata', () => { durationSpan.textContent = formatTime(video.duration); });
-    progressBar.addEventListener('click', (e) => {
-        const rect = progressBar.getBoundingClientRect();
-        const pos = (e.clientX - rect.left) / rect.width;
-        video.currentTime = pos * video.duration;
-        showControls();
-    });
-    
-    volumeBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        volumePopup.classList.toggle('show');
-        setTimeout(() => volumePopup.classList.remove('show'), 5000);
-    });
-    volumeSlider.addEventListener('input', (e) => {
-        video.volume = parseFloat(e.target.value);
-        const icon = volumeBtn.querySelector('i');
-        if (video.volume === 0) icon.className = 'fas fa-volume-mute';
-        else if (video.volume < 0.5) icon.className = 'fas fa-volume-down';
-        else icon.className = 'fas fa-volume-up';
-    });
-    
-    fullscreenBtn.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen();
-            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-        } else {
-            document.exitFullscreen();
-            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-        }
-    });
-    document.addEventListener('fullscreenchange', () => {
-        if (document.fullscreenElement) fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
-        else fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
-    });
-    
-    qualityBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        qualityMenu.classList.toggle('show');
-        setTimeout(() => qualityMenu.classList.remove('show'), 5000);
-    });
-    document.querySelectorAll('[data-quality]').forEach(item => {
-        item.addEventListener('click', (e) => {
-            const quality = e.target.getAttribute('data-quality');
-            currentQuality = quality;
-            if (hls) {
-                if (quality === 'auto') hls.currentLevel = -1;
-                else {
-                    const idx = hls.levels.findIndex(l => l.height === parseInt(quality));
-                    if (idx !== -1) hls.currentLevel = idx;
-                }
-            }
-            qualityMenu.classList.remove('show');
-        });
-    });
-    
-    mediaBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        mediaMenu.classList.toggle('show');
-        setTimeout(() => mediaMenu.classList.remove('show'), 5000);
-    });
-    document.querySelectorAll('[data-sub]').forEach(item => {
-        item.addEventListener('click', (e) => {
-            const lang = e.target.getAttribute('data-sub');
-            alert(`ژێرنووس بۆ ${lang} هەڵبژێردرا`);
-            mediaMenu.classList.remove('show');
-        });
-    });
-    document.querySelectorAll('[data-audio]').forEach(item => {
-        item.addEventListener('click', (e) => {
-            const audioLang = e.target.getAttribute('data-audio');
-            alert(`دەنگ بۆ ${audioLang} هەڵبژێردرا`);
-            mediaMenu.classList.remove('show');
-        });
-    });
-    
-    document.addEventListener('click', () => {
-        qualityMenu.classList.remove('show');
-        mediaMenu.classList.remove('show');
-        volumePopup.classList.remove('show');
-    });
-    
-    function formatTime(seconds) {
-        if (isNaN(seconds)) return '0:00';
-        const hrs = Math.floor(seconds / 3600);
-        const mins = Math.floor((seconds % 3600) / 60);
-        const secs = Math.floor(seconds % 60);
-        if (hrs > 0) return `${hrs}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        return `${mins}:${secs.toString().padStart(2,'0')}`;
-    }
-    
+  }
+  if (targetChunk !== currentChunkIndex) {
+    currentChunkIndex = targetChunk;
+    video.src = chunks[targetChunk].url;
+    video.load();
+    video.currentTime = targetTime - chunkStartTimes[targetChunk];
+    setLoading(true);
+    video.play().catch(() => {});
+  } else {
+    video.currentTime = targetTime - chunkStartTimes[currentChunkIndex];
+  }
+}
+
+// ====================================================
+// CONTROLS AUTO-HIDE
+// ====================================================
+function showControls() {
+  controlsOverlay.classList.remove('hidden');
+  container.classList.add('show-cursor');
+  clearTimeout(controlsTimer);
+  if (isVideoStarted && !video.paused) {
+    controlsTimer = setTimeout(() => {
+      controlsOverlay.classList.add('hidden');
+      container.classList.remove('show-cursor');
+    }, 3000);
+  }
+}
+
+container.addEventListener('mousemove', showControls);
+container.addEventListener('touchstart', () => {
+  if (controlsOverlay.classList.contains('hidden')) {
     showControls();
+  } else {
+    togglePlay();
+  }
+}, { passive: true });
+container.addEventListener('click', (e) => {
+  if (e.target.closest('.ctrl-btn') || e.target.closest('.progress-area')) return;
+  togglePlay();
+});
+
+// ====================================================
+// VIDEO EVENTS
+// ====================================================
+video.addEventListener('play', () => { setPlayIcon(true); showControls(); });
+video.addEventListener('pause', () => { setPlayIcon(false); showControls(); });
+video.addEventListener('ended', onChunkEnd);
+video.addEventListener('timeupdate', updateProgress);
+video.addEventListener('waiting', () => setLoading(true));
+video.addEventListener('canplay', () => setLoading(false));
+video.addEventListener('playing', () => setLoading(false));
+video.addEventListener('progress', updateProgress);
+
+function setLoading(b) {
+  loadingOverlay.classList.toggle('active', b);
+}
+
+function updateChunkInfo() {
+  chunkInfo.textContent = `chunk ${currentChunkIndex + 1}/${chunks.length}`;
+}
+
+// ====================================================
+// FORMAT TIME
+// ====================================================
+function formatTime(s) {
+  if (isNaN(s) || s < 0) return '0:00';
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const sec = Math.floor(s % 60);
+  if (h > 0) return `${h}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`;
+  return `${m}:${sec.toString().padStart(2,'0')}`;
+}
+
+// ====================================================
+// LIKE / SHARE
+// ====================================================
+function toggleLike() {
+  isLiked = !isLiked;
+  document.getElementById('likeBtn').classList.toggle('liked', isLiked);
+}
+function shareVideo() {
+  if (navigator.share) {
+    navigator.share({ title: document.getElementById('metaTitle').textContent, url: location.href });
+  } else {
+    navigator.clipboard.writeText(location.href).then(() => alert('لینکەکە کۆپی کرا!'));
+  }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  if (e.code === 'ArrowRight') { video.currentTime = Math.min(video.currentTime + 10, video.duration || 0); }
+  if (e.code === 'ArrowLeft') { video.currentTime = Math.max(video.currentTime - 10, 0); }
+  if (e.code === 'ArrowUp') { video.volume = Math.min(1, video.volume + 0.1); document.getElementById('volumeSlider').value = video.volume * 100; }
+  if (e.code === 'ArrowDown') { video.volume = Math.max(0, video.volume - 0.1); document.getElementById('volumeSlider').value = video.volume * 100; }
+  if (e.code === 'KeyF') toggleFullscreen();
+  if (e.code === 'KeyM') toggleMute();
+});
+
+// Close menus on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.popup-menu') && !e.target.closest('#speedBtn')) closeAllMenus();
+});
+
+// Init with demo
+initPlayer({
+  title: 'ناوی فیلمەکە یان درامەکە',
+  chunks: DEMO_CHUNKS,
+  views: '١٢٠،٠٠٠',
+  date: '٢ ڕۆژ لەمەوبەر',
+});
 </script>
 </body>
 </html>
