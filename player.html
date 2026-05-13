@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ckb" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ڤیدیۆ پلەیەر</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>Video Player</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -23,7 +23,7 @@
     --control-hover: rgba(255,255,255,0.15);
     --tooltip-bg: rgba(28,28,28,0.95);
     --radius: 8px;
-    --font: 'Noto Naskh Arabic', 'Segoe UI', sans-serif;
+    --font: 'Inter', 'Segoe UI', sans-serif;
   }
 
   body {
@@ -535,7 +535,7 @@
 
     <!-- Poster Overlay -->
     <div class="poster-overlay" id="posterOverlay">
-      <div class="poster-title" id="posterTitle">هەڵبژێرە چی ببینیت</div>
+      <div class="poster-title" id="posterTitle">Select something to watch</div>
       <button class="poster-play-btn" id="posterPlayBtn" onclick="startVideo()">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       </button>
@@ -579,26 +579,26 @@
         <!-- Play/Pause -->
         <button class="ctrl-btn large" id="playBtn" onclick="togglePlay()">
           <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <span class="btn-tooltip">پلەی / پاوز</span>
+          <span class="btn-tooltip">Play / Pause</span>
         </button>
 
         <!-- Prev chunk -->
         <button class="ctrl-btn" onclick="skipChunk(-1)" title="">
           <svg viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-          <span class="btn-tooltip">پارچەی پێشوو</span>
+          <span class="btn-tooltip">Previous chunk</span>
         </button>
 
         <!-- Next chunk -->
         <button class="ctrl-btn" onclick="skipChunk(1)">
           <svg viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-          <span class="btn-tooltip">پارچەی دواتر</span>
+          <span class="btn-tooltip">Next chunk</span>
         </button>
 
         <!-- Volume -->
         <div class="volume-group">
           <button class="ctrl-btn" id="muteBtn" onclick="toggleMute()">
             <svg id="volIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-            <span class="btn-tooltip">دەنگ</span>
+            <span class="btn-tooltip">Volume</span>
           </button>
           <div class="volume-slider-wrap">
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100" oninput="setVolume(this.value)">
@@ -614,13 +614,13 @@
         <div style="position:relative">
           <button class="ctrl-btn" id="speedBtn" onclick="toggleMenu('speedMenu')">
             <span id="speedLabel" style="font-size:13px;font-weight:600;min-width:36px;text-align:center;">1×</span>
-            <span class="btn-tooltip">خێرایی</span>
+            <span class="btn-tooltip">Speed</span>
           </button>
           <div class="popup-menu" id="speedMenu">
-            <div class="popup-header">خێرایی</div>
+            <div class="popup-header">Playback Speed</div>
             <div class="popup-item" onclick="setSpeed(0.5)"><span>0.5×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
             <div class="popup-item" onclick="setSpeed(0.75)"><span>0.75×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            <div class="popup-item active" onclick="setSpeed(1)"><span>نەرمال</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item active" onclick="setSpeed(1)"><span>Normal</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
             <div class="popup-item" onclick="setSpeed(1.25)"><span>1.25×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
             <div class="popup-item" onclick="setSpeed(1.5)"><span>1.5×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
             <div class="popup-item" onclick="setSpeed(2)"><span>2×</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
@@ -630,7 +630,7 @@
         <!-- Fullscreen -->
         <button class="ctrl-btn" id="fsBtn" onclick="toggleFullscreen()">
           <svg id="fsIcon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-          <span class="btn-tooltip">پڕ شاشە</span>
+          <span class="btn-tooltip">Fullscreen</span>
         </button>
 
       </div>
@@ -639,23 +639,23 @@
 
   <!-- META PANEL -->
   <div class="meta-panel">
-    <div class="meta-title" id="metaTitle">ناوی فیلمەکە / درامەکە</div>
+    <div class="meta-title" id="metaTitle">Movie / Drama Title</div>
     <div class="meta-row">
       <div class="meta-stats">
-        <span id="metaViews">١٢٠،٠٠٠ بینەر</span>
+        <span id="metaViews">120,000 views</span>
         <div class="meta-dot"></div>
-        <span id="metaDate">٢ ڕۆژ لەمەوبەر</span>
+        <span id="metaDate">2 days ago</span>
         <div class="meta-dot"></div>
-        <span id="metaDuration">٠:٠٠ کاتژمێر</span>
+        <span id="metaDuration">0:00</span>
       </div>
       <div class="meta-actions">
         <button class="action-btn" id="likeBtn" onclick="toggleLike()">
           <svg viewBox="0 0 24 24"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
-          <span>خۆشم هات</span>
+          <span>Like</span>
         </button>
         <button class="action-btn" onclick="shareVideo()">
           <svg viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92S19.61 16.08 18 16.08z"/></svg>
-          <span>بەشکردن</span>
+          <span>Share</span>
         </button>
       </div>
     </div>
@@ -726,7 +726,7 @@ function initPlayer(config) {
   chunks = config.chunks || DEMO_CHUNKS;
   document.getElementById('metaTitle').textContent = config.title || 'ناوی فیلمەکە';
   document.getElementById('posterTitle').textContent = config.title || '';
-  document.getElementById('metaViews').textContent = (config.views || '٠') + ' بینەر';
+  document.getElementById('metaViews').textContent = (config.views || '0') + ' views';
   document.getElementById('metaDate').textContent = config.date || '';
   if (config.poster) {
     posterOverlay.style.backgroundImage = `url(${config.poster})`;
@@ -857,7 +857,7 @@ function setSpeed(speed) {
   document.getElementById('speedLabel').textContent = speed === 1 ? '1×' : speed + '×';
   document.querySelectorAll('#speedMenu .popup-item').forEach(el => {
     el.classList.toggle('active', parseFloat(el.querySelector('span').textContent) === speed ||
-      (speed === 1 && el.querySelector('span').textContent === 'نەرمال'));
+      (speed === 1 && el.querySelector('span').textContent === 'Normal'));
   });
   closeAllMenus();
 }
@@ -1039,7 +1039,7 @@ function shareVideo() {
   if (navigator.share) {
     navigator.share({ title: document.getElementById('metaTitle').textContent, url: location.href });
   } else {
-    navigator.clipboard.writeText(location.href).then(() => alert('لینکەکە کۆپی کرا!'));
+    navigator.clipboard.writeText(location.href).then(() => alert('Link copied!'));
   }
 }
 
@@ -1062,10 +1062,10 @@ document.addEventListener('click', (e) => {
 
 // Init with demo
 initPlayer({
-  title: 'ناوی فیلمەکە یان درامەکە',
+  title: 'Movie / Drama Title',
   chunks: DEMO_CHUNKS,
-  views: '١٢٠،٠٠٠',
-  date: '٢ ڕۆژ لەمەوبەر',
+  views: '120,000',
+  date: '2 days ago',
 });
 </script>
 </body>
