@@ -735,7 +735,6 @@
 <script>
 // 3 VIDEOS - EACH 10 SECONDS (TOTAL 30 SECONDS)
 const DEMO_CHUNKS = [
-  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },   
   { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
   { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
   { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
@@ -773,17 +772,14 @@ let isVideoStarted = false;
 let volumeVisible = false;
 let volumeHideTimer = null;
 let isLoadingChunk = false;
+let isAutoSwitchingChunk = false; // Track automatic chunk switching
 
-// Initialize player with chunks
+// Initialize player
 function initPlayer(config) {
   chunks = config.chunks || DEMO_CHUNKS;
   calculateChunkTimes();
-  console.log('Player initialized with', chunks.length, 'chunks');
-  console.log('Total duration:', totalDuration, 'seconds');
-  console.log('Chunk start times:', chunkStartTimes);
 }
 
-// Calculate cumulative times for each chunk
 function calculateChunkTimes() {
   chunkStartTimes = [0];
   totalDuration = 0;
@@ -792,7 +788,6 @@ function calculateChunkTimes() {
     totalDuration += duration;
     chunkStartTimes.push(totalDuration);
   }
-  // chunkStartTimes example: [0, 10, 20, 30]
 }
 
 function startVideo() {
@@ -822,7 +817,6 @@ function loadChunk(index, seekTime = 0) {
   const onMetadata = function() {
     video.removeEventListener('loadedmetadata', onMetadata);
     
-    // Set current time within this chunk
     const maxTime = video.duration - 0.05;
     const targetSeek = Math.min(seekTime, maxTime);
     if (targetSeek > 0) {
@@ -840,27 +834,26 @@ function loadChunk(index, seekTime = 0) {
     video.removeEventListener('error', onError);
     isLoadingChunk = false;
     setLoading(false);
-    console.error('Error loading chunk:', index);
   });
   
   // Set ended event for this chunk
   video.onended = function() {
-    console.log('Chunk', currentChunkIndex, 'ended at', video.currentTime);
     onChunkEnd();
   };
 }
 
 function onChunkEnd() {
-  console.log('onChunkEnd called, currentChunkIndex:', currentChunkIndex, 'total chunks:', chunks.length);
-  
   if (currentChunkIndex < chunks.length - 1) {
-    // Move to next chunk (0-indexed: if current is 0, next is 1)
+    // This is automatic switching - set flag to prevent controls from showing
+    isAutoSwitchingChunk = true;
     const nextChunkIndex = currentChunkIndex + 1;
-    console.log('Moving to next chunk:', nextChunkIndex);
     loadChunk(nextChunkIndex, 0);
+    // Reset flag after a short delay
+    setTimeout(() => {
+      isAutoSwitchingChunk = false;
+    }, 500);
   } else {
     // End of all videos
-    console.log('All videos finished');
     setPlayIcon(false);
     posterOverlay.classList.remove('hidden');
     isVideoStarted = false;
@@ -894,7 +887,6 @@ function seekRelative(secs) {
 function seekToGlobal(targetTime) {
   if (totalDuration === 0) return;
   
-  // Find which chunk contains this target time
   let targetChunk = 0;
   for (let i = 0; i < chunkStartTimes.length - 1; i++) {
     if (targetTime >= chunkStartTimes[i] && targetTime < chunkStartTimes[i + 1]) {
@@ -904,12 +896,9 @@ function seekToGlobal(targetTime) {
   }
   if (targetChunk >= chunks.length) targetChunk = chunks.length - 1;
   
-  // Calculate local time within the target chunk
   const localTime = targetTime - chunkStartTimes[targetChunk];
-  console.log(`Seek: global=${targetTime}s, chunk=${targetChunk}, local=${localTime.toFixed(2)}s`);
   
   if (targetChunk !== currentChunkIndex) {
-    // Need to load different chunk
     currentChunkIndex = targetChunk;
     video.src = chunks[targetChunk].url;
     video.load();
@@ -923,7 +912,6 @@ function seekToGlobal(targetTime) {
       setLoading(false);
     });
   } else {
-    // Same chunk, just seek
     const seekLocal = Math.min(localTime, video.duration - 0.05);
     video.currentTime = Math.max(0, seekLocal);
   }
@@ -944,7 +932,6 @@ function updateProgress() {
   progressFill.style.width = pct + '%';
   progressThumb.style.left = pct + '%';
   
-  // Update buffer based on current chunk
   if (video.buffered.length > 0) {
     const bufEnd = video.buffered.end(video.buffered.length - 1);
     const globalBufferEnd = (chunkStartTimes[currentChunkIndex] || 0) + bufEnd;
@@ -1120,8 +1107,11 @@ function hoverProgress(e) {
 
 function leaveProgress() {}
 
-// Controls auto-hide
-function showControls() { 
+// Controls auto-hide - only on user activity
+function showControls() {
+  // Don't show controls if we're auto-switching chunks
+  if (isAutoSwitchingChunk) return;
+  
   controlsOverlay.classList.remove('hidden'); 
   container.classList.add('show-cursor'); 
   const mcc = document.getElementById('mobileCenterControls'); 
@@ -1136,18 +1126,34 @@ function showControls() {
   } 
 }
 
-container.addEventListener('mousemove', showControls);
+function hideControlsImmediately() {
+  controlsOverlay.classList.add('hidden');
+  container.classList.remove('show-cursor');
+  const mcc = document.getElementById('mobileCenterControls');
+  if(mcc) mcc.classList.remove('visible');
+  clearTimeout(controlsTimer);
+}
+
+// User activity events
+container.addEventListener('mousemove', () => {
+  if (!isAutoSwitchingChunk) showControls();
+});
 container.addEventListener('touchstart', (e) => { 
-  if (controlsOverlay.classList.contains('hidden')) showControls(); 
+  if (controlsOverlay.classList.contains('hidden') && !isAutoSwitchingChunk) showControls(); 
 }, { passive: true });
 
+// Only trigger play/pause on video click, not when controls are showing
 container.addEventListener('click', (e) => { 
   if (e.target.closest('.ctrl-btn') || e.target.closest('.progress-area') || e.target.closest('.popup-menu') || e.target.closest('.mobile-seek-btn') || e.target.closest('.mobile-play-btn')) return; 
   togglePlay(); 
 });
 
 // Video events
-video.addEventListener('play', () => { setPlayIcon(true); showControls(); });
+video.addEventListener('play', () => { 
+  setPlayIcon(true); 
+  // Only show controls on user-initiated play
+  if (!isAutoSwitchingChunk) showControls(); 
+});
 video.addEventListener('pause', () => { setPlayIcon(false); showControls(); });
 video.addEventListener('timeupdate', updateProgress);
 video.addEventListener('waiting', () => setLoading(true));
@@ -1158,7 +1164,7 @@ video.addEventListener('loadedmetadata', updateProgress);
 
 function setLoading(b) { loadingOverlay.classList.toggle('active', b); }
 
-// Format time (for 30 seconds total: 0:00 to 0:30)
+// Format time
 function formatTime(s) {
   if (isNaN(s) || s < 0) return '0:00';
   const minutes = Math.floor(s / 60);
