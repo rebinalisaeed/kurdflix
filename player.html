@@ -66,7 +66,6 @@
     -webkit-user-select: none;
   }
 
-  /* Disable right click */
   * {
     -webkit-tap-highlight-color: transparent;
   }
@@ -106,7 +105,6 @@
     pointer-events: none;
   }
 
-  /* Poster */
   .poster-overlay {
     position: absolute;
     inset: 0;
@@ -137,7 +135,6 @@
   .poster-play-btn:hover { transform: scale(1.1); background: var(--accent-hover); }
   .poster-play-btn svg { width: 28px; height: 28px; fill: #fff; margin-right: -3px; }
 
-  /* Loading */
   .loading-overlay {
     position: absolute;
     inset: 0;
@@ -162,7 +159,6 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Center Ripple & Icon */
   .click-ripple {
     position: absolute;
     top: 50%; left: 50%;
@@ -201,7 +197,6 @@
   }
   .center-icon svg { width: 44px; height: 44px; fill: #fff; margin-left: 4px; }
 
-  /* Controls Overlay */
   .controls-overlay {
     position: absolute;
     bottom: 0; left: 0; right: 0;
@@ -216,7 +211,6 @@
     pointer-events: none;
   }
 
-  /* Progress Bar */
   .progress-area {
     position: relative;
     height: 32px;
@@ -289,7 +283,6 @@
   }
   .progress-area:hover .progress-tooltip { opacity: 1; }
 
-  /* Control Row */
   .control-row {
     display: flex;
     align-items: center;
@@ -329,7 +322,6 @@
   
   .ctrl-btn svg { width: 32px; height: 32px; fill: currentColor; }
 
-  /* Desktop specific */
   @media (min-width: 769px) {
     .ctrl-btn svg { width: 40px !important; height: 40px !important; }
     .ctrl-btn { padding: 12px; }
@@ -338,7 +330,6 @@
     .right-controls { gap: 16px; }
   }
 
-  /* Volume Group */
   .volume-group {
     display: flex;
     align-items: center;
@@ -387,7 +378,6 @@
     letter-spacing: 0.5px;
   }
 
-  /* Popup Menus */
   .popup-menu {
     position: absolute;
     bottom: calc(100% + 8px);
@@ -421,7 +411,6 @@
     margin: 6px 0;
   }
   
-  /* Two-column menu */
   .two-column-menu {
     min-width: 280px;
     display: flex;
@@ -452,7 +441,6 @@
   .popup-item .check { width: 14px; height: 14px; fill: var(--accent); opacity: 0; flex-shrink: 0; }
   .popup-item.active .check { opacity: 1; }
 
-  /* Desktop only elements */
   .desktop-only {
     display: flex !important;
   }
@@ -461,7 +449,6 @@
     display: none !important;
   }
 
-  /* Mobile Center Controls */
   .mobile-center-controls {
     display: none;
     position: absolute;
@@ -491,7 +478,6 @@
   .mobile-play-btn:active { transform: scale(0.92); }
   .mobile-play-btn svg { width: 50px; height: 50px; fill: currentColor; margin-left: 5px; }
 
-  /* Mobile seek buttons */
   .mobile-seek-overlay {
     position: absolute;
     top: 0;
@@ -522,7 +508,6 @@
   .mobile-seek-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.6); }
   .mobile-seek-btn svg { width: 48px; height: 48px; fill: #ffffff; }
 
-  /* ====== MOBILE STYLES ====== */
   @media (max-width: 768px) {
     .desktop-only { display: none !important; }
     .mobile-only { display: flex !important; }
@@ -551,12 +536,10 @@
     .mobile-play-btn svg { width: 55px; height: 55px; }
     
     .control-row { gap: 8px; }
-    
     .left-controls { gap: 10px; }
     .right-controls { gap: 10px; }
   }
 
-  /* Fullscreen */
   :fullscreen .player-wrapper,
   :-webkit-full-screen .player-wrapper {
     height: 100vh;
@@ -567,7 +550,6 @@
     height: 100%;
   }
   
-  /* No zoom */
   * {
     touch-action: manipulation;
   }
@@ -602,7 +584,6 @@
       <svg id="centerIconSvg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     </div>
 
-    <!-- Mobile Seek Overlays -->
     <div class="mobile-seek-overlay mobile-seek-left mobile-only" id="mobileSeekLeft">
       <button class="mobile-seek-btn" id="mobileSeekBackBtn">
         <svg viewBox="0 0 24 24">
@@ -618,14 +599,12 @@
       </button>
     </div>
 
-    <!-- Mobile Center Play Button -->
     <div class="mobile-center-controls mobile-only" id="mobileCenterControls">
       <button class="mobile-play-btn" id="mobileCenterPlayBtn">
         <svg id="mobilePlayIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       </button>
     </div>
 
-    <!-- Controls Overlay -->
     <div class="controls-overlay" id="controlsOverlay">
       <div class="progress-area" id="progressArea"
            onmousedown="startScrub(event)"
@@ -642,7 +621,6 @@
       </div>
 
       <div class="control-row">
-        <!-- Left side: Play/Seek buttons + Volume -->
         <div class="left-controls">
           <button class="ctrl-btn desktop-only" id="playBtn">
             <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -669,7 +647,6 @@
           </div>
         </div>
 
-        <!-- Right side: Desktop order - Time (1st), CC (2nd), Quality (3rd), Fullscreen (4th) -->
         <div class="right-controls desktop-only">
           <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
           <div style="position:relative">
@@ -711,7 +688,6 @@
           </button>
         </div>
 
-        <!-- Mobile right controls - Order: Time (1st), CC (2nd), Quality (3rd), Fullscreen (4th) -->
         <div class="right-controls mobile-only">
           <div class="time-display" id="timeDisplayMobile">0:00 / 0:00</div>
           <div style="position:relative">
@@ -758,7 +734,8 @@
 </div>
 
 <script>
-// DEMO CHUNKS - Fixed duration handling
+// DEMO CHUNKS - Each chunk is 60 seconds (1 minute) for proper testing
+// Total duration: 3 minutes (180 seconds)
 const DEMO_CHUNKS = [
   { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 60 },
   { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 60 },
@@ -796,48 +773,92 @@ let controlsTimer = null;
 let isVideoStarted = false;
 let volumeVisible = false;
 let volumeHideTimer = null;
+let isLoadingChunk = false;
 
 // Init
 function initPlayer(config) {
   chunks = config.chunks || DEMO_CHUNKS;
-  preloadChunkDurations();
+  calculateChunkTimes();
 }
 
-function preloadChunkDurations() {
+function calculateChunkTimes() {
   chunkStartTimes = [0];
   totalDuration = 0;
   for (let i = 0; i < chunks.length; i++) {
-    const d = chunks[i].duration || 10;
+    const d = chunks[i].duration || 60;
     totalDuration += d;
     chunkStartTimes.push(totalDuration);
   }
+  console.log('Total duration:', totalDuration, 'seconds');
+  console.log('Chunk start times:', chunkStartTimes);
 }
 
 function startVideo() {
   if (isVideoStarted) return;
   posterOverlay.classList.add('hidden');
   isVideoStarted = true;
-  loadChunk(0);
-  video.addEventListener('canplay', () => { video.play().catch(e=>console.log); }, { once: true });
+  loadChunk(0, 0);
   showControls();
 }
 
-function loadChunk(index) {
+function loadChunk(index, seekTime = 0) {
   if (index < 0 || index >= chunks.length) return;
+  if (isLoadingChunk) return;
+  isLoadingChunk = true;
+  
   currentChunkIndex = index;
-  video.src = chunks[index].url;
+  const chunk = chunks[index];
+  
+  // Remove old event listeners to prevent conflicts
+  const oldOnEnded = video.onended;
+  video.onended = null;
+  
+  video.src = chunk.url;
   video.load();
   setLoading(true);
-  video.play().catch(() => {});
+  
+  video.addEventListener('loadedmetadata', function onMetadata() {
+    video.removeEventListener('loadedmetadata', onMetadata);
+    
+    // Set the current time within this chunk
+    const targetTime = Math.min(seekTime, video.duration - 0.1);
+    if (targetTime > 0) {
+      video.currentTime = targetTime;
+    }
+    
+    video.play().catch(e => console.log('Play error:', e));
+    isLoadingChunk = false;
+  });
+  
+  video.addEventListener('error', function onError() {
+    video.removeEventListener('error', onError);
+    isLoadingChunk = false;
+    setLoading(false);
+    console.error('Error loading chunk:', index);
+  });
+  
+  // Setup ended event for this chunk
+  video.onended = function() {
+    if (currentChunkIndex === index) {
+      onChunkEnd();
+    }
+  };
 }
 
 function onChunkEnd() {
+  console.log('Chunk ended:', currentChunkIndex);
+  
   if (currentChunkIndex < chunks.length - 1) {
-    loadChunk(currentChunkIndex + 1);
+    // Move to next chunk
+    const nextChunkIndex = currentChunkIndex + 1;
+    console.log('Moving to next chunk:', nextChunkIndex);
+    loadChunk(nextChunkIndex, 0);
   } else {
+    // End of all chunks
     setPlayIcon(false);
     posterOverlay.classList.remove('hidden');
     isVideoStarted = false;
+    currentChunkIndex = 0;
   }
 }
 
@@ -848,7 +869,7 @@ function togglePlay() {
       setPlayIcon(true);
       showCenterIcon(true);
       showControls();
-    }).catch(e=>console.log);
+    }).catch(e => console.log(e));
   } else {
     video.pause();
     setPlayIcon(false);
@@ -865,6 +886,9 @@ function seekRelative(secs) {
 }
 
 function seekToGlobal(targetTime) {
+  if (totalDuration === 0) return;
+  
+  // Find which chunk contains this target time
   let targetChunk = 0;
   for (let i = 0; i < chunkStartTimes.length - 1; i++) {
     if (targetTime >= chunkStartTimes[i] && targetTime < chunkStartTimes[i + 1]) {
@@ -874,38 +898,51 @@ function seekToGlobal(targetTime) {
   }
   if (targetChunk >= chunks.length) targetChunk = chunks.length - 1;
   
-  const newTime = targetTime - chunkStartTimes[targetChunk];
+  // Calculate local time within the target chunk
+  const localTime = targetTime - chunkStartTimes[targetChunk];
+  
+  console.log(`Seeking to global: ${targetTime}s, chunk: ${targetChunk}, local: ${localTime}s`);
   
   if (targetChunk !== currentChunkIndex) {
+    // Need to load different chunk
     currentChunkIndex = targetChunk;
     video.src = chunks[targetChunk].url;
     video.load();
+    setLoading(true);
+    
     video.addEventListener('loadedmetadata', function onLoad() {
       video.removeEventListener('loadedmetadata', onLoad);
-      video.currentTime = Math.max(0, Math.min(video.duration || 0, newTime));
-      setLoading(true);
+      const seekLocal = Math.min(localTime, video.duration - 0.1);
+      video.currentTime = Math.max(0, seekLocal);
       video.play().catch(() => {});
+      setLoading(false);
     });
   } else {
-    video.currentTime = Math.max(0, Math.min(video.duration || 0, newTime));
+    // Same chunk, just seek
+    const seekLocal = Math.min(localTime, video.duration - 0.1);
+    video.currentTime = Math.max(0, seekLocal);
   }
 }
 
 function getGlobalTime() {
+  if (!isVideoStarted) return 0;
   const localTime = video.currentTime || 0;
-  return chunkStartTimes[currentChunkIndex] + localTime;
+  const chunkStart = chunkStartTimes[currentChunkIndex] || 0;
+  return chunkStart + localTime;
 }
 
 function updateProgress() {
-  if (isScrubbing || totalDuration === 0) return;
+  if (isScrubbing || totalDuration === 0 || !isVideoStarted) return;
+  
   const globalTime = getGlobalTime();
   const pct = (globalTime / totalDuration) * 100;
   progressFill.style.width = pct + '%';
   progressThumb.style.left = pct + '%';
   
+  // Update buffer based on current chunk
   if (video.buffered.length > 0) {
     const bufEnd = video.buffered.end(video.buffered.length - 1);
-    const globalBufferEnd = chunkStartTimes[currentChunkIndex] + bufEnd;
+    const globalBufferEnd = (chunkStartTimes[currentChunkIndex] || 0) + bufEnd;
     const bufPct = (globalBufferEnd / totalDuration) * 100;
     progressBuffer.style.width = Math.min(bufPct, 100) + '%';
   }
@@ -974,7 +1011,6 @@ function updateVolIcon() {
   volIcon.querySelector('path').setAttribute('d', d);
 }
 
-// Quality
 function setQuality(q, isMobile = false) {
   const menuId = isMobile ? '#settingsMenuMobile' : '#settingsMenu';
   document.querySelectorAll(menuId + ' .popup-item').forEach(el => {
@@ -984,7 +1020,6 @@ function setQuality(q, isMobile = false) {
   closeAllMenus();
 }
 
-// Subtitle/Audio
 function selectCC(lang, isMobile = false) {
   const menuId = isMobile ? '#ccMenuMobile' : '#ccMenu';
   document.querySelectorAll(menuId + ' .menu-column:first-child .popup-item').forEach(el => el.classList.remove('active'));
@@ -1109,7 +1144,6 @@ container.addEventListener('click', (e) => {
 // Video events
 video.addEventListener('play', () => { setPlayIcon(true); showControls(); });
 video.addEventListener('pause', () => { setPlayIcon(false); showControls(); });
-video.addEventListener('ended', onChunkEnd);
 video.addEventListener('timeupdate', updateProgress);
 video.addEventListener('waiting', () => setLoading(true));
 video.addEventListener('canplay', () => setLoading(false));
@@ -1174,17 +1208,14 @@ document.getElementById('mobileCenterPlayBtn').onclick = (e) => { e.stopPropagat
 document.getElementById('muteBtn').onclick = () => handleVolumeIconClick();
 volumeSlider.oninput = (e) => setVolume(e.target.value);
 
-// Desktop menu events
 document.getElementById('settingsBtn').onclick = () => toggleMenu('settingsMenu');
 document.getElementById('ccBtn').onclick = () => toggleMenu('ccMenu');
 document.getElementById('fsBtn').onclick = () => toggleFullscreen();
 
-// Mobile menu events
 document.getElementById('settingsBtnMobile').onclick = () => toggleMenu('settingsMenuMobile');
 document.getElementById('ccBtnMobile').onclick = () => toggleMenu('ccMenuMobile');
 document.getElementById('fsBtnMobile').onclick = () => toggleFullscreen();
 
-// Menu items
 document.querySelectorAll('#settingsMenu .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality'), false); });
 document.querySelectorAll('#settingsMenuMobile .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality'), true); });
 document.querySelectorAll('#ccMenu .popup-item[data-cc]').forEach(el => { el.onclick = () => selectCC(el.getAttribute('data-cc'), false); });
