@@ -9,7 +9,7 @@
             "lang": "kurdish",
             "categories": ["kurdish-film", "all-films"],
             "videoUrl": "https://vidmoly.com/e/example1",
-            "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا",
+            "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا، گەنجێک بۆ پاراستنی گوندەکەی دەجەنگێت...",
             "trailerUrl": "https://www.youtube.com/embed/example1",
             "genres": ["دراما", "ئاکشن", "سەرکێشی"]
         },
@@ -22,15 +22,71 @@
             "lang": "turkish",
             "categories": ["turkish-series", "all-series"],
             "videoUrl": "https://streamsb.com/e/example2",
-            "description": "زنجیرەیەکی درامایی و سەرنجڕاکێش",
+            "description": "زنجیرەیەکی درامایی خێزانی کە چیرۆکی خۆشەویستی و خیانەت دەگێڕێتەوە",
             "trailerUrl": "https://www.youtube.com/embed/example2",
-            "genres": ["دراما", "ڕۆمانسی", "تراژیدی"]
+            "genres": ["دراما", "ڕۆمانسی", "تراژیدی"],
+            "episodes": [
+                {
+                    "number": 1,
+                    "title": "ئەڵقەی یەکەم - دەستپێک",
+                    "videoUrl": "https://streamsb.com/e/episode1"
+                },
+                {
+                    "number": 2,
+                    "title": "ئەڵقەی دووەم - ڕازەکان",
+                    "videoUrl": "https://streamsb.com/e/episode2"
+                },
+                {
+                    "number": 3,
+                    "title": "ئەڵقەی سێیەم - بڕیارەکان",
+                    "videoUrl": "https://streamsb.com/e/episode3"
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "title": "تاڵانی پارە",
+            "year": "2025",
+            "poster": "assets/posters/poster3.jpg",
+            "type": "film",
+            "lang": "turkish",
+            "categories": ["turkish-film", "all-films"],
+            "videoUrl": "https://vidmoly.com/e/example3",
+            "description": "فیلمێکی ئەکشنی خێرا و پڕ لە سەرکێشی، چیرۆکی تاڵانکاری گەورە لە ستەمبوڵ",
+            "trailerUrl": "https://www.youtube.com/embed/example3",
+            "genres": ["ئاکشن", "هەستبزوێن", "تاوانکاری"]
+        },
+        {
+            "id": 4,
+            "title": "بەردی خەونەکان",
+            "year": "2024",
+            "poster": "assets/posters/poster4.jpg",
+            "type": "series",
+            "lang": "kurdish",
+            "categories": ["kurdish-series", "all-series"],
+            "videoUrl": "https://vidmoly.com/e/example4",
+            "description": "زنجیرەیەکی کوردی سەبارەت بە ژیانی خێزانی و کێشە کۆمەڵایەتییەکان",
+            "trailerUrl": "https://www.youtube.com/embed/example4",
+            "genres": ["دراما", "کۆمەڵایەتی", "خێزانی"],
+            "episodes": [
+                {
+                    "number": 1,
+                    "title": "ئەڵقەی یەکەم",
+                    "videoUrl": "https://vidmoly.com/e/episode1"
+                },
+                {
+                    "number": 2,
+                    "title": "ئەڵقەی دووەم",
+                    "videoUrl": "https://vidmoly.com/e/episode2"
+                }
+            ]
         }
     ],
     "carousel": [
         {
             "id": 1778292633763,
             "title": "Crim 101",
+            "category": "تاوانکاری",
             "year": "2026",
             "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان، بەو هیوایەی پلانی ئەو دزییە چەندین ملیۆن دۆلارییەیان پووچەڵ بکاتەوە.",
             "images": {
@@ -44,6 +100,7 @@
         {
             "id": 1778292974779,
             "title": "Berlin 2",
+            "category": "درامای ئیسپانی",
             "year": "2026",
             "description": "دەستەیەک لە ئیسپانیا گروپێکی دروست دەکەن و هەڵدەکورنە سەر بانکی نێودەوڵەتی ئیسپانیا",
             "images": {
