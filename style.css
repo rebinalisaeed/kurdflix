@@ -326,13 +326,13 @@ input:checked + .slider:before {
     object-position: center;
 }
 
-/* ناوەڕۆکی سلاید - شوێنی نوسینەکان 4% بەرزتر کراوەتەوە */
+/* ناوەڕۆکی سلاید - بەبێ پاشەڕەنگ */
 .carousel-content {
     position: absolute;
     bottom: 4%;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
+    /* پاشەڕەنگ لابرا */
     padding: 2rem 2rem 2.5rem 2rem;
     text-align: center;
     color: white;
