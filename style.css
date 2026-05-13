@@ -365,17 +365,19 @@ input:checked + .slider:before {
     justify-content: center;
 }
 
+/* چەشنەکان - 10px بەرزتر کراوە */
 .genre-tag {
     background-color: rgba(255,255,255,0.2);
     padding: 0.3rem 0.9rem;
     border-radius: 25px;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     font-weight: normal;
     backdrop-filter: blur(4px);
 }
 
+/* ساڵ - 10px بەرزتر کراوە */
 .carousel-year {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     opacity: 0.9;
     background-color: rgba(0,0,0,0.6);
     padding: 0.3rem 0.9rem;
@@ -383,8 +385,9 @@ input:checked + .slider:before {
     backdrop-filter: blur(4px);
 }
 
+/* کورتە - 10px بەرزتر کراوە */
 .carousel-desc {
-    font-size: 0.9rem;
+    font-size: 1rem;
     max-width: 70%;
     margin: 0.25rem 0;
     line-height: 1.5;
@@ -397,12 +400,13 @@ input:checked + .slider:before {
     margin-top: 0.5rem;
 }
 
+/* دوگمەکان - 10px بەرزتر کراوە */
 .carousel-btn {
     padding: 0.6rem 1.8rem;
     border: none;
     border-radius: 40px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-family: 'NRT', sans-serif;
     font-weight: bold;
     transition: all 0.3s ease;
@@ -837,7 +841,7 @@ footer {
         height: 28px;
     }
     
-    /* سلاید بە هەمان ڕێژەی 27:40 */
+    /* سلاید */
     .hero-carousel {
         aspect-ratio: 27 / 40;
     }
@@ -847,25 +851,25 @@ footer {
         gap: 0.5rem;
     }
     
-    /* گەورەکردنی سایزی نوسینەکان بە 10px (~0.625rem) */
+    /* نوسینەکان لە مۆبایلدا 10px گەورەتر کراوە */
     .genre-tag {
-        font-size: 0.85rem;
+        font-size: 0.95rem;
         padding: 0.25rem 0.85rem;
     }
     
     .carousel-year {
-        font-size: 0.85rem;
+        font-size: 0.95rem;
         padding: 0.25rem 0.85rem;
     }
     
     .carousel-desc {
-        font-size: 0.9rem;
+        font-size: 1.05rem;
         max-width: 90%;
     }
     
     .carousel-btn {
         padding: 0.5rem 1.4rem;
-        font-size: 0.95rem;
+        font-size: 1.05rem;
     }
     
     .section-header h2 a {
@@ -890,7 +894,7 @@ footer {
         font-size: 0.9rem;
     }
     
-    /* مێنیوی مۆبایل - گەورەکردنی سایز */
+    /* مێنیوی مۆبایل */
     .mobile-nav-links a {
         font-size: 1.15rem;
     }
@@ -949,7 +953,7 @@ footer {
     }
     
     .carousel-desc {
-        font-size: 0.85rem;
+        font-size: 0.95rem;
     }
     
     .movie-card {
