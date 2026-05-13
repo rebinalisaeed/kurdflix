@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Kurdish Video Player - Premium</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -11,48 +11,64 @@
   :root {
     --bg-page: #0f0f0f;
     --bg-player: #000;
-    --bg-controls: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%);
-    --bg-progress-track: rgba(255,255,255,0.2);
-    --bg-progress-buffer: rgba(255,255,255,0.35);
+    --bg-controls: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+    --bg-progress-track: rgba(255,255,255,0.25);
+    --bg-progress-buffer: rgba(255,255,255,0.4);
     --accent: #ff0000;
     --accent-hover: #cc0000;
     --text-primary: #fff;
-    --text-secondary: rgba(255,255,255,0.75);
-    --text-muted: rgba(255,255,255,0.45);
-    --control-hover: rgba(255,255,255,0.15);
+    --text-secondary: rgba(255,255,255,0.8);
+    --text-muted: rgba(255,255,255,0.5);
+    --control-hover: rgba(255,255,255,0.12);
     --tooltip-bg: rgba(28,28,28,0.95);
     --font: 'Inter', 'Segoe UI', sans-serif;
+  }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
   }
 
   body {
     font-family: var(--font);
     background: var(--bg-page);
     color: var(--text-primary);
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    touch-action: pan-x pan-y; /* Prevent zoom but allow scrolling for menus */
   }
 
   .player-wrapper {
     width: 100%;
-    max-width: 1200px;
+    height: 100vh;
+    max-width: none;
     background: #000;
-    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 24px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.06);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .video-container {
     position: relative;
     width: 100%;
+    height: 100%;
     background: #000;
-    aspect-ratio: 16/9;
     overflow: hidden;
     cursor: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
+  
   .video-container.show-cursor { cursor: default; }
 
   video {
@@ -162,7 +178,7 @@
     position: absolute;
     bottom: 0; left: 0; right: 0;
     background: var(--bg-controls);
-    padding: 48px 14px 12px;
+    padding: 48px 14px 14px;
     transition: opacity 0.3s, transform 0.3s;
     z-index: 20;
   }
@@ -172,7 +188,7 @@
     pointer-events: none;
   }
 
-  /* Progress Bar - THICKER (2x) */
+  /* Progress Bar */
   .progress-area {
     position: relative;
     height: 28px;
@@ -186,20 +202,20 @@
   .progress-track {
     position: relative;
     width: 100%;
-    height: 8px; /* 2x thicker */
+    height: 6px;
     background: var(--bg-progress-track);
-    border-radius: 4px;
+    border-radius: 3px;
     overflow: hidden;
     transition: height 0.15s;
   }
-  .progress-area:hover .progress-track { height: 10px; }
+  .progress-area:hover .progress-track { height: 8px; }
 
   .progress-buffer {
     position: absolute;
     top: 0; left: 0;
     height: 100%;
     background: var(--bg-progress-buffer);
-    border-radius: 4px;
+    border-radius: 3px;
     width: 0%;
   }
 
@@ -208,7 +224,7 @@
     top: 0; left: 0;
     height: 100%;
     background: var(--accent);
-    border-radius: 4px;
+    border-radius: 3px;
     width: 0%;
     z-index: 1;
   }
@@ -216,7 +232,7 @@
   .progress-thumb {
     position: absolute;
     top: 50%;
-    width: 16px; height: 16px;
+    width: 14px; height: 14px;
     background: #fff;
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(0);
@@ -248,7 +264,9 @@
   .control-row {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .ctrl-btn {
@@ -267,14 +285,14 @@
   }
   .ctrl-btn:hover { background: var(--control-hover); }
   .ctrl-btn:active { transform: scale(0.95); }
-  .ctrl-btn svg { width: 28px; height: 28px; fill: currentColor; } /* BIGGER by 4px default */
-  .ctrl-btn.large svg { width: 36px; height: 36px; } /* Play button bigger */
+  .ctrl-btn svg { width: 26px; height: 26px; fill: currentColor; }
 
   /* Volume Group */
   .volume-group {
     display: flex;
     align-items: center;
     gap: 0;
+    margin-right: auto;
   }
 
   .volume-slider-wrap {
@@ -293,34 +311,40 @@
   .volume-slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 90px;
-    height: 5px;
-    background: rgba(255,255,255,0.25);
-    border-radius: 3px;
+    width: 80px;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
     outline: none;
     cursor: pointer;
     margin: 0 8px;
   }
   .volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 14px; height: 14px;
+    width: 12px; height: 12px;
     border-radius: 50%;
     background: #fff;
     cursor: pointer;
-    box-shadow: 0 0 4px rgba(0,0,0,0.3);
   }
 
   .time-display {
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-secondary);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
-    padding: 0 8px;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 0.5px;
+    padding: 0 4px;
+    font-family: monospace;
+    letter-spacing: 0.3px;
+    order: 1;
   }
 
-  .spacer { flex: 1; }
+  /* Right side items order */
+  .right-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    order: 2;
+  }
 
   /* Popup Menus */
   .popup-menu {
@@ -355,7 +379,7 @@
     margin: 6px 0;
   }
   
-  /* Two-column layout for CC menu (Subtitles & Audio side by side) */
+  /* Two-column menu */
   .two-column-menu {
     min-width: 280px;
     display: flex;
@@ -368,9 +392,7 @@
     border-right: 1px solid rgba(255,255,255,0.08);
   }
   .menu-column:last-child { border-right: none; }
-  .menu-column .popup-section-label {
-    padding-left: 12px;
-  }
+  
   .popup-item {
     display: flex;
     align-items: center;
@@ -387,28 +409,16 @@
   .popup-item .check { width: 14px; height: 14px; fill: var(--accent); opacity: 0; flex-shrink: 0; }
   .popup-item.active .check { opacity: 1; }
 
-  /* Settings Menu - Quality only (no speed) */
-  #settingsMenu { min-width: 160px; }
-
-  .btn-tooltip {
-    position: absolute;
-    bottom: calc(100% + 6px);
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--tooltip-bg);
-    color: #fff;
-    font-size: 11px;
-    padding: 4px 8px;
-    border-radius: 4px;
-    white-space: nowrap;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.15s;
-    z-index: 60;
+  /* Desktop only elements */
+  .desktop-only {
+    display: flex !important;
   }
-  .ctrl-btn:hover .btn-tooltip { opacity: 1; }
+  
+  .mobile-only {
+    display: none !important;
+  }
 
-  /* Mobile Center Controls - only PLAY icon (no 10s icons in center overlay) */
+  /* Mobile Center Controls */
   .mobile-center-controls {
     display: none;
     position: absolute;
@@ -424,8 +434,8 @@
     background: rgba(0,0,0,0.55);
     border: none;
     border-radius: 50%;
-    width: 88px;
-    height: 88px;
+    width: 80px;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -433,13 +443,12 @@
     pointer-events: all;
     color: #fff;
     transition: background 0.15s, transform 0.1s;
-    flex-shrink: 0;
     backdrop-filter: blur(8px);
   }
-  .mobile-play-btn:active { transform: scale(0.92); background: rgba(0,0,0,0.75); }
-  .mobile-play-btn svg { width: 56px; height: 56px; fill: currentColor; margin-left: 6px; }
+  .mobile-play-btn:active { transform: scale(0.92); }
+  .mobile-play-btn svg { width: 50px; height: 50px; fill: currentColor; margin-left: 5px; }
 
-  /* Mobile seek buttons (left/right) */
+  /* Mobile seek buttons */
   .mobile-seek-overlay {
     position: absolute;
     top: 0;
@@ -458,74 +467,62 @@
     background: rgba(0,0,0,0.4);
     border: none;
     border-radius: 60px;
-    width: 70px;
-    height: 70px;
+    width: 65px;
+    height: 65px;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
     backdrop-filter: blur(8px);
     transition: background 0.15s, transform 0.1s;
+    cursor: pointer;
   }
-  .mobile-seek-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.7); }
-  .mobile-seek-btn svg { width: 48px; height: 48px; fill: currentColor; }
-  .mobile-seek-btn svg text { font-size: 10px; font-weight: bold; }
+  .mobile-seek-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.6); }
+  .mobile-seek-btn svg { width: 45px; height: 45px; fill: #ffffff; }
+  .mobile-seek-btn svg text { fill: #ffffff; font-size: 9px; font-weight: bold; }
 
-  /* ====== RESPONSIVE MOBILE ====== */
-  @media (max-width: 700px) {
-    body { padding: 0; background: #000; }
-    .player-wrapper { border-radius: 0; box-shadow: none; }
-    .time-display { font-size: 13px; }
-
-    /* Desktop-only elements hidden */
+  /* ====== MOBILE STYLES ====== */
+  @media (max-width: 768px) {
     .desktop-only { display: none !important; }
-
-    /* Show mobile center overlay with only play button */
-    .mobile-center-controls { display: flex; }
+    .mobile-only { display: flex !important; }
     
-    /* All control buttons 8px bigger */
-    .ctrl-btn svg { width: 38px !important; height: 38px !important; }
-    .ctrl-btn.large svg { width: 44px !important; height: 44px !important; }
-    .ctrl-btn { padding: 10px; }
+    body { overflow: hidden; }
+    .player-wrapper { height: 100vh; border-radius: 0; }
     
-    /* Progress bar thicker on mobile (2x) */
-    .progress-track { height: 10px; }
-    .progress-area { height: 32px; }
-    .progress-thumb { width: 18px; height: 18px; transform: translate(-50%, -50%) scale(1); }
+    .ctrl-btn svg { width: 32px !important; height: 32px !important; }
     
-    /* Volume slider: 2x longer and thicker */
-    .volume-slider-wrap.visible { max-width: 140px; }
-    .volume-slider { width: 120px; height: 8px; }
-    .volume-slider::-webkit-slider-thumb { width: 18px; height: 18px; }
+    .progress-track { height: 8px; }
+    .progress-area { height: 30px; }
+    .progress-thumb { width: 16px; height: 16px; transform: translate(-50%, -50%) scale(1); }
     
-    /* CC Menu side by side columns */
-    .two-column-menu { min-width: 320px; gap: 12px; }
+    .volume-slider-wrap.visible { max-width: 130px; }
+    .volume-slider { width: 110px; height: 6px; }
+    .volume-slider::-webkit-slider-thumb { width: 16px; height: 16px; }
     
-    /* Mobile seek side buttons style */
-    .mobile-seek-btn { width: 64px; height: 64px; }
-    .mobile-seek-btn svg { width: 48px; height: 48px; }
-  }
-  
-  /* Small devices */
-  @media (max-width: 480px) {
-    .mobile-seek-btn { width: 56px; height: 56px; }
+    .two-column-menu { min-width: 300px; gap: 12px; }
+    
+    .mobile-seek-btn { width: 60px; height: 60px; }
     .mobile-seek-btn svg { width: 42px; height: 42px; }
-    .two-column-menu { min-width: 280px; }
+    .mobile-play-btn { width: 85px; height: 85px; }
+    .mobile-play-btn svg { width: 55px; height: 55px; }
+    
+    .control-row { gap: 6px; }
+    .time-display { font-size: 12px; }
   }
 
   /* Fullscreen */
   :fullscreen .player-wrapper,
   :-webkit-full-screen .player-wrapper {
-    max-width: 100vw;
-    border-radius: 0;
     height: 100vh;
-    display: flex;
-    flex-direction: column;
+    border-radius: 0;
   }
   :fullscreen .video-container,
   :-webkit-full-screen .video-container {
-    flex: 1;
-    aspect-ratio: unset;
+    height: 100%;
+  }
+  
+  /* No zoom */
+  * {
+    touch-action: manipulation;
   }
 </style>
 </head>
@@ -551,26 +548,26 @@
       <svg id="centerIconSvg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     </div>
 
-    <!-- Mobile: Left/Right Seek (10s) overlays -->
-    <div class="mobile-seek-overlay mobile-seek-left" id="mobileSeekLeft">
+    <!-- Mobile Seek Overlays -->
+    <div class="mobile-seek-overlay mobile-seek-left mobile-only" id="mobileSeekLeft">
       <button class="mobile-seek-btn" id="mobileSeekBackBtn">
         <svg viewBox="0 0 24 24">
           <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
-          <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
+          <text x="12" y="14.5" text-anchor="middle" font-size="7" fill="#ffffff" font-family="sans-serif" font-weight="bold">10</text>
         </svg>
       </button>
     </div>
-    <div class="mobile-seek-overlay mobile-seek-right" id="mobileSeekRight">
+    <div class="mobile-seek-overlay mobile-seek-right mobile-only" id="mobileSeekRight">
       <button class="mobile-seek-btn" id="mobileSeekFwdBtn">
         <svg viewBox="0 0 24 24">
           <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/>
-          <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
+          <text x="12" y="14.5" text-anchor="middle" font-size="7" fill="#ffffff" font-family="sans-serif" font-weight="bold">10</text>
         </svg>
       </button>
     </div>
 
     <!-- Mobile Center Play Button -->
-    <div class="mobile-center-controls" id="mobileCenterControls">
+    <div class="mobile-center-controls mobile-only" id="mobileCenterControls">
       <button class="mobile-play-btn" id="mobileCenterPlayBtn">
         <svg id="mobilePlayIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       </button>
@@ -592,35 +589,10 @@
       </div>
 
       <div class="control-row">
-        <!-- Desktop Play/Pause -->
-        <button class="ctrl-btn large desktop-only" id="playBtn">
-          <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-          <span class="btn-tooltip">Play / Pause</span>
-        </button>
-
-        <!-- Desktop Rewind 10s -->
-        <button class="ctrl-btn desktop-only" id="desktopRewindBtn">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
-            <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
-          </svg>
-          <span class="btn-tooltip">-10s</span>
-        </button>
-
-        <!-- Desktop Forward 10s -->
-        <button class="ctrl-btn desktop-only" id="desktopFwdBtn">
-          <svg viewBox="0 0 24 24">
-            <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/>
-            <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
-          </svg>
-          <span class="btn-tooltip">+10s</span>
-        </button>
-
-        <!-- Volume -->
+        <!-- Volume (left side) -->
         <div class="volume-group" id="volumeGroup">
           <button class="ctrl-btn" id="muteBtn">
             <svg id="volIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-            <span class="btn-tooltip">Volume</span>
           </button>
           <div class="volume-slider-wrap" id="volumeSliderWrap">
             <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="100">
@@ -629,11 +601,12 @@
 
         <div class="spacer"></div>
 
-        <!-- CC button (subtitles + audio side by side) -->
+        <!-- Right side items in order: Time, CC, Quality, Fullscreen -->
+        <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+
         <div style="position:relative">
           <button class="ctrl-btn" id="ccBtn">
             <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-9 9H9.5v-.5h-2v3h2V15H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V15H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z"/></svg>
-            <span class="btn-tooltip">Subtitles / Audio</span>
           </button>
           <div class="popup-menu two-column-menu" id="ccMenu">
             <div class="menu-column">
@@ -653,14 +626,9 @@
           </div>
         </div>
 
-        <!-- Time Display -->
-        <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
-
-        <!-- Settings (Quality only) -->
         <div style="position:relative">
           <button class="ctrl-btn" id="settingsBtn">
             <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-            <span class="btn-tooltip">Quality</span>
           </button>
           <div class="popup-menu" id="settingsMenu">
             <div class="popup-section-label">Video Quality</div>
@@ -672,10 +640,8 @@
           </div>
         </div>
 
-        <!-- Fullscreen -->
         <button class="ctrl-btn" id="fsBtn">
           <svg id="fsIcon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-          <span class="btn-tooltip">Fullscreen</span>
         </button>
       </div>
     </div>
@@ -683,9 +649,7 @@
 </div>
 
 <script>
-// ====================================================
 // DEMO CHUNKS
-// ====================================================
 const DEMO_CHUNKS = [
   { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 60 },
   { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 60 },
@@ -739,7 +703,6 @@ async function preloadChunkDurations() {
   }
 }
 
-// Playback core
 function startVideo() {
   if (isVideoStarted) return;
   posterOverlay.classList.add('hidden');
@@ -768,7 +731,6 @@ function onChunkEnd() {
   }
 }
 
-// FAST play/pause with immediate effect
 function togglePlay() {
   if (!isVideoStarted) { startVideo(); return; }
   if (video.paused) {
@@ -827,7 +789,6 @@ function updateProgress() {
   timeDisplay.textContent = formatTime(globalTime) + ' / ' + formatTime(totalDuration);
 }
 
-// UI Helpers
 function showCenterIcon(isPlay) {
   const path = isPlay ? 'M8 5v14l11-7z' : 'M6 19h4V5H6v14zm8-14v14h4V5h-4z';
   centerIconSvg.querySelector('path').setAttribute('d', path);
@@ -840,20 +801,42 @@ function showCenterIcon(isPlay) {
 
 function setPlayIcon(playing) {
   const d = playing ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z';
-  if(playIcon) playIcon.querySelector('path').setAttribute('d', d);
   const mobileIcon = document.getElementById('mobilePlayIcon');
   if(mobileIcon) mobileIcon.querySelector('path').setAttribute('d', d);
 }
 
-// Volume
+// Volume - ONLY controls volume, never affects play/pause
 function handleVolumeIconClick() {
   if (!volumeVisible) showVolumeSlider();
-  else { video.muted = !video.muted; updateVolIcon(); resetVolumeHideTimer(); }
+  else { 
+    video.muted = !video.muted; 
+    updateVolIcon(); 
+    resetVolumeHideTimer();
+  }
 }
-function showVolumeSlider() { volumeVisible = true; volumeSliderWrap.classList.add('visible'); resetVolumeHideTimer(); }
-function hideVolumeSlider() { volumeVisible = false; volumeSliderWrap.classList.remove('visible'); }
-function resetVolumeHideTimer() { clearTimeout(volumeHideTimer); volumeHideTimer = setTimeout(hideVolumeSlider, 5000); }
-function setVolume(val) { video.volume = val / 100; video.muted = (val == 0); updateVolIcon(); }
+
+function showVolumeSlider() { 
+  volumeVisible = true; 
+  volumeSliderWrap.classList.add('visible'); 
+  resetVolumeHideTimer(); 
+}
+
+function hideVolumeSlider() { 
+  volumeVisible = false; 
+  volumeSliderWrap.classList.remove('visible'); 
+}
+
+function resetVolumeHideTimer() { 
+  clearTimeout(volumeHideTimer); 
+  volumeHideTimer = setTimeout(hideVolumeSlider, 5000); 
+}
+
+function setVolume(val) { 
+  video.volume = val / 100; 
+  video.muted = (val == 0); 
+  updateVolIcon(); 
+}
+
 function updateVolIcon() {
   const v = video.muted ? 0 : video.volume;
   let d = '';
@@ -863,7 +846,6 @@ function updateVolIcon() {
   volIcon.querySelector('path').setAttribute('d', d);
 }
 
-// Quality
 function setQuality(q) {
   document.querySelectorAll('#settingsMenu .popup-item').forEach(el => {
     const val = el.getAttribute('data-quality');
@@ -872,26 +854,28 @@ function setQuality(q) {
   closeAllMenus();
 }
 
-// Subtitle / Audio selection
 function selectCC(lang) {
   document.querySelectorAll('#ccMenu .menu-column:first-child .popup-item').forEach(el => el.classList.remove('active'));
   document.querySelector(`#ccMenu .popup-item[data-cc="${lang}"]`).classList.add('active');
   closeAllMenus();
 }
+
 function selectAudio(track) {
   document.querySelectorAll('#ccMenu .menu-column:last-child .popup-item').forEach(el => el.classList.remove('active'));
   document.querySelector(`#ccMenu .popup-item[data-audio="${track}"]`).classList.add('active');
   closeAllMenus();
 }
 
-// Menus
 function toggleMenu(id) {
   const menu = document.getElementById(id);
   const isOpen = menu.classList.contains('open');
   closeAllMenus();
   if (!isOpen) menu.classList.add('open');
 }
-function closeAllMenus() { document.querySelectorAll('.popup-menu').forEach(m => m.classList.remove('open')); }
+
+function closeAllMenus() { 
+  document.querySelectorAll('.popup-menu').forEach(m => m.classList.remove('open')); 
+}
 
 // Progress scrubbing
 function startScrub(e) { isScrubbing = true; scrub(e); const move = (ev) => scrub(ev); const up = () => { isScrubbing = false; document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move); document.removeEventListener('mouseup', up); document.removeEventListener('touchend', up); endScrub(); }; document.addEventListener('mousemove', move); document.addEventListener('touchmove', move, { passive: false }); document.addEventListener('mouseup', up); document.addEventListener('touchend', up); e.preventDefault(); }
@@ -901,10 +885,31 @@ function hoverProgress(e) { const rect = progressArea.getBoundingClientRect(); c
 function leaveProgress() {}
 
 // Controls auto-hide
-function showControls() { controlsOverlay.classList.remove('hidden'); container.classList.add('show-cursor'); const mcc = document.getElementById('mobileCenterControls'); if(mcc) mcc.classList.add('visible'); clearTimeout(controlsTimer); if (isVideoStarted && !video.paused) { controlsTimer = setTimeout(() => { controlsOverlay.classList.add('hidden'); container.classList.remove('show-cursor'); if(mcc) mcc.classList.remove('visible'); }, 3000); } }
+function showControls() { 
+  controlsOverlay.classList.remove('hidden'); 
+  container.classList.add('show-cursor'); 
+  const mcc = document.getElementById('mobileCenterControls'); 
+  if(mcc) mcc.classList.add('visible'); 
+  clearTimeout(controlsTimer); 
+  if (isVideoStarted && !video.paused) { 
+    controlsTimer = setTimeout(() => { 
+      controlsOverlay.classList.add('hidden'); 
+      container.classList.remove('show-cursor'); 
+      if(mcc) mcc.classList.remove('visible'); 
+    }, 3000); 
+  } 
+}
+
 container.addEventListener('mousemove', showControls);
-container.addEventListener('touchstart', () => { if (controlsOverlay.classList.contains('hidden')) showControls(); else togglePlay(); }, { passive: true });
-container.addEventListener('click', (e) => { if (e.target.closest('.ctrl-btn') || e.target.closest('.progress-area') || e.target.closest('.popup-menu') || e.target.closest('.mobile-seek-btn') || e.target.closest('.mobile-play-btn')) return; togglePlay(); });
+container.addEventListener('touchstart', (e) => { 
+  if (controlsOverlay.classList.contains('hidden')) showControls(); 
+}, { passive: true });
+
+// Click on video toggles play/pause
+container.addEventListener('click', (e) => { 
+  if (e.target.closest('.ctrl-btn') || e.target.closest('.progress-area') || e.target.closest('.popup-menu') || e.target.closest('.mobile-seek-btn') || e.target.closest('.mobile-play-btn')) return; 
+  togglePlay(); 
+});
 
 // Video events
 video.addEventListener('play', () => { setPlayIcon(true); showControls(); });
@@ -915,23 +920,51 @@ video.addEventListener('waiting', () => setLoading(true));
 video.addEventListener('canplay', () => setLoading(false));
 video.addEventListener('playing', () => setLoading(false));
 video.addEventListener('progress', updateProgress);
+
 function setLoading(b) { loadingOverlay.classList.toggle('active', b); }
 
-// Format time
-function formatTime(s) { if (isNaN(s) || s < 0) return '0:00'; const h = Math.floor(s / 3600); const m = Math.floor((s % 3600) / 60); const sec = Math.floor(s % 60); if (h > 0) return `${h}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; return `${m}:${sec.toString().padStart(2,'0')}`; }
+// Format time - clean format without extra labels
+function formatTime(s) {
+  if (isNaN(s) || s < 0) return '0:00';
+  const hours = Math.floor(s / 3600);
+  const minutes = Math.floor((s % 3600) / 60);
+  const seconds = Math.floor(s % 60);
+  if (hours > 0) {
+    return hours + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
+  }
+  return minutes + ':' + seconds.toString().padStart(2, '0');
+}
 
 // Fullscreen
-function toggleFullscreen() { const wrap = document.getElementById('playerWrapper'); if (!document.fullscreenElement) { (wrap.requestFullscreen || wrap.webkitRequestFullscreen).call(wrap); } else { document.exitFullscreen?.(); } }
-document.addEventListener('fullscreenchange', () => { const isFs = !!document.fullscreenElement; document.getElementById('fsIcon').querySelector('path').setAttribute('d', isFs ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'); showControls(); });
+function toggleFullscreen() { 
+  const wrap = document.getElementById('playerWrapper'); 
+  if (!document.fullscreenElement) { 
+    (wrap.requestFullscreen || wrap.webkitRequestFullscreen).call(wrap); 
+  } else { 
+    document.exitFullscreen?.(); 
+  } 
+}
+
+document.addEventListener('fullscreenchange', () => { 
+  const isFs = !!document.fullscreenElement; 
+  document.getElementById('fsIcon').querySelector('path').setAttribute('d', isFs ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'); 
+  showControls(); 
+});
 
 // Keyboard shortcuts
-document.addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.code === 'Space') { e.preventDefault(); togglePlay(); } if (e.code === 'ArrowRight') seekRelative(10); if (e.code === 'ArrowLeft') seekRelative(-10); if (e.code === 'ArrowUp') { video.volume = Math.min(1, video.volume + 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); } if (e.code === 'ArrowDown') { video.volume = Math.max(0, video.volume - 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); } if (e.code === 'KeyF') toggleFullscreen(); if (e.code === 'KeyM') handleVolumeIconClick(); });
+document.addEventListener('keydown', (e) => { 
+  if (e.target.tagName === 'INPUT') return; 
+  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  if (e.code === 'ArrowRight') seekRelative(10);
+  if (e.code === 'ArrowLeft') seekRelative(-10);
+  if (e.code === 'ArrowUp') { video.volume = Math.min(1, video.volume + 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); }
+  if (e.code === 'ArrowDown') { video.volume = Math.max(0, video.volume - 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); }
+  if (e.code === 'KeyF') toggleFullscreen();
+  if (e.code === 'KeyM') { e.preventDefault(); handleVolumeIconClick(); }
+});
 
-// Event binding
+// Button events
 document.getElementById('posterPlayBtn').onclick = () => startVideo();
-document.getElementById('playBtn').onclick = () => togglePlay();
-document.getElementById('desktopRewindBtn').onclick = () => seekRelative(-10);
-document.getElementById('desktopFwdBtn').onclick = () => seekRelative(10);
 document.getElementById('mobileSeekBackBtn').onclick = (e) => { e.stopPropagation(); seekRelative(-10); };
 document.getElementById('mobileSeekFwdBtn').onclick = (e) => { e.stopPropagation(); seekRelative(10); };
 document.getElementById('mobileCenterPlayBtn').onclick = (e) => { e.stopPropagation(); togglePlay(); };
@@ -945,7 +978,16 @@ document.getElementById('fsBtn').onclick = () => toggleFullscreen();
 document.querySelectorAll('#ccMenu .popup-item[data-cc]').forEach(el => { el.onclick = () => selectCC(el.getAttribute('data-cc')); });
 document.querySelectorAll('#ccMenu .popup-item[data-audio]').forEach(el => { el.onclick = () => selectAudio(el.getAttribute('data-audio')); });
 document.querySelectorAll('#settingsMenu .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality')); });
-document.addEventListener('click', (e) => { if (!e.target.closest('.popup-menu') && !e.target.closest('#settingsBtn') && !e.target.closest('#ccBtn')) closeAllMenus(); });
+
+// Close menus on outside click
+document.addEventListener('click', (e) => { 
+  if (!e.target.closest('.popup-menu') && !e.target.closest('#settingsBtn') && !e.target.closest('#ccBtn')) closeAllMenus(); 
+});
+
+// Prevent zoom on double tap
+document.addEventListener('touchstart', (e) => {
+  if (e.touches.length > 1) e.preventDefault();
+}, { passive: false });
 
 // Boot
 initPlayer({ chunks: DEMO_CHUNKS });
