@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>خاوەن پلەیەری تۆ</title>
+    <style>
+        /* دیزاینی خۆتی لێرە زیاد بکە */
+        body { background: black; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .my-player-container { max-width: 800px; position: relative; }
+        video { width: 100%; border-radius: 12px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        /* ڕەنگە و شێوەی دوگمەکانت ڕێکبخە */
+        .custom-controls { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+        button { background: #0088cc; border: none; padding: 10px 20px; color: white; border-radius: 8px; cursor: pointer; }
+    </style>
+    <!-- libraryی hls.js لە CDN--ەوە بانگهێشت بکە -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+</head>
+<body>
+<div class="my-player-container">
+    <video id="myVideo" controls></video>
+    <div class="custom-controls">
+        <button onclick="document.getElementById('myVideo').play()">▶ Play</button>
+        <button onclick="document.getElementById('myVideo').pause()">⏸ Pause</button>
+        <button onclick="document.getElementById('myVideo').volume += 0.1">🔊 زۆر بکە</button>
+        <button onclick="document.getElementById('myVideo').volume -= 0.1">🔉 کەم بکە</button>
+    </div>
+</div>
+
+<script>
+    const video = document.getElementById('myVideo');
+    const videoUrl = 'https://your-telegram-bot.com/path/to/your/file.m3u8'; // <-- ناونیشانی m3u8ـەکە لێرە دابنێ
+
+    if (Hls.isSupported()) {
+        const hls = new Hls();
+        // فایلی m3u8 کە تێلیگرام هەڵیگرتووە بار بکە
+        hls.loadSource(videoUrl);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, function() {
+            console.log('سەرکەوتوو بوو، ڤیدیۆ ئامادەیە');
+            // video.play();
+        });
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        // ئەمە بۆ ئەپڵ و سیستەمە کۆنەکان
+        video.src = videoUrl;
+        video.addEventListener('loadedmetadata', function() {
+            video.play();
+        });
+    } else {
+        console.error('ئەم براوسەرە پشتیوانی لە HLS ناکات');
+    }
+</script>
+</body>
+</html>
