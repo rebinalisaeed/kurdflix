@@ -8,7 +8,6 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Custom Font - NRT-Bd.ttf */
   @font-face {
     font-family: 'NRT';
     src: url('fonts/NRT-Bd.ttf') format('truetype');
@@ -734,12 +733,11 @@
 </div>
 
 <script>
-// DEMO CHUNKS - Each chunk is 60 seconds (1 minute) for proper testing
-// Total duration: 3 minutes (180 seconds)
+// 3 VIDEOS - EACH 10 SECONDS (TOTAL 30 SECONDS)
 const DEMO_CHUNKS = [
-  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 60 },
-  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 60 },
-  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 60 },
+  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
+  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
+  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
 ];
 
 // DOM Elements
@@ -775,29 +773,33 @@ let volumeVisible = false;
 let volumeHideTimer = null;
 let isLoadingChunk = false;
 
-// Init
+// Initialize player with chunks
 function initPlayer(config) {
   chunks = config.chunks || DEMO_CHUNKS;
   calculateChunkTimes();
+  console.log('Player initialized with', chunks.length, 'chunks');
+  console.log('Total duration:', totalDuration, 'seconds');
+  console.log('Chunk start times:', chunkStartTimes);
 }
 
+// Calculate cumulative times for each chunk
 function calculateChunkTimes() {
   chunkStartTimes = [0];
   totalDuration = 0;
   for (let i = 0; i < chunks.length; i++) {
-    const d = chunks[i].duration || 60;
-    totalDuration += d;
+    const duration = chunks[i].duration || 10;
+    totalDuration += duration;
     chunkStartTimes.push(totalDuration);
   }
-  console.log('Total duration:', totalDuration, 'seconds');
-  console.log('Chunk start times:', chunkStartTimes);
+  // chunkStartTimes example: [0, 10, 20, 30]
 }
 
 function startVideo() {
   if (isVideoStarted) return;
   posterOverlay.classList.add('hidden');
   isVideoStarted = true;
-  loadChunk(0, 0);
+  currentChunkIndex = 0;
+  loadChunk(0);
   showControls();
 }
 
@@ -809,26 +811,29 @@ function loadChunk(index, seekTime = 0) {
   currentChunkIndex = index;
   const chunk = chunks[index];
   
-  // Remove old event listeners to prevent conflicts
-  const oldOnEnded = video.onended;
+  // Remove old ended event
   video.onended = null;
   
   video.src = chunk.url;
   video.load();
   setLoading(true);
   
-  video.addEventListener('loadedmetadata', function onMetadata() {
+  const onMetadata = function() {
     video.removeEventListener('loadedmetadata', onMetadata);
     
-    // Set the current time within this chunk
-    const targetTime = Math.min(seekTime, video.duration - 0.1);
-    if (targetTime > 0) {
-      video.currentTime = targetTime;
+    // Set current time within this chunk
+    const maxTime = video.duration - 0.05;
+    const targetSeek = Math.min(seekTime, maxTime);
+    if (targetSeek > 0) {
+      video.currentTime = targetSeek;
     }
     
     video.play().catch(e => console.log('Play error:', e));
     isLoadingChunk = false;
-  });
+    setLoading(false);
+  };
+  
+  video.addEventListener('loadedmetadata', onMetadata);
   
   video.addEventListener('error', function onError() {
     video.removeEventListener('error', onError);
@@ -837,24 +842,24 @@ function loadChunk(index, seekTime = 0) {
     console.error('Error loading chunk:', index);
   });
   
-  // Setup ended event for this chunk
+  // Set ended event for this chunk
   video.onended = function() {
-    if (currentChunkIndex === index) {
-      onChunkEnd();
-    }
+    console.log('Chunk', currentChunkIndex, 'ended at', video.currentTime);
+    onChunkEnd();
   };
 }
 
 function onChunkEnd() {
-  console.log('Chunk ended:', currentChunkIndex);
+  console.log('onChunkEnd called, currentChunkIndex:', currentChunkIndex, 'total chunks:', chunks.length);
   
   if (currentChunkIndex < chunks.length - 1) {
-    // Move to next chunk
+    // Move to next chunk (0-indexed: if current is 0, next is 1)
     const nextChunkIndex = currentChunkIndex + 1;
     console.log('Moving to next chunk:', nextChunkIndex);
     loadChunk(nextChunkIndex, 0);
   } else {
-    // End of all chunks
+    // End of all videos
+    console.log('All videos finished');
     setPlayIcon(false);
     posterOverlay.classList.remove('hidden');
     isVideoStarted = false;
@@ -900,8 +905,7 @@ function seekToGlobal(targetTime) {
   
   // Calculate local time within the target chunk
   const localTime = targetTime - chunkStartTimes[targetChunk];
-  
-  console.log(`Seeking to global: ${targetTime}s, chunk: ${targetChunk}, local: ${localTime}s`);
+  console.log(`Seek: global=${targetTime}s, chunk=${targetChunk}, local=${localTime.toFixed(2)}s`);
   
   if (targetChunk !== currentChunkIndex) {
     // Need to load different chunk
@@ -912,14 +916,14 @@ function seekToGlobal(targetTime) {
     
     video.addEventListener('loadedmetadata', function onLoad() {
       video.removeEventListener('loadedmetadata', onLoad);
-      const seekLocal = Math.min(localTime, video.duration - 0.1);
+      const seekLocal = Math.min(localTime, video.duration - 0.05);
       video.currentTime = Math.max(0, seekLocal);
       video.play().catch(() => {});
       setLoading(false);
     });
   } else {
     // Same chunk, just seek
-    const seekLocal = Math.min(localTime, video.duration - 0.1);
+    const seekLocal = Math.min(localTime, video.duration - 0.05);
     video.currentTime = Math.max(0, seekLocal);
   }
 }
@@ -1153,15 +1157,11 @@ video.addEventListener('loadedmetadata', updateProgress);
 
 function setLoading(b) { loadingOverlay.classList.toggle('active', b); }
 
-// Format time
+// Format time (for 30 seconds total: 0:00 to 0:30)
 function formatTime(s) {
   if (isNaN(s) || s < 0) return '0:00';
-  const hours = Math.floor(s / 3600);
-  const minutes = Math.floor((s % 3600) / 60);
+  const minutes = Math.floor(s / 60);
   const seconds = Math.floor(s % 60);
-  if (hours > 0) {
-    return hours + ':' + minutes.toString().padStart(2, '0') + ':' + seconds.toString().padStart(2, '0');
-  }
   return minutes + ':' + seconds.toString().padStart(2, '0');
 }
 
