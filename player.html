@@ -8,6 +8,21 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  /* Custom Font - NRT-Bd.ttf */
+  @font-face {
+    font-family: 'NRT';
+    src: url('fonts/NRT-Bd.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'NRT';
+    src: url('fonts/NRT-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
   :root {
     --bg-page: #0f0f0f;
     --bg-player: #000;
@@ -21,7 +36,7 @@
     --text-muted: rgba(255,255,255,0.5);
     --control-hover: rgba(255,255,255,0.12);
     --tooltip-bg: rgba(28,28,28,0.95);
-    --font: 'Inter', 'Segoe UI', sans-serif;
+    --font: 'NRT', 'Inter', 'Segoe UI', sans-serif;
   }
 
   html, body {
@@ -42,7 +57,7 @@
     padding: 0;
     margin: 0;
     overflow: hidden;
-    touch-action: pan-x pan-y; /* Prevent zoom but allow scrolling for menus */
+    touch-action: pan-x pan-y;
   }
 
   .player-wrapper {
@@ -76,6 +91,8 @@
     height: 100%;
     object-fit: contain;
     display: block;
+    /* Prevent zoom on video itself */
+    transform: scale(1);
   }
 
   /* Poster */
@@ -178,7 +195,7 @@
     position: absolute;
     bottom: 0; left: 0; right: 0;
     background: var(--bg-controls);
-    padding: 48px 14px 14px;
+    padding: 48px 16px 16px;
     transition: opacity 0.3s, transform 0.3s;
     z-index: 20;
   }
@@ -191,24 +208,24 @@
   /* Progress Bar */
   .progress-area {
     position: relative;
-    height: 28px;
+    height: 32px;
     display: flex;
     align-items: center;
     cursor: pointer;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     padding: 0 2px;
   }
 
   .progress-track {
     position: relative;
     width: 100%;
-    height: 6px;
+    height: 5px;
     background: var(--bg-progress-track);
     border-radius: 3px;
     overflow: hidden;
     transition: height 0.15s;
   }
-  .progress-area:hover .progress-track { height: 8px; }
+  .progress-area:hover .progress-track { height: 7px; }
 
   .progress-buffer {
     position: absolute;
@@ -257,6 +274,7 @@
     opacity: 0;
     transition: opacity 0.15s;
     z-index: 30;
+    font-family: monospace;
   }
   .progress-area:hover .progress-tooltip { opacity: 1; }
 
@@ -264,8 +282,8 @@
   .control-row {
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
+    gap: 12px;
+    flex-wrap: nowrap;
     justify-content: flex-end;
   }
 
@@ -274,8 +292,8 @@
     border: none;
     color: var(--text-primary);
     cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
+    padding: 10px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -285,7 +303,15 @@
   }
   .ctrl-btn:hover { background: var(--control-hover); }
   .ctrl-btn:active { transform: scale(0.95); }
-  .ctrl-btn svg { width: 26px; height: 26px; fill: currentColor; }
+  
+  /* Desktop icons 2x larger */
+  @media (min-width: 769px) {
+    .ctrl-btn svg { width: 44px !important; height: 44px !important; }
+    .ctrl-btn { padding: 12px; }
+    .time-display { font-size: 18px; }
+  }
+  
+  .ctrl-btn svg { width: 32px; height: 32px; fill: currentColor; }
 
   /* Volume Group */
   .volume-group {
@@ -304,45 +330,45 @@
     align-items: center;
   }
   .volume-slider-wrap.visible {
-    max-width: 100px;
+    max-width: 120px;
     opacity: 1;
   }
 
   .volume-slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 80px;
-    height: 4px;
+    width: 100px;
+    height: 5px;
     background: rgba(255,255,255,0.3);
-    border-radius: 2px;
+    border-radius: 3px;
     outline: none;
     cursor: pointer;
-    margin: 0 8px;
+    margin: 0 10px;
   }
   .volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 12px; height: 12px;
+    width: 14px; height: 14px;
     border-radius: 50%;
     background: #fff;
     cursor: pointer;
   }
 
   .time-display {
-    font-size: 13px;
+    font-size: 15px;
     color: var(--text-secondary);
     white-space: nowrap;
     font-variant-numeric: tabular-nums;
-    padding: 0 4px;
+    padding: 0 6px;
     font-family: monospace;
-    letter-spacing: 0.3px;
-    order: 1;
+    letter-spacing: 0.5px;
+    order: 4;
   }
 
-  /* Right side items order */
+  /* Right side items order: Fullscreen, Quality, CC, Time */
   .right-group {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     order: 2;
   }
 
@@ -372,6 +398,7 @@
     padding: 6px 14px 2px;
     text-transform: uppercase;
     letter-spacing: 0.6px;
+    font-family: var(--font);
   }
   .popup-divider {
     height: 1px;
@@ -403,6 +430,7 @@
     color: var(--text-secondary);
     cursor: pointer;
     transition: background 0.1s, color 0.1s;
+    font-family: var(--font);
   }
   .popup-item:hover { background: rgba(255,255,255,0.07); color: #fff; }
   .popup-item.active { color: var(--accent); }
@@ -416,6 +444,14 @@
   
   .mobile-only {
     display: none !important;
+  }
+
+  /* Desktop play/pause/seek buttons */
+  .desktop-play-seek {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: auto;
   }
 
   /* Mobile Center Controls */
@@ -467,8 +503,8 @@
     background: rgba(0,0,0,0.4);
     border: none;
     border-radius: 60px;
-    width: 65px;
-    height: 65px;
+    width: 70px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -477,22 +513,21 @@
     cursor: pointer;
   }
   .mobile-seek-btn:active { transform: scale(0.9); background: rgba(0,0,0,0.6); }
-  .mobile-seek-btn svg { width: 45px; height: 45px; fill: #ffffff; }
-  .mobile-seek-btn svg text { fill: #ffffff; font-size: 9px; font-weight: bold; }
+  .mobile-seek-btn svg { width: 48px; height: 48px; fill: #ffffff; }
 
   /* ====== MOBILE STYLES ====== */
   @media (max-width: 768px) {
-    .desktop-only { display: none !important; }
+    .desktop-only, .desktop-play-seek { display: none !important; }
     .mobile-only { display: flex !important; }
     
     body { overflow: hidden; }
     .player-wrapper { height: 100vh; border-radius: 0; }
     
-    .ctrl-btn svg { width: 32px !important; height: 32px !important; }
+    .ctrl-btn svg { width: 34px !important; height: 34px !important; }
     
-    .progress-track { height: 8px; }
-    .progress-area { height: 30px; }
-    .progress-thumb { width: 16px; height: 16px; transform: translate(-50%, -50%) scale(1); }
+    .progress-track { height: 6px; }
+    .progress-area { height: 28px; }
+    .progress-thumb { width: 14px; height: 14px; transform: translate(-50%, -50%) scale(1); }
     
     .volume-slider-wrap.visible { max-width: 130px; }
     .volume-slider { width: 110px; height: 6px; }
@@ -500,13 +535,19 @@
     
     .two-column-menu { min-width: 300px; gap: 12px; }
     
-    .mobile-seek-btn { width: 60px; height: 60px; }
-    .mobile-seek-btn svg { width: 42px; height: 42px; }
+    .mobile-seek-btn { width: 65px; height: 65px; }
+    .mobile-seek-btn svg { width: 45px; height: 45px; }
     .mobile-play-btn { width: 85px; height: 85px; }
     .mobile-play-btn svg { width: 55px; height: 55px; }
     
-    .control-row { gap: 6px; }
-    .time-display { font-size: 12px; }
+    .control-row { gap: 8px; }
+    .time-display { font-size: 13px; order: 3; }
+    
+    /* Mobile order: Fullscreen, Quality, CC, Time */
+    #fsBtn { order: 1; }
+    #settingsBtn { order: 2; }
+    #ccBtn { order: 3; }
+    .time-display { order: 4; }
   }
 
   /* Fullscreen */
@@ -520,9 +561,17 @@
     height: 100%;
   }
   
-  /* No zoom */
+  /* No zoom - prevent UI scaling */
   * {
     touch-action: manipulation;
+  }
+  
+  /* Prevent zoom on desktop via keyboard/mouse */
+  body {
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
   }
 </style>
 </head>
@@ -548,12 +597,11 @@
       <svg id="centerIconSvg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
     </div>
 
-    <!-- Mobile Seek Overlays -->
+    <!-- Mobile Seek Overlays (without number 10) -->
     <div class="mobile-seek-overlay mobile-seek-left mobile-only" id="mobileSeekLeft">
       <button class="mobile-seek-btn" id="mobileSeekBackBtn">
         <svg viewBox="0 0 24 24">
           <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
-          <text x="12" y="14.5" text-anchor="middle" font-size="7" fill="#ffffff" font-family="sans-serif" font-weight="bold">10</text>
         </svg>
       </button>
     </div>
@@ -561,7 +609,6 @@
       <button class="mobile-seek-btn" id="mobileSeekFwdBtn">
         <svg viewBox="0 0 24 24">
           <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/>
-          <text x="12" y="14.5" text-anchor="middle" font-size="7" fill="#ffffff" font-family="sans-serif" font-weight="bold">10</text>
         </svg>
       </button>
     </div>
@@ -599,10 +646,45 @@
           </div>
         </div>
 
+        <!-- Desktop: Play/Pause and Seek buttons -->
+        <div class="desktop-play-seek">
+          <button class="ctrl-btn" id="playBtn">
+            <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+          </button>
+          <button class="ctrl-btn" id="desktopRewindBtn">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+              <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
+            </svg>
+          </button>
+          <button class="ctrl-btn" id="desktopFwdBtn">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/>
+              <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
+            </svg>
+          </button>
+        </div>
+
         <div class="spacer"></div>
 
-        <!-- Right side items in order: Time, CC, Quality, Fullscreen -->
-        <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+        <!-- Right side items order: Fullscreen, Quality, CC, Time -->
+        <button class="ctrl-btn" id="fsBtn">
+          <svg id="fsIcon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
+        </button>
+
+        <div style="position:relative">
+          <button class="ctrl-btn" id="settingsBtn">
+            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+          </button>
+          <div class="popup-menu" id="settingsMenu">
+            <div class="popup-section-label">Video Quality</div>
+            <div class="popup-item active" data-quality="auto"><span>Auto</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item" data-quality="1080"><span>1080p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item" data-quality="720"><span>720p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item" data-quality="480"><span>480p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+            <div class="popup-item" data-quality="360"><span>360p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+          </div>
+        </div>
 
         <div style="position:relative">
           <button class="ctrl-btn" id="ccBtn">
@@ -626,23 +708,7 @@
           </div>
         </div>
 
-        <div style="position:relative">
-          <button class="ctrl-btn" id="settingsBtn">
-            <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
-          </button>
-          <div class="popup-menu" id="settingsMenu">
-            <div class="popup-section-label">Video Quality</div>
-            <div class="popup-item active" data-quality="auto"><span>Auto</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            <div class="popup-item" data-quality="1080"><span>1080p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            <div class="popup-item" data-quality="720"><span>720p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            <div class="popup-item" data-quality="480"><span>480p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-            <div class="popup-item" data-quality="360"><span>360p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-          </div>
-        </div>
-
-        <button class="ctrl-btn" id="fsBtn">
-          <svg id="fsIcon" viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-        </button>
+        <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
       </div>
     </div>
   </div>
@@ -801,11 +867,12 @@ function showCenterIcon(isPlay) {
 
 function setPlayIcon(playing) {
   const d = playing ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z';
+  if(playIcon) playIcon.querySelector('path').setAttribute('d', d);
   const mobileIcon = document.getElementById('mobilePlayIcon');
   if(mobileIcon) mobileIcon.querySelector('path').setAttribute('d', d);
 }
 
-// Volume - ONLY controls volume, never affects play/pause
+// Volume - ONLY controls volume
 function handleVolumeIconClick() {
   if (!volumeVisible) showVolumeSlider();
   else { 
@@ -856,13 +923,15 @@ function setQuality(q) {
 
 function selectCC(lang) {
   document.querySelectorAll('#ccMenu .menu-column:first-child .popup-item').forEach(el => el.classList.remove('active'));
-  document.querySelector(`#ccMenu .popup-item[data-cc="${lang}"]`).classList.add('active');
+  const target = document.querySelector(`#ccMenu .popup-item[data-cc="${lang}"]`);
+  if(target) target.classList.add('active');
   closeAllMenus();
 }
 
 function selectAudio(track) {
   document.querySelectorAll('#ccMenu .menu-column:last-child .popup-item').forEach(el => el.classList.remove('active'));
-  document.querySelector(`#ccMenu .popup-item[data-audio="${track}"]`).classList.add('active');
+  const target = document.querySelector(`#ccMenu .popup-item[data-audio="${track}"]`);
+  if(target) target.classList.add('active');
   closeAllMenus();
 }
 
@@ -905,7 +974,6 @@ container.addEventListener('touchstart', (e) => {
   if (controlsOverlay.classList.contains('hidden')) showControls(); 
 }, { passive: true });
 
-// Click on video toggles play/pause
 container.addEventListener('click', (e) => { 
   if (e.target.closest('.ctrl-btn') || e.target.closest('.progress-area') || e.target.closest('.popup-menu') || e.target.closest('.mobile-seek-btn') || e.target.closest('.mobile-play-btn')) return; 
   togglePlay(); 
@@ -923,7 +991,7 @@ video.addEventListener('progress', updateProgress);
 
 function setLoading(b) { loadingOverlay.classList.toggle('active', b); }
 
-// Format time - clean format without extra labels
+// Format time
 function formatTime(s) {
   if (isNaN(s) || s < 0) return '0:00';
   const hours = Math.floor(s / 3600);
@@ -947,7 +1015,8 @@ function toggleFullscreen() {
 
 document.addEventListener('fullscreenchange', () => { 
   const isFs = !!document.fullscreenElement; 
-  document.getElementById('fsIcon').querySelector('path').setAttribute('d', isFs ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'); 
+  const fsIcon = document.getElementById('fsIcon');
+  if(fsIcon) fsIcon.querySelector('path').setAttribute('d', isFs ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'); 
   showControls(); 
 });
 
@@ -965,6 +1034,9 @@ document.addEventListener('keydown', (e) => {
 
 // Button events
 document.getElementById('posterPlayBtn').onclick = () => startVideo();
+document.getElementById('playBtn').onclick = () => togglePlay();
+document.getElementById('desktopRewindBtn').onclick = () => seekRelative(-10);
+document.getElementById('desktopFwdBtn').onclick = () => seekRelative(10);
 document.getElementById('mobileSeekBackBtn').onclick = (e) => { e.stopPropagation(); seekRelative(-10); };
 document.getElementById('mobileSeekFwdBtn').onclick = (e) => { e.stopPropagation(); seekRelative(10); };
 document.getElementById('mobileCenterPlayBtn').onclick = (e) => { e.stopPropagation(); togglePlay(); };
@@ -979,15 +1051,25 @@ document.querySelectorAll('#ccMenu .popup-item[data-cc]').forEach(el => { el.onc
 document.querySelectorAll('#ccMenu .popup-item[data-audio]').forEach(el => { el.onclick = () => selectAudio(el.getAttribute('data-audio')); });
 document.querySelectorAll('#settingsMenu .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality')); });
 
-// Close menus on outside click
 document.addEventListener('click', (e) => { 
   if (!e.target.closest('.popup-menu') && !e.target.closest('#settingsBtn') && !e.target.closest('#ccBtn')) closeAllMenus(); 
 });
 
-// Prevent zoom on double tap
-document.addEventListener('touchstart', (e) => {
-  if (e.touches.length > 1) e.preventDefault();
+// Prevent zoom on desktop (Ctrl + / Cmd +)
+document.addEventListener('wheel', (e) => {
+  if (e.ctrlKey) {
+    e.preventDefault();
+  }
 }, { passive: false });
+
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+    e.preventDefault();
+  }
+  if (e.metaKey && (e.key === '+' || e.key === '-')) {
+    e.preventDefault();
+  }
+});
 
 // Boot
 initPlayer({ chunks: DEMO_CHUNKS });
