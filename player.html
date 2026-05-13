@@ -1,52 +1,467 @@
 <!DOCTYPE html>
-<html>
+<html lang="ckb">
 <head>
-    <title>خاوەن پلەیەری تۆ</title>
-    <style>
-        /* دیزاینی خۆتی لێرە زیاد بکە */
-        body { background: black; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .my-player-container { max-width: 800px; position: relative; }
-        video { width: 100%; border-radius: 12px; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
-        /* ڕەنگە و شێوەی دوگمەکانت ڕێکبخە */
-        .custom-controls { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
-        button { background: #0088cc; border: none; padding: 10px 20px; color: white; border-radius: 8px; cursor: pointer; }
-    </style>
-    <!-- libraryی hls.js لە CDN--ەوە بانگهێشت بکە -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>پلەیەری ئاسایی یوتیوب - فیلم و دراما</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* قالبە سەرەکیەکە */
+        .youtube-player-container {
+            max-width: 1200px;
+            width: 100%;
+            background: #0f0f0f;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+        }
+
+        /* شوێنی ڤیدیۆ */
+        .video-wrapper {
+            position: relative;
+            background: #000;
+            width: 100%;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+            cursor: pointer;
+        }
+
+        /* کانتڕۆڵەکان (وەک یوتیوب لە خوارەوە) */
+        .custom-controls {
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 10px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: opacity 0.3s ease;
+        }
+
+        /* ڕیکەی پێشکەوتن */
+        .progress-bar-container {
+            width: 100%;
+            cursor: pointer;
+            padding: 5px 0;
+        }
+
+        .progress-track {
+            background-color: rgba(255, 255, 255, 0.2);
+            height: 4px;
+            border-radius: 2px;
+            position: relative;
+            transition: height 0.2s;
+        }
+
+        .progress-track:hover {
+            height: 6px;
+        }
+
+        .progress-fill {
+            background-color: #ff0000;
+            height: 100%;
+            width: 0%;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .progress-handle {
+            width: 12px;
+            height: 12px;
+            background-color: #ff0000;
+            border-radius: 50%;
+            position: absolute;
+            right: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .progress-track:hover .progress-handle {
+            opacity: 1;
+        }
+
+        /* بەشی خوارەوەی کۆنتڕۆڵ */
+        .controls-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .controls-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .controls-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .time-display {
+            color: white;
+            font-size: 14px;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        /* کۆنترۆڵی دەنگ */
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume-slider {
+            width: 80px;
+            cursor: pointer;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            height: 4px;
+            border-radius: 2px;
+        }
+
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff0000;
+            cursor: pointer;
+        }
+
+        /* ناوی ڤیدیۆ و ژمارەی بینەر */
+        .video-info {
+            padding: 12px 16px;
+            background: #0f0f0f;
+            border-top: 1px solid #272727;
+        }
+
+        .video-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .video-stats {
+            color: #aaa;
+            font-size: 14px;
+            display: flex;
+            gap: 16px;
+        }
+
+        /* وەڵامدانەوە (Responsive) */
+        @media (max-width: 768px) {
+            .controls-row {
+                gap: 8px;
+            }
+            .control-btn {
+                font-size: 16px;
+                padding: 6px;
+            }
+            .volume-slider {
+                width: 50px;
+            }
+            .video-title {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="my-player-container">
-    <video id="myVideo" controls></video>
-    <div class="custom-controls">
-        <button onclick="document.getElementById('myVideo').play()">▶ Play</button>
-        <button onclick="document.getElementById('myVideo').pause()">⏸ Pause</button>
-        <button onclick="document.getElementById('myVideo').volume += 0.1">🔊 زۆر بکە</button>
-        <button onclick="document.getElementById('myVideo').volume -= 0.1">🔉 کەم بکە</button>
+
+<div class="youtube-player-container">
+    <div class="video-wrapper">
+        <video id="youtubeStyleVideo" poster="https://via.placeholder.com/1280x720/1a1a2e/ffffff?text=فیلم+و+دراما"></video>
+        
+        <div class="custom-controls" id="controls">
+            <div class="progress-bar-container" id="progressBar">
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                    <div class="progress-handle"></div>
+                </div>
+            </div>
+            
+            <div class="controls-row">
+                <div class="controls-left">
+                    <button class="control-btn" id="playPauseBtn">
+                        <i class="fas fa-play" id="playPauseIcon"></i>
+                    </button>
+                    
+                    <div class="time-display">
+                        <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+                    </div>
+                    
+                    <div class="volume-container">
+                        <button class="control-btn" id="volumeBtn">
+                            <i class="fas fa-volume-up" id="volumeIcon"></i>
+                        </button>
+                        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1" class="volume-slider">
+                    </div>
+                </div>
+                
+                <div class="controls-right">
+                    <button class="control-btn" id="fullscreenBtn">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="video-info">
+        <div class="video-title">
+            🎬 ناوی فیلم/دراماکەت لێرە دەنووسیت
+        </div>
+        <div class="video-stats">
+            <span><i class="fas fa-eye"></i> 1,234 بینەر</span>
+            <span><i class="fas fa-thumbs-up"></i> 456</span>
+            <span><i class="fas fa-thumbs-down"></i> 12</span>
+        </div>
     </div>
 </div>
 
 <script>
-    const video = document.getElementById('myVideo');
-    const videoUrl = 'https://your-telegram-bot.com/path/to/your/file.m3u8'; // <-- ناونیشانی m3u8ـەکە لێرە دابنێ
-
+    // گۆڕاوەکان
+    const video = document.getElementById('youtubeStyleVideo');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const playPauseIcon = document.getElementById('playPauseIcon');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
+    const currentTimeSpan = document.getElementById('currentTime');
+    const durationSpan = document.getElementById('duration');
+    const volumeBtn = document.getElementById('volumeBtn');
+    const volumeIcon = document.getElementById('volumeIcon');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const controls = document.getElementById('controls');
+    
+    // ========== لینکی ڤیدیۆی خۆت لێرە دابنێ ==========
+    // https://your-telegram-bot.com/path/to/your/file.m3u8
+    const videoUrl = 'https://your-telegram-bot.com/path/to/your/file.m3u8'; // <-- ئەمە بگۆڕە بۆ لینکی m3u8ـەکەت
+    
+    let hls = null;
+    let controlsTimeout;
+    let isControlsVisible = true;
+    
+    // شاردنەوەی کۆنتڕۆڵەکان دوای 3 چرکە لە کاتی پەخشدا
+    function hideControls() {
+        if (!video.paused) {
+            controls.style.opacity = '0';
+            isControlsVisible = false;
+        }
+    }
+    
+    function showControls() {
+        controls.style.opacity = '1';
+        isControlsVisible = true;
+        clearTimeout(controlsTimeout);
+        if (!video.paused) {
+            controlsTimeout = setTimeout(hideControls, 3000);
+        }
+    }
+    
+    // ڕووداوەکانی ماوس
+    const wrapper = document.querySelector('.video-wrapper');
+    wrapper.addEventListener('mousemove', showControls);
+    wrapper.addEventListener('mouseleave', () => {
+        if (!video.paused) {
+            controlsTimeout = setTimeout(hideControls, 1000);
+        }
+    });
+    video.addEventListener('click', togglePlay);
+    
+    // ========== HLS Setup (پارچەکانی تێلیگرام) ==========
     if (Hls.isSupported()) {
-        const hls = new Hls();
-        // فایلی m3u8 کە تێلیگرام هەڵیگرتووە بار بکە
+        hls = new Hls({
+            debug: false,
+            enableWorker: true,
+            lowLatencyMode: true,
+        });
         hls.loadSource(videoUrl);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, function() {
-            console.log('سەرکەوتوو بوو، ڤیدیۆ ئامادەیە');
-            // video.play();
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+            console.log('✅ ڤیدیۆ لە تێلیگرامەوە سەرکەوتوو بارکرا');
+        });
+        hls.on(Hls.Events.ERROR, (event, data) => {
+            if (data.fatal) {
+                console.error('❌ هەڵە لە پەخشدا:', data);
+            }
         });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        // ئەمە بۆ ئەپڵ و سیستەمە کۆنەکان
         video.src = videoUrl;
-        video.addEventListener('loadedmetadata', function() {
-            video.play();
-        });
     } else {
-        console.error('ئەم براوسەرە پشتیوانی لە HLS ناکات');
+        console.error('ئەم براوسەرە پشتیوانی HLS نییە');
+        alert('تکایە براوسەری خۆت نوێ بکەوە یان گۆڕی بە Chrome/Edge/Firefox');
     }
+    
+    // ========== فەرمانەکانی پلەیەر ==========
+    function togglePlay() {
+        if (video.paused) {
+            video.play();
+            playPauseIcon.className = 'fas fa-pause';
+            controlsTimeout = setTimeout(hideControls, 3000);
+        } else {
+            video.pause();
+            playPauseIcon.className = 'fas fa-play';
+            showControls();
+        }
+    }
+    
+    playPauseBtn.addEventListener('click', togglePlay);
+    
+    // کاتی ڤیدیۆ
+    video.addEventListener('timeupdate', () => {
+        const percent = (video.currentTime / video.duration) * 100;
+        progressFill.style.width = `${percent}%`;
+        
+        currentTimeSpan.textContent = formatTime(video.currentTime);
+    });
+    
+    video.addEventListener('loadedmetadata', () => {
+        durationSpan.textContent = formatTime(video.duration);
+    });
+    
+    // ڕیکە (Seek)
+    progressBar.addEventListener('click', (e) => {
+        const rect = progressBar.getBoundingClientRect();
+        const pos = (e.clientX - rect.left) / rect.width;
+        video.currentTime = pos * video.duration;
+    });
+    
+    // دەنگ
+    volumeSlider.addEventListener('input', (e) => {
+        video.volume = e.target.value;
+        updateVolumeIcon();
+    });
+    
+    volumeBtn.addEventListener('click', () => {
+        if (video.volume > 0) {
+            video.volume = 0;
+        } else {
+            video.volume = volumeSlider.value;
+        }
+        volumeSlider.value = video.volume;
+        updateVolumeIcon();
+    });
+    
+    function updateVolumeIcon() {
+        if (video.volume === 0) {
+            volumeIcon.className = 'fas fa-volume-mute';
+        } else if (video.volume < 0.5) {
+            volumeIcon.className = 'fas fa-volume-down';
+        } else {
+            volumeIcon.className = 'fas fa-volume-up';
+        }
+    }
+    
+    // پڕکرنی شاشە
+    fullscreenBtn.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen();
+            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+        } else {
+            document.exitFullscreen();
+            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+        }
+    });
+    
+    document.addEventListener('fullscreenchange', () => {
+        if (document.fullscreenElement) {
+            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i>';
+        } else {
+            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i>';
+        }
+    });
+    
+    // فۆرماتکردنی کات (00:00)
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return '0:00';
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = Math.floor(seconds % 60);
+        if (hrs > 0) {
+            return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    // ڕێگەدان بە کلیلەکانی کیبۆرد (space بۆ پەخش، پەیمان بۆ دەنگ)
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            togglePlay();
+        } else if (e.code === 'ArrowUp') {
+            e.preventDefault();
+            video.volume = Math.min(1, video.volume + 0.05);
+            volumeSlider.value = video.volume;
+            updateVolumeIcon();
+        } else if (e.code === 'ArrowDown') {
+            e.preventDefault();
+            video.volume = Math.max(0, video.volume - 0.05);
+            volumeSlider.value = video.volume;
+            updateVolumeIcon();
+        } else if (e.code === 'ArrowLeft') {
+            e.preventDefault();
+            video.currentTime = Math.max(0, video.currentTime - 5);
+        } else if (e.code === 'ArrowRight') {
+            e.preventDefault();
+            video.currentTime = Math.min(video.duration, video.currentTime + 5);
+        }
+    });
+    
+    // سەرەتا کۆنتڕۆڵەکان پیشان بدە
+    showControls();
 </script>
 </body>
 </html>
