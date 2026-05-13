@@ -34,7 +34,7 @@ async function loadData() {
 function loadSampleData() {
     allMovies = [
         { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "https://picsum.photos/200/300?random=1", type: "film", lang: "kurdish", categories: ["kurdish-film"], description: "فیلمێکی کوردی", genres: ["دراما", "ئاکشن"], videoUrl: "https://vidmoly.com/e/example1" },
-        { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "https://picsum.photos/200/300?random=2", type: "series", lang: "turkish", categories: ["turkish-series"], description: "زنجیرەیەکی درامایی", genres: ["دراما", "ڕۆمانسی"], videoUrl: "https://streamsb.com/e/example2" }
+        { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "https://picsum.photos/200/300?random=2", type: "series", lang: "turkish", categories: ["turkish-series"], description: "زنجیرەیەکی درامایی", genres: ["دراما", "ڕۆمانسی"], videoUrl: "https://streamsb.com/e/example2", episodes: [{ number: 1, title: "ئەڵقەی یەکەم", videoUrl: "https://streamsb.com/e/ep1" }] }
     ];
     carouselSlides = [
         { id: 1, title: "ئەفسانەی کوێستان", year: "2024", description: "فیلمێکی کوردی", images: { mobile: "https://picsum.photos/1080/1920?random=1", tablet: "https://picsum.photos/1200/1600?random=1", desktop: "https://picsum.photos/1920/1080?random=1" }, movieId: 1, genres: ["دراما", "ئاکشن"] }
@@ -80,8 +80,8 @@ function renderCarousel() {
                 </div>
                 <p class="carousel-desc">${slide.description || ''}</p>
                 <div class="carousel-buttons">
-                    <button class="carousel-btn trailer" data-id="${slide.movieId}">🎬 سەیرکردن</button>
-                    <button class="carousel-btn info" data-id="${slide.movieId}">ℹ️ زانیاری زیاتر</button>
+                    <button class="carousel-btn trailer" data-id="${slide.movieId}" data-type="movie">🎬 سەیرکردن</button>
+                    <button class="carousel-btn info" data-id="${slide.movieId}" data-type="movie">ℹ️ زانیاری زیاتر</button>
                 </div>
             </div>
         `;
@@ -97,7 +97,12 @@ function renderCarousel() {
     document.querySelectorAll('.carousel-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const movieId = parseInt(btn.dataset.id);
-            window.location.href = `movie.html?id=${movieId}`;
+            const movie = allMovies.find(m => m.id === movieId);
+            if (movie && movie.type === 'film') {
+                window.location.href = `movie.html?id=${movieId}`;
+            } else {
+                window.location.href = `series.html?id=${movieId}`;
+            }
         });
     });
     
@@ -153,14 +158,17 @@ function renderSlider(containerId, movies) {
     const slider = document.getElementById(containerId);
     if (!slider) return;
     if (movies.length === 0) { slider.innerHTML = '<div style="padding: 2rem; text-align: center;">هیچ بەرهەمێک نەدۆزرایەوە</div>'; return; }
-    slider.innerHTML = movies.map(movie => `
-        <div class="movie-card" onclick="location.href='movie.html?id=${movie.id}'">
-            <img src="${movie.poster}" class="movie-poster" onerror="this.src='https://picsum.photos/200/300?random=1'">
-            <div class="movie-info">
-                <h3 class="movie-title">${movie.title}</h3>
+    slider.innerHTML = movies.map(movie => {
+        const targetPage = movie.type === 'film' ? 'movie.html' : 'series.html';
+        return `
+            <div class="movie-card" onclick="location.href='${targetPage}?id=${movie.id}'">
+                <img src="${movie.poster}" class="movie-poster" onerror="this.src='https://picsum.photos/200/300?random=1'">
+                <div class="movie-info">
+                    <h3 class="movie-title">${movie.title}</h3>
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 function renderAllSections() {
@@ -176,18 +184,29 @@ function renderAllSections() {
 }
 
 let searchIndex = [];
-function populateSearchIndex() { searchIndex = allMovies.map(m => ({ id: m.id, title: m.title, type: m.type })); }
-function searchMovies(query) { if (!query.trim()) return []; return searchIndex.filter(item => item.title.toLowerCase().includes(query.toLowerCase())); }
+function populateSearchIndex() { 
+    searchIndex = allMovies.map(m => ({ id: m.id, title: m.title, type: m.type })); 
+}
+
+function searchMovies(query) { 
+    if (!query.trim()) return []; 
+    return searchIndex.filter(item => item.title.toLowerCase().includes(query.toLowerCase())); 
+}
+
 function displaySearchResults(results) {
     const resultsDiv = document.getElementById('searchResults');
     if (!resultsDiv) return;
-    if (results.length === 0) { resultsDiv.innerHTML = '<div class="search-item">هیچ ئەنجامێک نەدۆزرایەوە</div>'; return; }
+    if (results.length === 0) { 
+        resultsDiv.innerHTML = '<div class="search-item">هیچ ئەنجامێک نەدۆزرایەوە</div>'; 
+        return; 
+    }
     resultsDiv.innerHTML = '';
     results.forEach(result => {
         const item = document.createElement('div');
         item.className = 'search-item';
+        const targetPage = result.type === 'film' ? 'movie.html' : 'series.html';
         item.textContent = `${result.title} (${result.type === 'film' ? 'فیلم' : 'زنجیرە'})`;
-        item.onclick = () => window.location.href = `movie.html?id=${result.id}`;
+        item.onclick = () => window.location.href = `${targetPage}?id=${result.id}`;
         resultsDiv.appendChild(item);
     });
 }
