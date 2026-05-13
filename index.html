@@ -174,15 +174,13 @@
         </section>
     </main>
 
-    <!-- ==================== مێنیوی مۆبایل (بە گۆڕانکارییەکان) ==================== -->
+    <!-- ==================== مێنیوی مۆبایل ==================== -->
     <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-header"><button class="close-menu" id="closeMenuBtn"><i class="fas fa-times"></i></button></div>
         <div class="mobile-menu-content">
             <div class="mobile-nav-links">
-                <!-- فیلمەکان Dropdown لە مۆبایل -->
-                <div class="mobile-dropdown">
-                    <a href="#" class="mobile-dropdown-toggle">فیلمەکان <i class="fas fa-chevron-down"></i></a>
+                <div class="mobile-dropdown"><a href="#" class="mobile-dropdown-toggle">فیلمەکان <i class="fas fa-chevron-down"></i></a>
                     <ul class="mobile-dropdown-menu">
                         <li><a href="#" data-category="all-films">─ هەموو</a></li>
                         <li><a href="#" data-category="kurdish-film">─ فیلمی کوردی</a></li>
@@ -197,9 +195,7 @@
                         <li><a href="#" data-category="short-film">─ کورتە فیلم</a></li>
                     </ul>
                 </div>
-                <!-- زنجیرەکان Dropdown لە مۆبایل -->
-                <div class="mobile-dropdown">
-                    <a href="#" class="mobile-dropdown-toggle">زنجیرەکان <i class="fas fa-chevron-down"></i></a>
+                <div class="mobile-dropdown"><a href="#" class="mobile-dropdown-toggle">زنجیرەکان <i class="fas fa-chevron-down"></i></a>
                     <ul class="mobile-dropdown-menu">
                         <li><a href="#" data-category="all-series">─ هەموو</a></li>
                         <li><a href="#" data-category="kurdish-series">─ زنجیرەی کوردی</a></li>
@@ -244,13 +240,14 @@
             </div>
             <p class="social-text">دەتوانن لەم شوێنانە لەگەڵمان بن</p>
             <div class="social-icons">
-                <a href="#" target="_blank"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
-                <a href="#" target="_blank"><i class="fab fa-telegram-plane"></i></a>
-                <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
-                <a href="#" target="_blank"><i class="fab fa-snapchat-ghost"></i></a>
-                <a href="#" target="_blank"><i class="fab fa-x-twitter"></i></a>
-                <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.facebook.com/kurdflix" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/kurdflix" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://t.me/kurdflix" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+                <a href="https://www.tiktok.com/@kurdflix" target="_blank"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.snapchat.com/add/kurdflix" target="_blank"><i class="fab fa-snapchat-ghost"></i></a>
+                <a href="https://www.threads.net/@kurdflix" target="_blank"><i class="fab fa-threads"></i></a>
+                <a href="https://twitter.com/kurdflix" target="_blank"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://youtube.com/@kurdflix" target="_blank"><i class="fab fa-youtube"></i></a>
             </div>
         </div>
         <div class="footer-about">
@@ -262,8 +259,27 @@
         </div>
     </footer>
 
-    <div id="loginModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h2>چوونە ژوورەوە</h2><form id="loginForm"><input type="email" placeholder="ئیمەیڵ" required><input type="password" placeholder="پاسیۆرد" required><button type="submit">چوونە ژوورەوە</button></form><p>هەژمارت نییە؟ <a href="#">تۆمار بکە</a></p></div></div>
-    <div id="vipModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h2>VIP - پلانی تایبەت</h2><p>بە زوو ئەم بەشە کارا دەبێت...</p></div></div>
+    <!-- مۆدالەکان -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>چوونە ژوورەوە</h2>
+            <form id="loginForm">
+                <input type="email" placeholder="ئیمەیڵ" required>
+                <input type="password" placeholder="پاسیۆرد" required>
+                <button type="submit">چوونە ژوورەوە</button>
+            </form>
+            <p>هەژمارت نییە؟ <a href="#">تۆمار بکە</a></p>
+        </div>
+    </div>
+
+    <div id="vipModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>VIP - پلانی تایبەت</h2>
+            <p>بە زوو ئەم بەشە کارا دەبێت...</p>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
