@@ -411,13 +411,79 @@
   }
   .ctrl-btn:hover .btn-tooltip { opacity: 1; }
 
+  /* ====== MOBILE OVERLAY CONTROLS ====== */
+  .mobile-center-controls {
+    display: none;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 18;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10%;
+  }
+  .mobile-center-controls.visible { display: flex; }
+
+  .mobile-seek-btn {
+    background: rgba(0,0,0,0.45);
+    border: none;
+    border-radius: 50%;
+    width: 60px; height: 60px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    pointer-events: all;
+    color: #fff;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+  }
+  .mobile-seek-btn:active { transform: scale(0.88); background: rgba(0,0,0,0.65); }
+  .mobile-seek-btn svg { width: 36px; height: 36px; fill: currentColor; }
+
+  .mobile-play-btn {
+    background: rgba(0,0,0,0.5);
+    border: none;
+    border-radius: 50%;
+    width: 72px; height: 72px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    pointer-events: all;
+    color: #fff;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+  }
+  .mobile-play-btn:active { transform: scale(0.88); }
+  .mobile-play-btn svg { width: 44px; height: 44px; fill: currentColor; }
+
   /* ====== RESPONSIVE ====== */
   @media (max-width: 600px) {
     body { padding: 0; background: #000; }
     .player-wrapper { border-radius: 0; box-shadow: none; }
-    .time-display { font-size: 11px; }
-    .ctrl-btn svg { width: 20px; height: 20px; }
-    .ctrl-btn.large svg { width: 24px; height: 24px; }
+    .time-display { font-size: 12px; }
+
+    /* Hide desktop play/seek from control row on mobile */
+    .desktop-only { display: none !important; }
+
+    /* Show mobile center overlay */
+    .mobile-center-controls { display: flex; }
+
+    /* Bigger icons in taskbar */
+    .ctrl-btn svg { width: 36px; height: 36px; }
+    .ctrl-btn.large svg { width: 44px; height: 44px; }
+    .ctrl-btn { padding: 8px; }
+
+    /* Mobile taskbar layout:
+       LEFT: Volume | spacer | CC | Time | Quality | Fullscreen :RIGHT */
+    .control-row { gap: 0; padding: 0 4px; }
+
+    /* Volume slider wider on mobile */
+    .volume-slider-wrap.visible { max-width: 70px; }
+    .volume-slider { width: 62px; }
+
+    /* Bigger progress thumb on mobile */
+    .progress-area:hover .progress-thumb,
+    .progress-thumb { transform: translate(-50%, -50%) scale(1); width: 16px; height: 16px; }
+    .progress-area { height: 28px; }
+    .progress-track { height: 5px; }
   }
 
   /* ====== FULLSCREEN ====== */
@@ -445,7 +511,6 @@
 
     <!-- Poster -->
     <div class="poster-overlay" id="posterOverlay">
-      <div class="poster-title" id="posterTitle">Select something to watch</div>
       <button class="poster-play-btn" onclick="startVideo()">
         <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
       </button>
@@ -460,6 +525,30 @@
     <div class="click-ripple" id="clickRipple"></div>
     <div class="center-icon" id="centerIcon">
       <svg id="centerIconSvg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+    </div>
+
+    <!-- Mobile center overlay: rewind | play | forward -->
+    <div class="mobile-center-controls" id="mobileCenterControls">
+      <!-- Rewind 10s (left) -->
+      <button class="mobile-seek-btn" onclick="seekRelative(-10)">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+          <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
+        </svg>
+      </button>
+
+      <!-- Play/Pause (center) -->
+      <button class="mobile-play-btn" onclick="togglePlay()">
+        <svg id="mobilePlayIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+
+      <!-- Forward 10s (right) -->
+      <button class="mobile-seek-btn" onclick="seekRelative(10)">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/>
+          <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
+        </svg>
+      </button>
     </div>
 
     <!-- Controls -->
@@ -482,16 +571,14 @@
       <!-- Control row -->
       <div class="control-row">
 
-        <!-- LEFT SIDE -->
-
-        <!-- Play/Pause -->
-        <button class="ctrl-btn large" id="playBtn" onclick="togglePlay()">
+        <!-- Play/Pause (desktop only) -->
+        <button class="ctrl-btn large desktop-only" id="playBtn" onclick="togglePlay()">
           <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
           <span class="btn-tooltip">Play / Pause</span>
         </button>
 
-        <!-- Rewind 10s -->
-        <button class="ctrl-btn" onclick="seekRelative(-10)">
+        <!-- Rewind 10s (desktop only) -->
+        <button class="ctrl-btn desktop-only" onclick="seekRelative(-10)">
           <svg viewBox="0 0 24 24">
             <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
             <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
@@ -499,8 +586,8 @@
           <span class="btn-tooltip">-10s</span>
         </button>
 
-        <!-- Forward 10s -->
-        <button class="ctrl-btn" onclick="seekRelative(10)">
+        <!-- Forward 10s (desktop only) -->
+        <button class="ctrl-btn desktop-only" onclick="seekRelative(10)">
           <svg viewBox="0 0 24 24">
             <path d="M12 5V1l5 5-5 5V7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6h2c0 4.42-3.58 8-8 8s-8-3.58-8-8 3.58-8 8-8z"/>
             <text x="12" y="14.5" text-anchor="middle" font-size="6" fill="currentColor" font-family="sans-serif" font-weight="bold">10</text>
@@ -508,7 +595,7 @@
           <span class="btn-tooltip">+10s</span>
         </button>
 
-        <!-- Volume -->
+        <!-- Volume (always visible, left side) -->
         <div class="volume-group" id="volumeGroup">
           <button class="ctrl-btn" id="muteBtn" onclick="handleVolumeIconClick()">
             <svg id="volIcon" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
@@ -632,8 +719,6 @@ let volumeHideTimer  = null;
 // ====================================================
 function initPlayer(config) {
   chunks = config.chunks || DEMO_CHUNKS;
-  document.getElementById('metaTitle') && (document.getElementById('metaTitle').textContent = config.title || '');
-  document.getElementById('posterTitle').textContent = config.title || 'Select something to watch';
   if (config.poster) {
     posterOverlay.style.backgroundImage = `url(${config.poster})`;
     posterOverlay.style.backgroundSize = 'cover';
@@ -734,9 +819,10 @@ function showCenterIcon(isPlay) {
 }
 
 function setPlayIcon(playing) {
-  playIcon.querySelector('path').setAttribute('d',
-    playing ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z'
-  );
+  const d = playing ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z';
+  playIcon.querySelector('path').setAttribute('d', d);
+  const mpi = document.getElementById('mobilePlayIcon');
+  if (mpi) mpi.querySelector('path').setAttribute('d', d);
 }
 
 // ====================================================
@@ -957,11 +1043,14 @@ function endScrub() {
 function showControls() {
   controlsOverlay.classList.remove('hidden');
   container.classList.add('show-cursor');
+  const mcc = document.getElementById('mobileCenterControls');
+  if (mcc) mcc.classList.add('visible');
   clearTimeout(controlsTimer);
   if (isVideoStarted && !video.paused) {
     controlsTimer = setTimeout(() => {
       controlsOverlay.classList.add('hidden');
       container.classList.remove('show-cursor');
+      if (mcc) mcc.classList.remove('visible');
     }, 3000);
   }
 }
