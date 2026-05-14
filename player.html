@@ -181,8 +181,7 @@
     transform: translate(-50%, -50%) scale(0);
     background: rgba(0,0,0,0.6);
     border-radius: 50%;
-    width: 80px;
-    height: 80px;
+    width: 80px; height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -200,7 +199,6 @@
   }
   .center-icon svg { width: 44px; height: 44px; fill: #fff; margin-left: 4px; }
   
-  /* Center icon hidden state */
   .center-icon.hidden-center {
     opacity: 0 !important;
     pointer-events: none;
@@ -691,8 +689,7 @@
             </button>
             <div class="popup-menu" id="settingsMenu">
               <div class="popup-section-label">Video Quality</div>
-              <div class="popup-item active" data-quality="auto"><span>Auto</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              <div class="popup-item" data-quality="1080"><span>1080p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+              <div class="popup-item active" data-quality="1080"><span>1080p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
               <div class="popup-item" data-quality="720"><span>720p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
               <div class="popup-item" data-quality="480"><span>480p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
               <div class="popup-item" data-quality="360"><span>360p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
@@ -732,8 +729,7 @@
             </button>
             <div class="popup-menu" id="settingsMenuMobile">
               <div class="popup-section-label">Video Quality</div>
-              <div class="popup-item active" data-quality="auto"><span>Auto</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              <div class="popup-item" data-quality="1080"><span>1080p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+              <div class="popup-item active" data-quality="1080"><span>1080p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
               <div class="popup-item" data-quality="720"><span>720p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
               <div class="popup-item" data-quality="480"><span>480p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
               <div class="popup-item" data-quality="360"><span>360p</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
@@ -749,12 +745,43 @@
 </div>
 
 <script>
-// 3 VIDEOS - EACH 10 SECONDS (TOTAL 30 SECONDS)
-const DEMO_CHUNKS = [
-  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
-  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
-  { url: 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 },
+// ====================================================
+// VIDEO SOURCES - Configure your videos here
+// Each video has 4 quality options (1080p, 720p, 480p, 360p)
+// Duration will be auto-detected by the player
+// ====================================================
+const VIDEO_SOURCES = [
+  {
+    name: "Video 1",
+    qualities: {
+      "1080": "YOUR_TELEGRAM_VIDEO_1080_URL_1",
+      "720": "YOUR_TELEGRAM_VIDEO_720_URL_1", 
+      "480": "YOUR_TELEGRAM_VIDEO_480_URL_1",
+      "360": "YOUR_TELEGRAM_VIDEO_360_URL_1"
+    }
+  },
+  {
+    name: "Video 2",
+    qualities: {
+      "1080": "YOUR_TELEGRAM_VIDEO_1080_URL_2",
+      "720": "YOUR_TELEGRAM_VIDEO_720_URL_2",
+      "480": "YOUR_TELEGRAM_VIDEO_480_URL_2",
+      "360": "YOUR_TELEGRAM_VIDEO_360_URL_2"
+    }
+  },
+  {
+    name: "Video 3",
+    qualities: {
+      "1080": "YOUR_TELEGRAM_VIDEO_1080_URL_3",
+      "720": "YOUR_TELEGRAM_VIDEO_720_URL_3",
+      "480": "YOUR_TELEGRAM_VIDEO_480_URL_3",
+      "360": "YOUR_TELEGRAM_VIDEO_360_URL_3"
+    }
+  }
 ];
+
+// Current quality setting
+let currentQuality = "1080";
 
 // DOM Elements
 const video = document.getElementById('video');
@@ -791,61 +818,57 @@ let isVideoStarted = false;
 let volumeVisible = false;
 let volumeHideTimer = null;
 let isLoadingChunk = false;
+let durationsLoaded = false;
+let durationsToLoad = 0;
 
-// Hide all controls (bottom bar, center play button, left/right seek buttons)
-function hideAllControls() {
-  controlsOverlay.classList.add('hidden');
-  container.classList.remove('show-cursor');
-  
-  // Hide mobile center play button
-  if (mobileCenterControls) {
-    mobileCenterControls.classList.remove('visible');
-    mobileCenterControls.classList.add('hidden-mobile');
-  }
-  
-  // Hide mobile seek overlays
-  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
-  if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
-  
-  // Hide desktop center icon (the popup play/pause icon)
-  centerIconDiv.classList.add('hidden-center');
-  
-  clearTimeout(controlsTimer);
+// Get URL for current quality
+function getCurrentQualityUrl(chunkIndex) {
+  const videoData = VIDEO_SOURCES[chunkIndex];
+  if (!videoData) return null;
+  return videoData.qualities[currentQuality];
 }
 
-// Show all controls
-function showAllControls() {
-  controlsOverlay.classList.remove('hidden');
-  container.classList.add('show-cursor');
-  
-  // Show mobile center play button
-  if (mobileCenterControls) {
-    mobileCenterControls.classList.add('visible');
-    mobileCenterControls.classList.remove('hidden-mobile');
-  }
-  
-  // Show mobile seek overlays
-  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '1';
-  if (mobileSeekRight) mobileSeekRight.style.opacity = '1';
-  
-  // Show desktop center icon (but it will animate and fade)
-  centerIconDiv.classList.remove('hidden-center');
-  
-  // Set timer to hide after 3 seconds of inactivity
-  clearTimeout(controlsTimer);
-  if (isVideoStarted && !video.paused) {
-    controlsTimer = setTimeout(() => {
-      hideAllControls();
-    }, 3000);
-  }
+// Auto-detect video duration
+function loadVideoDuration(url, index) {
+  return new Promise((resolve, reject) => {
+    const tempVideo = document.createElement('video');
+    tempVideo.preload = 'metadata';
+    tempVideo.onloadedmetadata = function() {
+      const duration = tempVideo.duration;
+      tempVideo.src = '';
+      resolve({ index, duration });
+    };
+    tempVideo.onerror = function() {
+      tempVideo.src = '';
+      resolve({ index, duration: 10 }); // fallback to 10 seconds
+    };
+    tempVideo.src = url;
+  });
 }
 
-// Initialize player
-function initPlayer(config) {
-  chunks = config.chunks || DEMO_CHUNKS;
+// Load all durations
+async function loadAllDurations() {
+  durationsToLoad = VIDEO_SOURCES.length;
+  let loadedCount = 0;
+  
+  for (let i = 0; i < VIDEO_SOURCES.length; i++) {
+    const url = getCurrentQualityUrl(i);
+    if (url && url !== "YOUR_TELEGRAM_VIDEO_1080_URL_1" && !url.includes("YOUR_TELEGRAM")) {
+      const result = await loadVideoDuration(url, i);
+      chunks[result.index] = { url: getCurrentQualityUrl(result.index), duration: result.duration };
+      loadedCount++;
+    } else {
+      // Fallback for demo
+      chunks[i] = { url: getCurrentQualityUrl(i) || 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 };
+      loadedCount++;
+    }
+  }
+  
   calculateChunkTimes();
+  durationsLoaded = true;
 }
 
+// Calculate cumulative times
 function calculateChunkTimes() {
   chunkStartTimes = [0];
   totalDuration = 0;
@@ -856,13 +879,77 @@ function calculateChunkTimes() {
   }
 }
 
+// Change quality
+function setQuality(quality, isMobile = false) {
+  if (!isVideoStarted) {
+    currentQuality = quality;
+    updateQualityMenuUI(quality, isMobile);
+    closeAllMenus();
+    return;
+  }
+  
+  const currentTime = getGlobalTime();
+  currentQuality = quality;
+  
+  // Reload all chunks with new quality
+  for (let i = 0; i < VIDEO_SOURCES.length; i++) {
+    chunks[i] = { url: getCurrentQualityUrl(i), duration: chunks[i]?.duration || 10 };
+  }
+  
+  updateQualityMenuUI(quality, isMobile);
+  closeAllMenus();
+  
+  // Reload current video at same position
+  const targetChunk = currentChunkIndex;
+  const localTime = currentTime - chunkStartTimes[currentChunkIndex];
+  
+  video.src = getCurrentQualityUrl(targetChunk);
+  video.load();
+  setLoading(true);
+  
+  video.addEventListener('loadedmetadata', function onLoad() {
+    video.removeEventListener('loadedmetadata', onLoad);
+    const seekLocal = Math.min(localTime, video.duration - 0.05);
+    if (seekLocal > 0) {
+      video.currentTime = seekLocal;
+    }
+    if (!video.paused) {
+      video.play().catch(() => {});
+    }
+    setLoading(false);
+  });
+}
+
+function updateQualityMenuUI(quality, isMobile = false) {
+  const menuId = isMobile ? '#settingsMenuMobile' : '#settingsMenu';
+  document.querySelectorAll(menuId + ' .popup-item').forEach(el => {
+    const val = el.getAttribute('data-quality');
+    el.classList.toggle('active', val === quality);
+  });
+}
+
+// Initialize chunks array
+function initChunks() {
+  chunks = [];
+  for (let i = 0; i < VIDEO_SOURCES.length; i++) {
+    chunks.push({ url: getCurrentQualityUrl(i), duration: null });
+  }
+}
+
+// Start video
 function startVideo() {
   if (isVideoStarted) return;
   posterOverlay.classList.add('hidden');
   isVideoStarted = true;
   currentChunkIndex = 0;
-  loadChunk(0);
-  // Don't show controls on auto-start, keep them hidden
+  
+  if (!durationsLoaded) {
+    loadAllDurations().then(() => {
+      loadChunk(0);
+    });
+  } else {
+    loadChunk(0);
+  }
   hideAllControls();
 }
 
@@ -874,9 +961,13 @@ function loadChunk(index, seekTime = 0) {
   currentChunkIndex = index;
   const chunk = chunks[index];
   
-  // Remove old ended event
-  video.onended = null;
+  if (!chunk || !chunk.url || chunk.url.includes("YOUR_TELEGRAM")) {
+    // Fallback for demo
+    chunk.url = 'https://www.w3schools.com/html/mov_bbb.mp4';
+    chunk.duration = 10;
+  }
   
+  video.onended = null;
   video.src = chunk.url;
   video.load();
   setLoading(true);
@@ -884,13 +975,20 @@ function loadChunk(index, seekTime = 0) {
   const onMetadata = function() {
     video.removeEventListener('loadedmetadata', onMetadata);
     
+    if (chunk.duration === null || chunk.duration === undefined) {
+      chunk.duration = video.duration;
+      calculateChunkTimes();
+    }
+    
     const maxTime = video.duration - 0.05;
     const targetSeek = Math.min(seekTime, maxTime);
     if (targetSeek > 0) {
       video.currentTime = targetSeek;
     }
     
-    video.play().catch(e => console.log('Play error:', e));
+    if (!video.paused) {
+      video.play().catch(e => console.log('Play error:', e));
+    }
     isLoadingChunk = false;
     setLoading(false);
   };
@@ -903,7 +1001,6 @@ function loadChunk(index, seekTime = 0) {
     setLoading(false);
   });
   
-  // Set ended event for this chunk
   video.onended = function() {
     onChunkEnd();
   };
@@ -913,10 +1010,8 @@ function onChunkEnd() {
   if (currentChunkIndex < chunks.length - 1) {
     const nextChunkIndex = currentChunkIndex + 1;
     loadChunk(nextChunkIndex, 0);
-    // Keep controls hidden during auto-switch
     hideAllControls();
   } else {
-    // End of all videos
     setPlayIcon(false);
     posterOverlay.classList.remove('hidden');
     isVideoStarted = false;
@@ -928,7 +1023,6 @@ function onChunkEnd() {
 function togglePlay() {
   if (!isVideoStarted) { 
     startVideo(); 
-    // After manual start, show controls then auto-hide
     setTimeout(() => showAllControls(), 100);
     return; 
   }
@@ -951,7 +1045,6 @@ function seekRelative(secs) {
   const globalNow = getGlobalTime();
   let target = Math.max(0, Math.min(totalDuration, globalNow + secs));
   seekToGlobal(target);
-  // Show controls on user action
   showAllControls();
 }
 
@@ -971,7 +1064,8 @@ function seekToGlobal(targetTime) {
   
   if (targetChunk !== currentChunkIndex) {
     currentChunkIndex = targetChunk;
-    video.src = chunks[targetChunk].url;
+    const chunk = chunks[targetChunk];
+    video.src = chunk.url;
     video.load();
     setLoading(true);
     
@@ -979,7 +1073,9 @@ function seekToGlobal(targetTime) {
       video.removeEventListener('loadedmetadata', onLoad);
       const seekLocal = Math.min(localTime, video.duration - 0.05);
       video.currentTime = Math.max(0, seekLocal);
-      video.play().catch(() => {});
+      if (!video.paused) {
+        video.play().catch(() => {});
+      }
       setLoading(false);
     });
   } else {
@@ -1014,6 +1110,38 @@ function updateProgress() {
   const formattedTotal = formatTime(totalDuration);
   if (timeDisplay) timeDisplay.textContent = formattedTime + ' / ' + formattedTotal;
   if (timeDisplayMobile) timeDisplayMobile.textContent = formattedTime + ' / ' + formattedTotal;
+}
+
+function hideAllControls() {
+  controlsOverlay.classList.add('hidden');
+  container.classList.remove('show-cursor');
+  if (mobileCenterControls) {
+    mobileCenterControls.classList.remove('visible');
+    mobileCenterControls.classList.add('hidden-mobile');
+  }
+  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
+  if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
+  centerIconDiv.classList.add('hidden-center');
+  clearTimeout(controlsTimer);
+}
+
+function showAllControls() {
+  controlsOverlay.classList.remove('hidden');
+  container.classList.add('show-cursor');
+  if (mobileCenterControls) {
+    mobileCenterControls.classList.add('visible');
+    mobileCenterControls.classList.remove('hidden-mobile');
+  }
+  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '1';
+  if (mobileSeekRight) mobileSeekRight.style.opacity = '1';
+  centerIconDiv.classList.remove('hidden-center');
+  
+  clearTimeout(controlsTimer);
+  if (isVideoStarted && !video.paused) {
+    controlsTimer = setTimeout(() => {
+      hideAllControls();
+    }, 3000);
+  }
 }
 
 function showCenterIcon(isPlay) {
@@ -1073,16 +1201,6 @@ function updateVolIcon() {
   else if (v < 0.5) d = 'M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L7 9H5z';
   else d = 'M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z';
   volIcon.querySelector('path').setAttribute('d', d);
-}
-
-function setQuality(q, isMobile = false) {
-  const menuId = isMobile ? '#settingsMenuMobile' : '#settingsMenu';
-  document.querySelectorAll(menuId + ' .popup-item').forEach(el => {
-    const val = el.getAttribute('data-quality');
-    el.classList.toggle('active', val === q);
-  });
-  closeAllMenus();
-  showAllControls();
 }
 
 function selectCC(lang, isMobile = false) {
@@ -1184,7 +1302,6 @@ function hoverProgress(e) {
 
 function leaveProgress() {}
 
-// User activity events
 function onUserActivity() {
   if (isVideoStarted && !video.paused) {
     showAllControls();
@@ -1196,16 +1313,12 @@ container.addEventListener('touchstart', (e) => {
   onUserActivity();
 }, { passive: true });
 
-// Only trigger play/pause on video click (not on controls)
 container.addEventListener('click', (e) => { 
   if (e.target.closest('.ctrl-btn') || e.target.closest('.progress-area') || e.target.closest('.popup-menu') || e.target.closest('.mobile-seek-btn') || e.target.closest('.mobile-play-btn')) return; 
   togglePlay(); 
 });
 
-// Video events
-video.addEventListener('play', () => { 
-  setPlayIcon(true); 
-});
+video.addEventListener('play', () => { setPlayIcon(true); });
 video.addEventListener('pause', () => { setPlayIcon(false); showAllControls(); });
 video.addEventListener('timeupdate', updateProgress);
 video.addEventListener('waiting', () => setLoading(true));
@@ -1216,7 +1329,6 @@ video.addEventListener('loadedmetadata', updateProgress);
 
 function setLoading(b) { loadingOverlay.classList.toggle('active', b); }
 
-// Format time
 function formatTime(s) {
   if (isNaN(s) || s < 0) return '0:00';
   const minutes = Math.floor(s / 60);
@@ -1224,7 +1336,6 @@ function formatTime(s) {
   return minutes + ':' + seconds.toString().padStart(2, '0');
 }
 
-// Fullscreen
 function toggleFullscreen() { 
   const wrap = document.getElementById('playerWrapper'); 
   if (!document.fullscreenElement) { 
@@ -1276,8 +1387,15 @@ document.getElementById('settingsBtnMobile').onclick = () => toggleMenu('setting
 document.getElementById('ccBtnMobile').onclick = () => toggleMenu('ccMenuMobile');
 document.getElementById('fsBtnMobile').onclick = () => toggleFullscreen();
 
-document.querySelectorAll('#settingsMenu .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality'), false); });
-document.querySelectorAll('#settingsMenuMobile .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality'), true); });
+// Quality menu items
+document.querySelectorAll('#settingsMenu .popup-item').forEach(el => {
+  el.onclick = () => setQuality(el.getAttribute('data-quality'), false);
+});
+document.querySelectorAll('#settingsMenuMobile .popup-item').forEach(el => {
+  el.onclick = () => setQuality(el.getAttribute('data-quality'), true);
+});
+
+// CC menu items
 document.querySelectorAll('#ccMenu .popup-item[data-cc]').forEach(el => { el.onclick = () => selectCC(el.getAttribute('data-cc'), false); });
 document.querySelectorAll('#ccMenu .popup-item[data-audio]').forEach(el => { el.onclick = () => selectAudio(el.getAttribute('data-audio'), false); });
 document.querySelectorAll('#ccMenuMobile .popup-item[data-cc]').forEach(el => { el.onclick = () => selectCC(el.getAttribute('data-cc'), true); });
@@ -1293,7 +1411,6 @@ document.addEventListener('contextmenu', (e) => {
   return false;
 });
 
-// Disable text selection
 document.addEventListener('selectstart', (e) => {
   e.preventDefault();
   return false;
@@ -1315,14 +1432,12 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Set initial hidden state for mobile controls
+// Initial setup
+initChunks();
 if (mobileCenterControls) mobileCenterControls.classList.add('hidden-mobile');
 if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
 if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
 centerIconDiv.classList.add('hidden-center');
-
-// Boot
-initPlayer({ chunks: DEMO_CHUNKS });
 </script>
 </body>
 </html>
