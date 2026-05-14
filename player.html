@@ -760,6 +760,9 @@ const centerIconSvg = document.getElementById('centerIconSvg');
 const clickRipple = document.getElementById('clickRipple');
 const volumeSliderWrap = document.getElementById('volumeSliderWrap');
 const volumeSlider = document.getElementById('volumeSlider');
+const mobileCenterControls = document.getElementById('mobileCenterControls');
+const mobileSeekLeft = document.getElementById('mobileSeekLeft');
+const mobileSeekRight = document.getElementById('mobileSeekRight');
 
 // State
 let chunks = [];
@@ -772,7 +775,7 @@ let isVideoStarted = false;
 let volumeVisible = false;
 let volumeHideTimer = null;
 let isLoadingChunk = false;
-let isAutoSwitchingChunk = false; // Track automatic chunk switching
+let controlsHidden = false; // Track if controls are hidden
 
 // Initialize player
 function initPlayer(config) {
@@ -796,7 +799,37 @@ function startVideo() {
   isVideoStarted = true;
   currentChunkIndex = 0;
   loadChunk(0);
-  showControls();
+  // Don't show controls on auto-start
+  hideAllControls();
+}
+
+function hideAllControls() {
+  controlsOverlay.classList.add('hidden');
+  container.classList.remove('show-cursor');
+  if (mobileCenterControls) mobileCenterControls.classList.remove('visible');
+  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
+  if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
+  controlsHidden = true;
+  clearTimeout(controlsTimer);
+}
+
+function showAllControls() {
+  controlsOverlay.classList.remove('hidden');
+  container.classList.add('show-cursor');
+  if (mobileCenterControls) mobileCenterControls.classList.add('visible');
+  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '1';
+  if (mobileSeekRight) mobileSeekRight.style.opacity = '1';
+  controlsHidden = false;
+  
+  // Set timer to hide after 3 seconds of inactivity
+  clearTimeout(controlsTimer);
+  if (isVideoStarted && !video.paused) {
+    controlsTimer = setTimeout(() => {
+      if (!controlsHidden) {
+        hideAllControls();
+      }
+    }, 3000);
+  }
 }
 
 function loadChunk(index, seekTime = 0) {
@@ -844,36 +877,40 @@ function loadChunk(index, seekTime = 0) {
 
 function onChunkEnd() {
   if (currentChunkIndex < chunks.length - 1) {
-    // This is automatic switching - set flag to prevent controls from showing
-    isAutoSwitchingChunk = true;
     const nextChunkIndex = currentChunkIndex + 1;
     loadChunk(nextChunkIndex, 0);
-    // Reset flag after a short delay
-    setTimeout(() => {
-      isAutoSwitchingChunk = false;
-    }, 500);
+    // Keep controls hidden during auto-switch
+    if (controlsHidden === false) {
+      hideAllControls();
+    }
   } else {
     // End of all videos
     setPlayIcon(false);
     posterOverlay.classList.remove('hidden');
     isVideoStarted = false;
     currentChunkIndex = 0;
+    hideAllControls();
   }
 }
 
 function togglePlay() {
-  if (!isVideoStarted) { startVideo(); return; }
+  if (!isVideoStarted) { 
+    startVideo(); 
+    // After manual start, show controls then auto-hide
+    setTimeout(() => showAllControls(), 100);
+    return; 
+  }
   if (video.paused) {
     video.play().then(() => {
       setPlayIcon(true);
       showCenterIcon(true);
-      showControls();
+      showAllControls();
     }).catch(e => console.log(e));
   } else {
     video.pause();
     setPlayIcon(false);
     showCenterIcon(false);
-    showControls();
+    showAllControls();
   }
 }
 
@@ -882,6 +919,8 @@ function seekRelative(secs) {
   const globalNow = getGlobalTime();
   let target = Math.max(0, Math.min(totalDuration, globalNow + secs));
   seekToGlobal(target);
+  // Show controls on user action
+  showAllControls();
 }
 
 function seekToGlobal(targetTime) {
@@ -970,6 +1009,7 @@ function handleVolumeIconClick() {
     updateVolIcon(); 
     resetVolumeHideTimer();
   }
+  showAllControls();
 }
 
 function showVolumeSlider() { 
@@ -1010,6 +1050,7 @@ function setQuality(q, isMobile = false) {
     el.classList.toggle('active', val === q);
   });
   closeAllMenus();
+  showAllControls();
 }
 
 function selectCC(lang, isMobile = false) {
@@ -1018,6 +1059,7 @@ function selectCC(lang, isMobile = false) {
   const target = document.querySelector(menuId + ' .popup-item[data-cc="' + lang + '"]');
   if(target) target.classList.add('active');
   closeAllMenus();
+  showAllControls();
 }
 
 function selectAudio(track, isMobile = false) {
@@ -1026,6 +1068,7 @@ function selectAudio(track, isMobile = false) {
   const target = document.querySelector(menuId + ' .popup-item[data-audio="' + track + '"]');
   if(target) target.classList.add('active');
   closeAllMenus();
+  showAllControls();
 }
 
 function toggleMenu(menuId) {
@@ -1033,6 +1076,7 @@ function toggleMenu(menuId) {
   const isOpen = menu.classList.contains('open');
   closeAllMenus();
   if (!isOpen) menu.classList.add('open');
+  showAllControls();
 }
 
 function closeAllMenus() { 
@@ -1059,6 +1103,7 @@ function handleProgressClick(e) {
   const percent = getProgressPercentFromEvent(e);
   const targetTime = percent * totalDuration;
   seekToGlobal(targetTime);
+  showAllControls();
   e.stopPropagation();
 }
 
@@ -1107,42 +1152,19 @@ function hoverProgress(e) {
 
 function leaveProgress() {}
 
-// Controls auto-hide - only on user activity
-function showControls() {
-  // Don't show controls if we're auto-switching chunks
-  if (isAutoSwitchingChunk) return;
-  
-  controlsOverlay.classList.remove('hidden'); 
-  container.classList.add('show-cursor'); 
-  const mcc = document.getElementById('mobileCenterControls'); 
-  if(mcc) mcc.classList.add('visible'); 
-  clearTimeout(controlsTimer); 
-  if (isVideoStarted && !video.paused) { 
-    controlsTimer = setTimeout(() => { 
-      controlsOverlay.classList.add('hidden'); 
-      container.classList.remove('show-cursor'); 
-      if(mcc) mcc.classList.remove('visible'); 
-    }, 3000); 
-  } 
-}
-
-function hideControlsImmediately() {
-  controlsOverlay.classList.add('hidden');
-  container.classList.remove('show-cursor');
-  const mcc = document.getElementById('mobileCenterControls');
-  if(mcc) mcc.classList.remove('visible');
-  clearTimeout(controlsTimer);
-}
-
 // User activity events
-container.addEventListener('mousemove', () => {
-  if (!isAutoSwitchingChunk) showControls();
-});
+function onUserActivity() {
+  if (isVideoStarted && !video.paused) {
+    showAllControls();
+  }
+}
+
+container.addEventListener('mousemove', onUserActivity);
 container.addEventListener('touchstart', (e) => { 
-  if (controlsOverlay.classList.contains('hidden') && !isAutoSwitchingChunk) showControls(); 
+  onUserActivity();
 }, { passive: true });
 
-// Only trigger play/pause on video click, not when controls are showing
+// Only trigger play/pause on video click (not on controls)
 container.addEventListener('click', (e) => { 
   if (e.target.closest('.ctrl-btn') || e.target.closest('.progress-area') || e.target.closest('.popup-menu') || e.target.closest('.mobile-seek-btn') || e.target.closest('.mobile-play-btn')) return; 
   togglePlay(); 
@@ -1151,10 +1173,9 @@ container.addEventListener('click', (e) => {
 // Video events
 video.addEventListener('play', () => { 
   setPlayIcon(true); 
-  // Only show controls on user-initiated play
-  if (!isAutoSwitchingChunk) showControls(); 
+  if (!controlsHidden) showAllControls();
 });
-video.addEventListener('pause', () => { setPlayIcon(false); showControls(); });
+video.addEventListener('pause', () => { setPlayIcon(false); showAllControls(); });
 video.addEventListener('timeupdate', updateProgress);
 video.addEventListener('waiting', () => setLoading(true));
 video.addEventListener('canplay', () => setLoading(false));
@@ -1179,7 +1200,8 @@ function toggleFullscreen() {
     (wrap.requestFullscreen || wrap.webkitRequestFullscreen).call(wrap); 
   } else { 
     document.exitFullscreen?.(); 
-  } 
+  }
+  showAllControls();
 }
 
 document.addEventListener('fullscreenchange', () => { 
@@ -1189,7 +1211,7 @@ document.addEventListener('fullscreenchange', () => {
   const path = isFs ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z';
   if(fsIcon) fsIcon.querySelector('path').setAttribute('d', path);
   if(fsIconMobile) fsIconMobile.querySelector('path').setAttribute('d', path);
-  showControls(); 
+  showAllControls(); 
 });
 
 // Keyboard shortcuts
@@ -1198,8 +1220,8 @@ document.addEventListener('keydown', (e) => {
   if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
   if (e.code === 'ArrowRight') seekRelative(10);
   if (e.code === 'ArrowLeft') seekRelative(-10);
-  if (e.code === 'ArrowUp') { video.volume = Math.min(1, video.volume + 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); }
-  if (e.code === 'ArrowDown') { video.volume = Math.max(0, video.volume - 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); }
+  if (e.code === 'ArrowUp') { video.volume = Math.min(1, video.volume + 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); showAllControls(); }
+  if (e.code === 'ArrowDown') { video.volume = Math.max(0, video.volume - 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); showAllControls(); }
   if (e.code === 'KeyF') toggleFullscreen();
   if (e.code === 'KeyM') { e.preventDefault(); handleVolumeIconClick(); }
 });
@@ -1261,6 +1283,10 @@ document.addEventListener('keydown', (e) => {
     e.preventDefault();
   }
 });
+
+// Make mobile seek overlays visible by default (opacity controlled by hide/show)
+if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
+if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
 
 // Boot
 initPlayer({ chunks: DEMO_CHUNKS });
