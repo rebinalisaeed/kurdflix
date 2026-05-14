@@ -45,8 +45,6 @@
     width: 100%;
     user-select: none;
     -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
   }
 
   body {
@@ -61,12 +59,6 @@
     margin: 0;
     overflow: hidden;
     touch-action: pan-x pan-y;
-    user-select: none;
-    -webkit-user-select: none;
-  }
-
-  * {
-    -webkit-tap-highlight-color: transparent;
   }
 
   .player-wrapper {
@@ -748,11 +740,10 @@
 // ====================================================
 // VIDEO SOURCES - Configure your videos here
 // Each video has 4 quality options (1080p, 720p, 480p, 360p)
-// Duration will be auto-detected by the player
 // ====================================================
 const VIDEO_SOURCES = [
   {
-    name: "Video 1",
+    name: "ڤیدیۆ 1",
     qualities: {
       "1080": "https://streamable.com/embed/wxj4vh",
       "720": "https://streamable.com/embed/wxj4vh", 
@@ -761,7 +752,7 @@ const VIDEO_SOURCES = [
     }
   },
   {
-    name: "Video 2",
+    name: "ڤیدیۆ 2",
     qualities: {
       "1080": "https://streamable.com/embed/wxj4vh",
       "720": "https://streamable.com/embed/wxj4vh", 
@@ -770,7 +761,7 @@ const VIDEO_SOURCES = [
     }
   },
   {
-    name: "Video 3",
+    name: "ڤیدیۆ 3",
     qualities: {
       "1080": "https://streamable.com/embed/wxj4vh",
       "720": "https://streamable.com/embed/wxj4vh", 
@@ -818,8 +809,6 @@ let isVideoStarted = false;
 let volumeVisible = false;
 let volumeHideTimer = null;
 let isLoadingChunk = false;
-let durationsLoaded = false;
-let durationsToLoad = 0;
 let wasPlayingBeforeQualityChange = false;
 
 // Get URL for current quality
@@ -829,44 +818,15 @@ function getCurrentQualityUrl(chunkIndex) {
   return videoData.qualities[currentQuality];
 }
 
-// Auto-detect video duration
-function loadVideoDuration(url, index) {
-  return new Promise((resolve, reject) => {
-    const tempVideo = document.createElement('video');
-    tempVideo.preload = 'metadata';
-    tempVideo.onloadedmetadata = function() {
-      const duration = tempVideo.duration;
-      tempVideo.src = '';
-      resolve({ index, duration });
-    };
-    tempVideo.onerror = function() {
-      tempVideo.src = '';
-      resolve({ index, duration: 10 }); // fallback to 10 seconds
-    };
-    tempVideo.src = url;
-  });
-}
-
-// Load all durations
-async function loadAllDurations() {
-  durationsToLoad = VIDEO_SOURCES.length;
-  let loadedCount = 0;
-  
+// Initialize chunks array with proper structure
+function initChunks() {
+  chunks = [];
   for (let i = 0; i < VIDEO_SOURCES.length; i++) {
-    const url = getCurrentQualityUrl(i);
-    if (url && url !== "YOUR_TELEGRAM_VIDEO_1080_URL_1" && !url.includes("YOUR_TELEGRAM")) {
-      const result = await loadVideoDuration(url, i);
-      chunks[result.index] = { url: getCurrentQualityUrl(result.index), duration: result.duration };
-      loadedCount++;
-    } else {
-      // Fallback for demo
-      chunks[i] = { url: getCurrentQualityUrl(i) || 'https://www.w3schools.com/html/mov_bbb.mp4', duration: 10 };
-      loadedCount++;
-    }
+    chunks.push({ 
+      url: getCurrentQualityUrl(i), 
+      duration: 10 // default duration, will be updated when metadata loads
+    });
   }
-  
-  calculateChunkTimes();
-  durationsLoaded = true;
 }
 
 // Calculate cumulative times
@@ -882,11 +842,17 @@ function calculateChunkTimes() {
 
 // Change quality WITHOUT resetting video position
 function setQuality(quality, isMobile = false) {
-  // Save current playing state and position
+  if (!isVideoStarted) {
+    currentQuality = quality;
+    updateQualityMenuUI(quality, isMobile);
+    closeAllMenus();
+    return;
+  }
+  
+  // Save current state
   wasPlayingBeforeQualityChange = !video.paused;
-  const currentGlobalTime = getGlobalTime();
+  const currentTime = getGlobalTime();
   const currentChunk = currentChunkIndex;
-  const localTime = video.currentTime || 0;
   
   // Update quality
   currentQuality = quality;
@@ -895,20 +861,16 @@ function setQuality(quality, isMobile = false) {
   updateQualityMenuUI(quality, isMobile);
   closeAllMenus();
   
-  // Reload chunks with new quality URLs but keep durations
+  // Update URLs in chunks
   for (let i = 0; i < VIDEO_SOURCES.length; i++) {
     if (chunks[i]) {
       chunks[i].url = getCurrentQualityUrl(i);
-    } else {
-      chunks[i] = { url: getCurrentQualityUrl(i), duration: 10 };
     }
   }
   
   // Reload current video at same position
   const newUrl = getCurrentQualityUrl(currentChunk);
   if (newUrl && video.src !== newUrl) {
-    const wasPlaying = !video.paused;
-    
     video.src = newUrl;
     video.load();
     setLoading(true);
@@ -916,8 +878,9 @@ function setQuality(quality, isMobile = false) {
     video.addEventListener('loadedmetadata', function onLoad() {
       video.removeEventListener('loadedmetadata', onLoad);
       
-      // Seek to the same local time
-      const seekTime = Math.min(localTime, video.duration - 0.05);
+      // Calculate local time within the current chunk
+      const localTime = currentTime - chunkStartTimes[currentChunk];
+      const seekTime = Math.min(Math.max(0, localTime), video.duration - 0.05);
       if (seekTime > 0) {
         video.currentTime = seekTime;
       }
@@ -948,28 +911,13 @@ function updateQualityMenuUI(quality, isMobile = false) {
   });
 }
 
-// Initialize chunks array
-function initChunks() {
-  chunks = [];
-  for (let i = 0; i < VIDEO_SOURCES.length; i++) {
-    chunks.push({ url: getCurrentQualityUrl(i), duration: null });
-  }
-}
-
 // Start video
 function startVideo() {
   if (isVideoStarted) return;
   posterOverlay.classList.add('hidden');
   isVideoStarted = true;
   currentChunkIndex = 0;
-  
-  if (!durationsLoaded) {
-    loadAllDurations().then(() => {
-      loadChunk(0);
-    });
-  } else {
-    loadChunk(0);
-  }
+  loadChunk(0);
   hideAllControls();
 }
 
@@ -981,10 +929,10 @@ function loadChunk(index, seekTime = 0) {
   currentChunkIndex = index;
   const chunk = chunks[index];
   
-  if (!chunk || !chunk.url || chunk.url.includes("YOUR_TELEGRAM")) {
-    // Fallback for demo
-    chunk.url = 'https://www.w3schools.com/html/mov_bbb.mp4';
-    chunk.duration = 10;
+  if (!chunk || !chunk.url || chunk.url.includes("لینک") || chunk.url.includes("لێرە دابنێ")) {
+    console.error('Invalid URL for chunk', index, chunk);
+    isLoadingChunk = false;
+    return;
   }
   
   video.onended = null;
@@ -995,7 +943,8 @@ function loadChunk(index, seekTime = 0) {
   const onMetadata = function() {
     video.removeEventListener('loadedmetadata', onMetadata);
     
-    if (chunk.duration === null || chunk.duration === undefined) {
+    // Update duration
+    if (chunk.duration !== video.duration) {
       chunk.duration = video.duration;
       calculateChunkTimes();
     }
@@ -1019,6 +968,7 @@ function loadChunk(index, seekTime = 0) {
     video.removeEventListener('error', onError);
     isLoadingChunk = false;
     setLoading(false);
+    console.error('Error loading chunk:', index);
   });
   
   video.onended = function() {
@@ -1027,11 +977,14 @@ function loadChunk(index, seekTime = 0) {
 }
 
 function onChunkEnd() {
+  console.log('Chunk ended:', currentChunkIndex);
+  
   if (currentChunkIndex < chunks.length - 1) {
     const nextChunkIndex = currentChunkIndex + 1;
     loadChunk(nextChunkIndex, 0);
     hideAllControls();
   } else {
+    // End of all videos
     setPlayIcon(false);
     posterOverlay.classList.remove('hidden');
     isVideoStarted = false;
@@ -1183,7 +1136,7 @@ function setPlayIcon(playing) {
   if(mobileIcon) mobileIcon.querySelector('path').setAttribute('d', d);
 }
 
-// Volume
+// Volume functions
 function handleVolumeIconClick() {
   if (!volumeVisible) showVolumeSlider();
   else { 
@@ -1225,6 +1178,7 @@ function updateVolIcon() {
   volIcon.querySelector('path').setAttribute('d', d);
 }
 
+// Menu functions
 function selectCC(lang, isMobile = false) {
   const menuId = isMobile ? '#ccMenuMobile' : '#ccMenu';
   document.querySelectorAll(menuId + ' .menu-column:first-child .popup-item').forEach(el => el.classList.remove('active'));
