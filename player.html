@@ -820,6 +820,7 @@ let volumeHideTimer = null;
 let isLoadingChunk = false;
 let durationsLoaded = false;
 let durationsToLoad = 0;
+let wasPlayingBeforeQualityChange = false;
 
 // Get URL for current quality
 function getCurrentQualityUrl(chunkIndex) {
@@ -879,45 +880,64 @@ function calculateChunkTimes() {
   }
 }
 
-// Change quality
+// Change quality WITHOUT resetting video position
 function setQuality(quality, isMobile = false) {
-  if (!isVideoStarted) {
-    currentQuality = quality;
-    updateQualityMenuUI(quality, isMobile);
-    closeAllMenus();
-    return;
-  }
+  // Save current playing state and position
+  wasPlayingBeforeQualityChange = !video.paused;
+  const currentGlobalTime = getGlobalTime();
+  const currentChunk = currentChunkIndex;
+  const localTime = video.currentTime || 0;
   
-  const currentTime = getGlobalTime();
+  // Update quality
   currentQuality = quality;
   
-  // Reload all chunks with new quality
-  for (let i = 0; i < VIDEO_SOURCES.length; i++) {
-    chunks[i] = { url: getCurrentQualityUrl(i), duration: chunks[i]?.duration || 10 };
-  }
-  
+  // Update UI
   updateQualityMenuUI(quality, isMobile);
   closeAllMenus();
   
+  // Reload chunks with new quality URLs but keep durations
+  for (let i = 0; i < VIDEO_SOURCES.length; i++) {
+    if (chunks[i]) {
+      chunks[i].url = getCurrentQualityUrl(i);
+    } else {
+      chunks[i] = { url: getCurrentQualityUrl(i), duration: 10 };
+    }
+  }
+  
   // Reload current video at same position
-  const targetChunk = currentChunkIndex;
-  const localTime = currentTime - chunkStartTimes[currentChunkIndex];
+  const newUrl = getCurrentQualityUrl(currentChunk);
+  if (newUrl && video.src !== newUrl) {
+    const wasPlaying = !video.paused;
+    
+    video.src = newUrl;
+    video.load();
+    setLoading(true);
+    
+    video.addEventListener('loadedmetadata', function onLoad() {
+      video.removeEventListener('loadedmetadata', onLoad);
+      
+      // Seek to the same local time
+      const seekTime = Math.min(localTime, video.duration - 0.05);
+      if (seekTime > 0) {
+        video.currentTime = seekTime;
+      }
+      
+      // Restore playing state if it was playing before
+      if (wasPlayingBeforeQualityChange) {
+        video.play().catch(e => console.log('Play error after quality change:', e));
+      }
+      
+      setLoading(false);
+    });
+    
+    video.addEventListener('error', function onError() {
+      video.removeEventListener('error', onError);
+      setLoading(false);
+      console.error('Error loading video with new quality');
+    });
+  }
   
-  video.src = getCurrentQualityUrl(targetChunk);
-  video.load();
-  setLoading(true);
-  
-  video.addEventListener('loadedmetadata', function onLoad() {
-    video.removeEventListener('loadedmetadata', onLoad);
-    const seekLocal = Math.min(localTime, video.duration - 0.05);
-    if (seekLocal > 0) {
-      video.currentTime = seekLocal;
-    }
-    if (!video.paused) {
-      video.play().catch(() => {});
-    }
-    setLoading(false);
-  });
+  showAllControls();
 }
 
 function updateQualityMenuUI(quality, isMobile = false) {
@@ -1065,19 +1085,21 @@ function seekToGlobal(targetTime) {
   if (targetChunk !== currentChunkIndex) {
     currentChunkIndex = targetChunk;
     const chunk = chunks[targetChunk];
-    video.src = chunk.url;
-    video.load();
-    setLoading(true);
-    
-    video.addEventListener('loadedmetadata', function onLoad() {
-      video.removeEventListener('loadedmetadata', onLoad);
-      const seekLocal = Math.min(localTime, video.duration - 0.05);
-      video.currentTime = Math.max(0, seekLocal);
-      if (!video.paused) {
-        video.play().catch(() => {});
-      }
-      setLoading(false);
-    });
+    if (chunk && chunk.url) {
+      video.src = chunk.url;
+      video.load();
+      setLoading(true);
+      
+      video.addEventListener('loadedmetadata', function onLoad() {
+        video.removeEventListener('loadedmetadata', onLoad);
+        const seekLocal = Math.min(localTime, video.duration - 0.05);
+        video.currentTime = Math.max(0, seekLocal);
+        if (!video.paused) {
+          video.play().catch(() => {});
+        }
+        setLoading(false);
+      });
+    }
   } else {
     const seekLocal = Math.min(localTime, video.duration - 0.05);
     video.currentTime = Math.max(0, seekLocal);
