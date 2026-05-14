@@ -181,12 +181,16 @@
     transform: translate(-50%, -50%) scale(0);
     background: rgba(0,0,0,0.6);
     border-radius: 50%;
-    width: 80px; height: 80px;
-    display: flex; align-items: center; justify-content: center;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     pointer-events: none;
     z-index: 9;
     opacity: 0;
     backdrop-filter: blur(4px);
+    transition: opacity 0.2s;
   }
   .center-icon.animate { animation: pop 0.3s ease-out forwards; }
   @keyframes pop {
@@ -195,6 +199,12 @@
     100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
   }
   .center-icon svg { width: 44px; height: 44px; fill: #fff; margin-left: 4px; }
+  
+  /* Center icon hidden state */
+  .center-icon.hidden-center {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
 
   .controls-overlay {
     position: absolute;
@@ -456,8 +466,13 @@
     z-index: 18;
     align-items: center;
     justify-content: center;
+    transition: opacity 0.2s;
   }
   .mobile-center-controls.visible { display: flex; }
+  .mobile-center-controls.hidden-mobile {
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
 
   .mobile-play-btn {
     background: rgba(0,0,0,0.55);
@@ -487,6 +502,7 @@
     justify-content: center;
     pointer-events: all;
     z-index: 17;
+    transition: opacity 0.2s;
   }
   .mobile-seek-left { left: 0; }
   .mobile-seek-right { right: 0; }
@@ -775,7 +791,54 @@ let isVideoStarted = false;
 let volumeVisible = false;
 let volumeHideTimer = null;
 let isLoadingChunk = false;
-let controlsHidden = false; // Track if controls are hidden
+
+// Hide all controls (bottom bar, center play button, left/right seek buttons)
+function hideAllControls() {
+  controlsOverlay.classList.add('hidden');
+  container.classList.remove('show-cursor');
+  
+  // Hide mobile center play button
+  if (mobileCenterControls) {
+    mobileCenterControls.classList.remove('visible');
+    mobileCenterControls.classList.add('hidden-mobile');
+  }
+  
+  // Hide mobile seek overlays
+  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
+  if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
+  
+  // Hide desktop center icon (the popup play/pause icon)
+  centerIconDiv.classList.add('hidden-center');
+  
+  clearTimeout(controlsTimer);
+}
+
+// Show all controls
+function showAllControls() {
+  controlsOverlay.classList.remove('hidden');
+  container.classList.add('show-cursor');
+  
+  // Show mobile center play button
+  if (mobileCenterControls) {
+    mobileCenterControls.classList.add('visible');
+    mobileCenterControls.classList.remove('hidden-mobile');
+  }
+  
+  // Show mobile seek overlays
+  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '1';
+  if (mobileSeekRight) mobileSeekRight.style.opacity = '1';
+  
+  // Show desktop center icon (but it will animate and fade)
+  centerIconDiv.classList.remove('hidden-center');
+  
+  // Set timer to hide after 3 seconds of inactivity
+  clearTimeout(controlsTimer);
+  if (isVideoStarted && !video.paused) {
+    controlsTimer = setTimeout(() => {
+      hideAllControls();
+    }, 3000);
+  }
+}
 
 // Initialize player
 function initPlayer(config) {
@@ -799,37 +862,8 @@ function startVideo() {
   isVideoStarted = true;
   currentChunkIndex = 0;
   loadChunk(0);
-  // Don't show controls on auto-start
+  // Don't show controls on auto-start, keep them hidden
   hideAllControls();
-}
-
-function hideAllControls() {
-  controlsOverlay.classList.add('hidden');
-  container.classList.remove('show-cursor');
-  if (mobileCenterControls) mobileCenterControls.classList.remove('visible');
-  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
-  if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
-  controlsHidden = true;
-  clearTimeout(controlsTimer);
-}
-
-function showAllControls() {
-  controlsOverlay.classList.remove('hidden');
-  container.classList.add('show-cursor');
-  if (mobileCenterControls) mobileCenterControls.classList.add('visible');
-  if (mobileSeekLeft) mobileSeekLeft.style.opacity = '1';
-  if (mobileSeekRight) mobileSeekRight.style.opacity = '1';
-  controlsHidden = false;
-  
-  // Set timer to hide after 3 seconds of inactivity
-  clearTimeout(controlsTimer);
-  if (isVideoStarted && !video.paused) {
-    controlsTimer = setTimeout(() => {
-      if (!controlsHidden) {
-        hideAllControls();
-      }
-    }, 3000);
-  }
 }
 
 function loadChunk(index, seekTime = 0) {
@@ -880,9 +914,7 @@ function onChunkEnd() {
     const nextChunkIndex = currentChunkIndex + 1;
     loadChunk(nextChunkIndex, 0);
     // Keep controls hidden during auto-switch
-    if (controlsHidden === false) {
-      hideAllControls();
-    }
+    hideAllControls();
   } else {
     // End of all videos
     setPlayIcon(false);
@@ -1173,7 +1205,6 @@ container.addEventListener('click', (e) => {
 // Video events
 video.addEventListener('play', () => { 
   setPlayIcon(true); 
-  if (!controlsHidden) showAllControls();
 });
 video.addEventListener('pause', () => { setPlayIcon(false); showAllControls(); });
 video.addEventListener('timeupdate', updateProgress);
@@ -1284,9 +1315,11 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// Make mobile seek overlays visible by default (opacity controlled by hide/show)
+// Set initial hidden state for mobile controls
+if (mobileCenterControls) mobileCenterControls.classList.add('hidden-mobile');
 if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
 if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
+centerIconDiv.classList.add('hidden-center');
 
 // Boot
 initPlayer({ chunks: DEMO_CHUNKS });
