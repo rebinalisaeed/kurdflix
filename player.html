@@ -8,20 +8,6 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  @font-face {
-    font-family: 'NRT';
-    src: url('fonts/NRT-Bd.ttf') format('truetype');
-    font-weight: bold;
-    font-style: normal;
-  }
-  
-  @font-face {
-    font-family: 'NRT';
-    src: url('fonts/NRT-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-
   :root {
     --bg-page: #0f0f0f;
     --bg-player: #000;
@@ -35,7 +21,7 @@
     --text-muted: rgba(255,255,255,0.5);
     --control-hover: rgba(255,255,255,0.12);
     --tooltip-bg: rgba(28,28,28,0.95);
-    --font: 'NRT', 'Inter', 'Segoe UI', sans-serif;
+    --font: 'Inter', 'Segoe UI', sans-serif;
   }
 
   html, body {
@@ -58,7 +44,6 @@
     padding: 0;
     margin: 0;
     overflow: hidden;
-    touch-action: pan-x pan-y;
   }
 
   .player-wrapper {
@@ -93,7 +78,6 @@
     object-fit: contain;
     display: block;
     transform: scale(1);
-    pointer-events: none;
   }
 
   .poster-overlay {
@@ -738,43 +722,52 @@
 
 <script>
 // ====================================================
-// VIDEO SOURCES - Configure your videos here
-// Each video has 4 quality options (1080p, 720p, 480p, 360p)
+// SOURCE VIDEOS - لینکەکانی خۆت لێرە دابنێ
 // ====================================================
 const VIDEO_SOURCES = [
   {
-    name: "ڤیدیۆ 1",
+    name: "بەشی 1",
     qualities: {
-      "1080": "https://streamable.com/embed/wxj4vh",
-      "720": "https://streamable.com/embed/wxj4vh", 
-      "480": "https://streamable.com/embed/wxj4vh",
-      "360": "https://streamable.com/embed/wxj4vh"
+      "1080": "لینکی 1080p ی بەشی یەکەم",
+      "720": "لینکی 720p ی بەشی یەکەم", 
+      "480": "لینکی 480p ی بەشی یەکەم",
+      "360": "لینکی 360p ی بەشی یەکەم"
     }
   },
   {
-    name: "ڤیدیۆ 2",
+    name: "بەشی 2",
     qualities: {
-      "1080": "https://streamable.com/embed/wxj4vh",
-      "720": "https://streamable.com/embed/wxj4vh", 
-      "480": "https://streamable.com/embed/wxj4vh",
-      "360": "https://streamable.com/embed/wxj4vh"
+      "1080": "لینکی 1080p ی بەشی دووەم",
+      "720": "لینکی 720p ی بەشی دووەم",
+      "480": "لینکی 480p ی بەشی دووەم",
+      "360": "لینکی 360p ی بەشی دووەم"
     }
   },
   {
-    name: "ڤیدیۆ 3",
+    name: "بەشی 3",
     qualities: {
-      "1080": "https://streamable.com/embed/wxj4vh",
-      "720": "https://streamable.com/embed/wxj4vh", 
-      "480": "https://streamable.com/embed/wxj4vh",
-      "360": "https://streamable.com/embed/wxj4vh"
+      "1080": "لینکی 1080p ی بەشی سێیەم",
+      "720": "لینکی 720p ی بەشی سێیەم",
+      "480": "لینکی 480p ی بەشی سێیەم",
+      "360": "لینکی 360p ی بەشی سێیەم"
     }
   }
 ];
 
-// Current quality setting
 let currentQuality = "1080";
+let chunks = [];
+let currentChunkIndex = 0;
+let totalDuration = 0;
+let chunkStartTimes = [];
+let isScrubbing = false;
+let controlsTimer = null;
+let isVideoStarted = false;
+let volumeVisible = false;
+let volumeHideTimer = null;
+let isLoadingChunk = false;
+let wasPlayingBeforeQualityChange = false;
 
-// DOM Elements
+// DOM elements
 const video = document.getElementById('video');
 const container = document.getElementById('videoContainer');
 const progressArea = document.getElementById('progressArea');
@@ -798,38 +791,19 @@ const mobileCenterControls = document.getElementById('mobileCenterControls');
 const mobileSeekLeft = document.getElementById('mobileSeekLeft');
 const mobileSeekRight = document.getElementById('mobileSeekRight');
 
-// State
-let chunks = [];
-let currentChunkIndex = 0;
-let totalDuration = 0;
-let chunkStartTimes = [];
-let isScrubbing = false;
-let controlsTimer = null;
-let isVideoStarted = false;
-let volumeVisible = false;
-let volumeHideTimer = null;
-let isLoadingChunk = false;
-let wasPlayingBeforeQualityChange = false;
-
-// Get URL for current quality
 function getCurrentQualityUrl(chunkIndex) {
   const videoData = VIDEO_SOURCES[chunkIndex];
   if (!videoData) return null;
   return videoData.qualities[currentQuality];
 }
 
-// Initialize chunks array with proper structure
 function initChunks() {
   chunks = [];
   for (let i = 0; i < VIDEO_SOURCES.length; i++) {
-    chunks.push({ 
-      url: getCurrentQualityUrl(i), 
-      duration: 10 // default duration, will be updated when metadata loads
-    });
+    chunks.push({ url: getCurrentQualityUrl(i), duration: 10 });
   }
 }
 
-// Calculate cumulative times
 function calculateChunkTimes() {
   chunkStartTimes = [0];
   totalDuration = 0;
@@ -840,7 +814,6 @@ function calculateChunkTimes() {
   }
 }
 
-// Change quality WITHOUT resetting video position
 function setQuality(quality, isMobile = false) {
   if (!isVideoStarted) {
     currentQuality = quality;
@@ -849,69 +822,43 @@ function setQuality(quality, isMobile = false) {
     return;
   }
   
-  // Save current state
   wasPlayingBeforeQualityChange = !video.paused;
   const currentTime = getGlobalTime();
   const currentChunk = currentChunkIndex;
   
-  // Update quality
   currentQuality = quality;
-  
-  // Update UI
   updateQualityMenuUI(quality, isMobile);
   closeAllMenus();
   
-  // Update URLs in chunks
   for (let i = 0; i < VIDEO_SOURCES.length; i++) {
-    if (chunks[i]) {
-      chunks[i].url = getCurrentQualityUrl(i);
-    }
+    if (chunks[i]) chunks[i].url = getCurrentQualityUrl(i);
   }
   
-  // Reload current video at same position
   const newUrl = getCurrentQualityUrl(currentChunk);
-  if (newUrl && video.src !== newUrl) {
+  if (newUrl && newUrl !== "لینکی 1080p ی بەشی یەکەم" && video.src !== newUrl) {
     video.src = newUrl;
     video.load();
     setLoading(true);
     
     video.addEventListener('loadedmetadata', function onLoad() {
       video.removeEventListener('loadedmetadata', onLoad);
-      
-      // Calculate local time within the current chunk
       const localTime = currentTime - chunkStartTimes[currentChunk];
       const seekTime = Math.min(Math.max(0, localTime), video.duration - 0.05);
-      if (seekTime > 0) {
-        video.currentTime = seekTime;
-      }
-      
-      // Restore playing state if it was playing before
-      if (wasPlayingBeforeQualityChange) {
-        video.play().catch(e => console.log('Play error after quality change:', e));
-      }
-      
+      if (seekTime > 0) video.currentTime = seekTime;
+      if (wasPlayingBeforeQualityChange) video.play().catch(() => {});
       setLoading(false);
-    });
-    
-    video.addEventListener('error', function onError() {
-      video.removeEventListener('error', onError);
-      setLoading(false);
-      console.error('Error loading video with new quality');
     });
   }
-  
   showAllControls();
 }
 
 function updateQualityMenuUI(quality, isMobile = false) {
   const menuId = isMobile ? '#settingsMenuMobile' : '#settingsMenu';
   document.querySelectorAll(menuId + ' .popup-item').forEach(el => {
-    const val = el.getAttribute('data-quality');
-    el.classList.toggle('active', val === quality);
+    el.classList.toggle('active', el.getAttribute('data-quality') === quality);
   });
 }
 
-// Start video
 function startVideo() {
   if (isVideoStarted) return;
   posterOverlay.classList.add('hidden');
@@ -922,117 +869,68 @@ function startVideo() {
 }
 
 function loadChunk(index, seekTime = 0) {
-  if (index < 0 || index >= chunks.length) return;
-  if (isLoadingChunk) return;
+  if (index < 0 || index >= chunks.length || isLoadingChunk) return;
   isLoadingChunk = true;
-  
   currentChunkIndex = index;
   const chunk = chunks[index];
   
-  if (!chunk || !chunk.url || chunk.url.includes("لینک") || chunk.url.includes("لێرە دابنێ")) {
-    console.error('Invalid URL for chunk', index, chunk);
-    isLoadingChunk = false;
-    return;
-  }
+  if (!chunk || !chunk.url || chunk.url.includes("لینک")) return;
   
   video.onended = null;
   video.src = chunk.url;
   video.load();
   setLoading(true);
   
-  const onMetadata = function() {
+  video.addEventListener('loadedmetadata', function onMetadata() {
     video.removeEventListener('loadedmetadata', onMetadata);
-    
-    // Update duration
     if (chunk.duration !== video.duration) {
       chunk.duration = video.duration;
       calculateChunkTimes();
     }
-    
-    const maxTime = video.duration - 0.05;
-    const targetSeek = Math.min(seekTime, maxTime);
-    if (targetSeek > 0) {
-      video.currentTime = targetSeek;
-    }
-    
-    if (!video.paused) {
-      video.play().catch(e => console.log('Play error:', e));
-    }
+    const targetSeek = Math.min(seekTime, video.duration - 0.05);
+    if (targetSeek > 0) video.currentTime = targetSeek;
+    if (!video.paused) video.play().catch(() => {});
     isLoadingChunk = false;
     setLoading(false);
-  };
-  
-  video.addEventListener('loadedmetadata', onMetadata);
-  
-  video.addEventListener('error', function onError() {
-    video.removeEventListener('error', onError);
-    isLoadingChunk = false;
-    setLoading(false);
-    console.error('Error loading chunk:', index);
   });
   
-  video.onended = function() {
-    onChunkEnd();
+  video.onended = () => {
+    if (currentChunkIndex < chunks.length - 1) {
+      loadChunk(currentChunkIndex + 1, 0);
+      hideAllControls();
+    } else {
+      setPlayIcon(false);
+      posterOverlay.classList.remove('hidden');
+      isVideoStarted = false;
+      hideAllControls();
+    }
   };
-}
-
-function onChunkEnd() {
-  console.log('Chunk ended:', currentChunkIndex);
-  
-  if (currentChunkIndex < chunks.length - 1) {
-    const nextChunkIndex = currentChunkIndex + 1;
-    loadChunk(nextChunkIndex, 0);
-    hideAllControls();
-  } else {
-    // End of all videos
-    setPlayIcon(false);
-    posterOverlay.classList.remove('hidden');
-    isVideoStarted = false;
-    currentChunkIndex = 0;
-    hideAllControls();
-  }
 }
 
 function togglePlay() {
-  if (!isVideoStarted) { 
-    startVideo(); 
-    setTimeout(() => showAllControls(), 100);
-    return; 
-  }
+  if (!isVideoStarted) { startVideo(); setTimeout(() => showAllControls(), 100); return; }
   if (video.paused) {
-    video.play().then(() => {
-      setPlayIcon(true);
-      showCenterIcon(true);
-      showAllControls();
-    }).catch(e => console.log(e));
+    video.play().then(() => { setPlayIcon(true); showCenterIcon(true); showAllControls(); }).catch(() => {});
   } else {
     video.pause();
-    setPlayIcon(false);
-    showCenterIcon(false);
-    showAllControls();
+    setPlayIcon(false); showCenterIcon(false); showAllControls();
   }
 }
 
 function seekRelative(secs) {
   if (!isVideoStarted) return;
-  const globalNow = getGlobalTime();
-  let target = Math.max(0, Math.min(totalDuration, globalNow + secs));
+  const target = Math.max(0, Math.min(totalDuration, getGlobalTime() + secs));
   seekToGlobal(target);
   showAllControls();
 }
 
 function seekToGlobal(targetTime) {
   if (totalDuration === 0) return;
-  
   let targetChunk = 0;
   for (let i = 0; i < chunkStartTimes.length - 1; i++) {
-    if (targetTime >= chunkStartTimes[i] && targetTime < chunkStartTimes[i + 1]) {
-      targetChunk = i;
-      break;
-    }
+    if (targetTime >= chunkStartTimes[i] && targetTime < chunkStartTimes[i+1]) { targetChunk = i; break; }
   }
   if (targetChunk >= chunks.length) targetChunk = chunks.length - 1;
-  
   const localTime = targetTime - chunkStartTimes[targetChunk];
   
   if (targetChunk !== currentChunkIndex) {
@@ -1042,58 +940,43 @@ function seekToGlobal(targetTime) {
       video.src = chunk.url;
       video.load();
       setLoading(true);
-      
       video.addEventListener('loadedmetadata', function onLoad() {
         video.removeEventListener('loadedmetadata', onLoad);
-        const seekLocal = Math.min(localTime, video.duration - 0.05);
-        video.currentTime = Math.max(0, seekLocal);
-        if (!video.paused) {
-          video.play().catch(() => {});
-        }
+        video.currentTime = Math.min(localTime, video.duration - 0.05);
+        if (!video.paused) video.play().catch(() => {});
         setLoading(false);
       });
     }
   } else {
-    const seekLocal = Math.min(localTime, video.duration - 0.05);
-    video.currentTime = Math.max(0, seekLocal);
+    video.currentTime = Math.min(localTime, video.duration - 0.05);
   }
 }
 
 function getGlobalTime() {
   if (!isVideoStarted) return 0;
-  const localTime = video.currentTime || 0;
-  const chunkStart = chunkStartTimes[currentChunkIndex] || 0;
-  return chunkStart + localTime;
+  return (chunkStartTimes[currentChunkIndex] || 0) + (video.currentTime || 0);
 }
 
 function updateProgress() {
   if (isScrubbing || totalDuration === 0 || !isVideoStarted) return;
-  
   const globalTime = getGlobalTime();
   const pct = (globalTime / totalDuration) * 100;
   progressFill.style.width = pct + '%';
   progressThumb.style.left = pct + '%';
-  
   if (video.buffered.length > 0) {
-    const bufEnd = video.buffered.end(video.buffered.length - 1);
-    const globalBufferEnd = (chunkStartTimes[currentChunkIndex] || 0) + bufEnd;
-    const bufPct = (globalBufferEnd / totalDuration) * 100;
+    const bufPct = ((chunkStartTimes[currentChunkIndex] + video.buffered.end(video.buffered.length-1)) / totalDuration) * 100;
     progressBuffer.style.width = Math.min(bufPct, 100) + '%';
   }
-  
-  const formattedTime = formatTime(globalTime);
-  const formattedTotal = formatTime(totalDuration);
-  if (timeDisplay) timeDisplay.textContent = formattedTime + ' / ' + formattedTotal;
-  if (timeDisplayMobile) timeDisplayMobile.textContent = formattedTime + ' / ' + formattedTotal;
+  const ft = formatTime(globalTime);
+  const ftt = formatTime(totalDuration);
+  if (timeDisplay) timeDisplay.textContent = ft + ' / ' + ftt;
+  if (timeDisplayMobile) timeDisplayMobile.textContent = ft + ' / ' + ftt;
 }
 
 function hideAllControls() {
   controlsOverlay.classList.add('hidden');
   container.classList.remove('show-cursor');
-  if (mobileCenterControls) {
-    mobileCenterControls.classList.remove('visible');
-    mobileCenterControls.classList.add('hidden-mobile');
-  }
+  if (mobileCenterControls) { mobileCenterControls.classList.remove('visible'); mobileCenterControls.classList.add('hidden-mobile'); }
   if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
   if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
   centerIconDiv.classList.add('hidden-center');
@@ -1103,20 +986,12 @@ function hideAllControls() {
 function showAllControls() {
   controlsOverlay.classList.remove('hidden');
   container.classList.add('show-cursor');
-  if (mobileCenterControls) {
-    mobileCenterControls.classList.add('visible');
-    mobileCenterControls.classList.remove('hidden-mobile');
-  }
+  if (mobileCenterControls) { mobileCenterControls.classList.add('visible'); mobileCenterControls.classList.remove('hidden-mobile'); }
   if (mobileSeekLeft) mobileSeekLeft.style.opacity = '1';
   if (mobileSeekRight) mobileSeekRight.style.opacity = '1';
   centerIconDiv.classList.remove('hidden-center');
-  
   clearTimeout(controlsTimer);
-  if (isVideoStarted && !video.paused) {
-    controlsTimer = setTimeout(() => {
-      hideAllControls();
-    }, 3000);
-  }
+  if (isVideoStarted && !video.paused) controlsTimer = setTimeout(() => hideAllControls(), 3000);
 }
 
 function showCenterIcon(isPlay) {
@@ -1131,44 +1006,21 @@ function showCenterIcon(isPlay) {
 
 function setPlayIcon(playing) {
   const d = playing ? 'M6 19h4V5H6v14zm8-14v14h4V5h-4z' : 'M8 5v14l11-7z';
-  if(playIcon) playIcon.querySelector('path').setAttribute('d', d);
+  if (playIcon) playIcon.querySelector('path').setAttribute('d', d);
   const mobileIcon = document.getElementById('mobilePlayIcon');
-  if(mobileIcon) mobileIcon.querySelector('path').setAttribute('d', d);
+  if (mobileIcon) mobileIcon.querySelector('path').setAttribute('d', d);
 }
 
-// Volume functions
+// Volume controls
 function handleVolumeIconClick() {
   if (!volumeVisible) showVolumeSlider();
-  else { 
-    video.muted = !video.muted; 
-    updateVolIcon(); 
-    resetVolumeHideTimer();
-  }
+  else { video.muted = !video.muted; updateVolIcon(); resetVolumeHideTimer(); }
   showAllControls();
 }
-
-function showVolumeSlider() { 
-  volumeVisible = true; 
-  volumeSliderWrap.classList.add('visible'); 
-  resetVolumeHideTimer(); 
-}
-
-function hideVolumeSlider() { 
-  volumeVisible = false; 
-  volumeSliderWrap.classList.remove('visible'); 
-}
-
-function resetVolumeHideTimer() { 
-  clearTimeout(volumeHideTimer); 
-  volumeHideTimer = setTimeout(hideVolumeSlider, 5000); 
-}
-
-function setVolume(val) { 
-  video.volume = val / 100; 
-  video.muted = (val == 0); 
-  updateVolIcon(); 
-}
-
+function showVolumeSlider() { volumeVisible = true; volumeSliderWrap.classList.add('visible'); resetVolumeHideTimer(); }
+function hideVolumeSlider() { volumeVisible = false; volumeSliderWrap.classList.remove('visible'); }
+function resetVolumeHideTimer() { clearTimeout(volumeHideTimer); volumeHideTimer = setTimeout(hideVolumeSlider, 5000); }
+function setVolume(val) { video.volume = val / 100; video.muted = (val == 0); updateVolIcon(); }
 function updateVolIcon() {
   const v = video.muted ? 0 : video.volume;
   let d = '';
@@ -1178,12 +1030,11 @@ function updateVolIcon() {
   volIcon.querySelector('path').setAttribute('d', d);
 }
 
-// Menu functions
 function selectCC(lang, isMobile = false) {
   const menuId = isMobile ? '#ccMenuMobile' : '#ccMenu';
   document.querySelectorAll(menuId + ' .menu-column:first-child .popup-item').forEach(el => el.classList.remove('active'));
   const target = document.querySelector(menuId + ' .popup-item[data-cc="' + lang + '"]');
-  if(target) target.classList.add('active');
+  if (target) target.classList.add('active');
   closeAllMenus();
   showAllControls();
 }
@@ -1192,110 +1043,53 @@ function selectAudio(track, isMobile = false) {
   const menuId = isMobile ? '#ccMenuMobile' : '#ccMenu';
   document.querySelectorAll(menuId + ' .menu-column:last-child .popup-item').forEach(el => el.classList.remove('active'));
   const target = document.querySelector(menuId + ' .popup-item[data-audio="' + track + '"]');
-  if(target) target.classList.add('active');
+  if (target) target.classList.add('active');
   closeAllMenus();
   showAllControls();
 }
 
-function toggleMenu(menuId) {
-  const menu = document.getElementById(menuId);
-  const isOpen = menu.classList.contains('open');
-  closeAllMenus();
-  if (!isOpen) menu.classList.add('open');
-  showAllControls();
+function toggleMenu(menuId) { 
+  const menu = document.getElementById(menuId); 
+  const isOpen = menu.classList.contains('open'); 
+  closeAllMenus(); 
+  if (!isOpen) menu.classList.add('open'); 
+  showAllControls(); 
 }
+function closeAllMenus() { document.querySelectorAll('.popup-menu').forEach(m => m.classList.remove('open')); }
 
-function closeAllMenus() { 
-  document.querySelectorAll('.popup-menu').forEach(m => m.classList.remove('open')); 
-}
-
-// Progress handling
+// Progress events
 function getProgressPercentFromEvent(e) {
   const rect = progressArea.getBoundingClientRect();
-  let clientX;
-  if (e.touches) {
-    clientX = e.touches[0].clientX;
-  } else if (e.clientX !== undefined) {
-    clientX = e.clientX;
-  } else {
-    clientX = e.pageX;
-  }
-  let x = clientX - rect.left;
-  x = Math.max(0, Math.min(rect.width, x));
+  let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  let x = Math.max(0, Math.min(rect.width, clientX - rect.left));
   return x / rect.width;
 }
-
-function handleProgressClick(e) {
-  const percent = getProgressPercentFromEvent(e);
-  const targetTime = percent * totalDuration;
-  seekToGlobal(targetTime);
-  showAllControls();
-  e.stopPropagation();
-}
-
+function handleProgressClick(e) { seekToGlobal(getProgressPercentFromEvent(e) * totalDuration); showAllControls(); e.stopPropagation(); }
 function startScrub(e) { 
   isScrubbing = true; 
-  const percent = getProgressPercentFromEvent(e);
-  progressFill.style.width = (percent * 100) + '%';
-  progressThumb.style.left = (percent * 100) + '%';
-  
-  const move = (ev) => { 
-    if (!isScrubbing) return;
-    const pct = getProgressPercentFromEvent(ev);
-    progressFill.style.width = (pct * 100) + '%';
-    progressThumb.style.left = (pct * 100) + '%';
-  };
-  
-  const up = () => { 
-    if (isScrubbing) {
-      const pct = parseFloat(progressFill.style.width) / 100;
-      const targetTime = pct * totalDuration;
-      seekToGlobal(targetTime);
-    }
-    isScrubbing = false; 
-    document.removeEventListener('mousemove', move); 
-    document.removeEventListener('touchmove', move); 
-    document.removeEventListener('mouseup', up); 
-    document.removeEventListener('touchend', up); 
-  };
-  
-  document.addEventListener('mousemove', move); 
-  document.addEventListener('touchmove', move, { passive: false }); 
-  document.addEventListener('mouseup', up); 
-  document.addEventListener('touchend', up); 
-  e.preventDefault(); 
+  const pct = getProgressPercentFromEvent(e);
+  progressFill.style.width = (pct * 100) + '%';
+  progressThumb.style.left = (pct * 100) + '%';
+  const move = (ev) => { if (isScrubbing) { const p = getProgressPercentFromEvent(ev); progressFill.style.width = (p * 100) + '%'; progressThumb.style.left = (p * 100) + '%'; } };
+  const up = () => { if (isScrubbing) seekToGlobal(parseFloat(progressFill.style.width) / 100 * totalDuration); isScrubbing = false; document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move); document.removeEventListener('mouseup', up); document.removeEventListener('touchend', up); };
+  document.addEventListener('mousemove', move); document.addEventListener('touchmove', move, { passive: false }); document.addEventListener('mouseup', up); document.addEventListener('touchend', up); e.preventDefault();
 }
-
 function hoverProgress(e) { 
-  const percent = getProgressPercentFromEvent(e);
-  progressTooltip.textContent = formatTime(percent * totalDuration); 
+  const pct = getProgressPercentFromEvent(e);
+  progressTooltip.textContent = formatTime(pct * totalDuration);
   const rect = progressArea.getBoundingClientRect();
-  let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  let x = clientX - rect.left;
-  progressTooltip.style.right = (rect.width - x) + 'px'; 
-  progressTooltip.style.left = 'auto'; 
+  let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  progressTooltip.style.right = (rect.width - x) + 'px'; progressTooltip.style.left = 'auto';
 }
-
 function leaveProgress() {}
 
-function onUserActivity() {
-  if (isVideoStarted && !video.paused) {
-    showAllControls();
-  }
-}
-
+function onUserActivity() { if (isVideoStarted && !video.paused) showAllControls(); }
 container.addEventListener('mousemove', onUserActivity);
-container.addEventListener('touchstart', (e) => { 
-  onUserActivity();
-}, { passive: true });
+container.addEventListener('touchstart', onUserActivity);
+container.addEventListener('click', (e) => { if (!e.target.closest('.ctrl-btn') && !e.target.closest('.progress-area') && !e.target.closest('.popup-menu') && !e.target.closest('.mobile-seek-btn') && !e.target.closest('.mobile-play-btn')) togglePlay(); });
 
-container.addEventListener('click', (e) => { 
-  if (e.target.closest('.ctrl-btn') || e.target.closest('.progress-area') || e.target.closest('.popup-menu') || e.target.closest('.mobile-seek-btn') || e.target.closest('.mobile-play-btn')) return; 
-  togglePlay(); 
-});
-
-video.addEventListener('play', () => { setPlayIcon(true); });
-video.addEventListener('pause', () => { setPlayIcon(false); showAllControls(); });
+video.addEventListener('play', () => setPlayIcon(true));
+video.addEventListener('pause', () => setPlayIcon(false));
 video.addEventListener('timeupdate', updateProgress);
 video.addEventListener('waiting', () => setLoading(true));
 video.addEventListener('canplay', () => setLoading(false));
@@ -1304,47 +1098,19 @@ video.addEventListener('progress', updateProgress);
 video.addEventListener('loadedmetadata', updateProgress);
 
 function setLoading(b) { loadingOverlay.classList.toggle('active', b); }
-
-function formatTime(s) {
-  if (isNaN(s) || s < 0) return '0:00';
-  const minutes = Math.floor(s / 60);
-  const seconds = Math.floor(s % 60);
-  return minutes + ':' + seconds.toString().padStart(2, '0');
-}
-
+function formatTime(s) { if (isNaN(s) || s < 0) return '0:00'; const m = Math.floor(s / 60); const sc = Math.floor(s % 60); return m + ':' + sc.toString().padStart(2, '0'); }
 function toggleFullscreen() { 
-  const wrap = document.getElementById('playerWrapper'); 
-  if (!document.fullscreenElement) { 
-    (wrap.requestFullscreen || wrap.webkitRequestFullscreen).call(wrap); 
-  } else { 
-    document.exitFullscreen?.(); 
-  }
+  const wrap = document.getElementById('playerWrapper');
+  if (!document.fullscreenElement) wrap.requestFullscreen?.(); else document.exitFullscreen?.();
   showAllControls();
 }
-
-document.addEventListener('fullscreenchange', () => { 
-  const isFs = !!document.fullscreenElement; 
-  const fsIcon = document.getElementById('fsIcon');
-  const fsIconMobile = document.getElementById('fsIconMobile');
-  const path = isFs ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z';
-  if(fsIcon) fsIcon.querySelector('path').setAttribute('d', path);
-  if(fsIconMobile) fsIconMobile.querySelector('path').setAttribute('d', path);
+document.addEventListener('fullscreenchange', () => { const p = document.fullscreenElement ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'; 
+  document.getElementById('fsIcon')?.querySelector('path').setAttribute('d', p); 
+  document.getElementById('fsIconMobile')?.querySelector('path').setAttribute('d', p); 
   showAllControls(); 
 });
 
-// Keyboard shortcuts
-document.addEventListener('keydown', (e) => { 
-  if (e.target.tagName === 'INPUT') return; 
-  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
-  if (e.code === 'ArrowRight') seekRelative(10);
-  if (e.code === 'ArrowLeft') seekRelative(-10);
-  if (e.code === 'ArrowUp') { video.volume = Math.min(1, video.volume + 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); showAllControls(); }
-  if (e.code === 'ArrowDown') { video.volume = Math.max(0, video.volume - 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); showAllControls(); }
-  if (e.code === 'KeyF') toggleFullscreen();
-  if (e.code === 'KeyM') { e.preventDefault(); handleVolumeIconClick(); }
-});
-
-// Button events
+document.addEventListener('keydown', (e) => { if (e.target.tagName === 'INPUT') return; if (e.code === 'Space') { e.preventDefault(); togglePlay(); } if (e.code === 'ArrowRight') seekRelative(10); if (e.code === 'ArrowLeft') seekRelative(-10); if (e.code === 'ArrowUp') { video.volume = Math.min(1, video.volume + 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); } if (e.code === 'ArrowDown') { video.volume = Math.max(0, video.volume - 0.1); volumeSlider.value = video.volume * 100; updateVolIcon(); } if (e.code === 'KeyF') toggleFullscreen(); if (e.code === 'KeyM') { e.preventDefault(); handleVolumeIconClick(); } });
 document.getElementById('posterPlayBtn').onclick = () => startVideo();
 document.getElementById('playBtn').onclick = () => togglePlay();
 document.getElementById('desktopRewindBtn').onclick = () => seekRelative(-10);
@@ -1354,61 +1120,25 @@ document.getElementById('mobileSeekFwdBtn').onclick = (e) => { e.stopPropagation
 document.getElementById('mobileCenterPlayBtn').onclick = (e) => { e.stopPropagation(); togglePlay(); };
 document.getElementById('muteBtn').onclick = () => handleVolumeIconClick();
 volumeSlider.oninput = (e) => setVolume(e.target.value);
-
 document.getElementById('settingsBtn').onclick = () => toggleMenu('settingsMenu');
 document.getElementById('ccBtn').onclick = () => toggleMenu('ccMenu');
 document.getElementById('fsBtn').onclick = () => toggleFullscreen();
-
 document.getElementById('settingsBtnMobile').onclick = () => toggleMenu('settingsMenuMobile');
 document.getElementById('ccBtnMobile').onclick = () => toggleMenu('ccMenuMobile');
 document.getElementById('fsBtnMobile').onclick = () => toggleFullscreen();
 
-// Quality menu items
-document.querySelectorAll('#settingsMenu .popup-item').forEach(el => {
-  el.onclick = () => setQuality(el.getAttribute('data-quality'), false);
-});
-document.querySelectorAll('#settingsMenuMobile .popup-item').forEach(el => {
-  el.onclick = () => setQuality(el.getAttribute('data-quality'), true);
-});
-
-// CC menu items
+document.querySelectorAll('#settingsMenu .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality'), false); });
+document.querySelectorAll('#settingsMenuMobile .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality'), true); });
 document.querySelectorAll('#ccMenu .popup-item[data-cc]').forEach(el => { el.onclick = () => selectCC(el.getAttribute('data-cc'), false); });
 document.querySelectorAll('#ccMenu .popup-item[data-audio]').forEach(el => { el.onclick = () => selectAudio(el.getAttribute('data-audio'), false); });
 document.querySelectorAll('#ccMenuMobile .popup-item[data-cc]').forEach(el => { el.onclick = () => selectCC(el.getAttribute('data-cc'), true); });
 document.querySelectorAll('#ccMenuMobile .popup-item[data-audio]').forEach(el => { el.onclick = () => selectAudio(el.getAttribute('data-audio'), true); });
+document.addEventListener('click', (e) => { if (!e.target.closest('.popup-menu') && !e.target.closest('#settingsBtn') && !e.target.closest('#ccBtn') && !e.target.closest('#settingsBtnMobile') && !e.target.closest('#ccBtnMobile')) closeAllMenus(); });
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+document.addEventListener('selectstart', (e) => e.preventDefault());
+document.addEventListener('wheel', (e) => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+document.addEventListener('keydown', (e) => { if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) e.preventDefault(); });
 
-document.addEventListener('click', (e) => { 
-  if (!e.target.closest('.popup-menu') && !e.target.closest('#settingsBtn') && !e.target.closest('#ccBtn') && !e.target.closest('#settingsBtnMobile') && !e.target.closest('#ccBtnMobile')) closeAllMenus(); 
-});
-
-// Disable right click
-document.addEventListener('contextmenu', (e) => {
-  e.preventDefault();
-  return false;
-});
-
-document.addEventListener('selectstart', (e) => {
-  e.preventDefault();
-  return false;
-});
-
-// Prevent zoom
-document.addEventListener('wheel', (e) => {
-  if (e.ctrlKey) {
-    e.preventDefault();
-  }
-}, { passive: false });
-
-document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
-    e.preventDefault();
-  }
-  if (e.metaKey && (e.key === '+' || e.key === '-')) {
-    e.preventDefault();
-  }
-});
-
-// Initial setup
 initChunks();
 if (mobileCenterControls) mobileCenterControls.classList.add('hidden-mobile');
 if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
