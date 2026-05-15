@@ -7,9 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
-  /* ========== پاڕاستن ========== */
-  
-  /* 1. ڕێگری کردن لە هەڵبژاردنی تێکست و وێنە */
+  /* ========== پاراستن ========== */
   body, .video-container, video {
     user-select: none;
     -webkit-user-select: none;
@@ -18,60 +16,17 @@
     -webkit-tap-highlight-color: transparent;
   }
   
-  /* 2. ڕێگری کردن لە دراگ کردن و هێنانی وێنە */
   video {
     pointer-events: auto;
     -webkit-user-drag: none;
     user-drag: none;
   }
   
-  /* 3. ڕێگری کردن لە سکرین شۆت بە CSS backdrop (ئەمە وێنەیەکی ڕەش لەسەر شاشەکە دادەنێت کاتێک پرتەسکرین دەکرێت) */
-  .video-container {
-    position: relative;
-  }
-  
-  .video-container::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: transparent;
-    pointer-events: none;
-    z-index: 999;
-  }
-  
-  /* 4. ڕێگری کردن لە Save As */
   img, video {
     -webkit-touch-callout: none;
   }
-  
-  /* 5. واوەرمارکی شەفاف لە ناوەڕاستی ڤیدیۆکە (لە سکرین شۆت و ڕیکۆرددا دەردەکەوێت) */
-  .video-watermark {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-15deg);
-    color: rgba(255, 255, 255, 0.15);
-    font-size: 18px;
-    font-weight: bold;
-    white-space: nowrap;
-    pointer-events: none;
-    z-index: 100;
-    font-family: monospace;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-  }
-  
-  @media (min-width: 768px) {
-    .video-watermark {
-      font-size: 32px;
-      letter-spacing: 8px;
-    }
-  }
-  
-  /* پلەیەرەکە بە تەواوەتی - هەمان دیزاینی پێشوو */
+
+  /* ========== دیزاین ========== */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -146,7 +101,6 @@
     transform: scale(1);
   }
 
-  /* پۆستەر */
   .poster-overlay {
     position: absolute;
     inset: 0;
@@ -624,9 +578,6 @@
   <div class="video-container show-cursor" id="videoContainer">
 
     <video id="video" preload="metadata"></video>
-    
-    <!-- واوەرمارکی شەفاف -->
-    <div class="video-watermark" id="watermark">© KURDISH PLAYER</div>
 
     <div class="poster-overlay" id="posterOverlay">
       <button class="poster-play-btn" id="posterPlayBtn">
@@ -710,7 +661,10 @@
           <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
           <div style="position:relative">
             <button class="ctrl-btn" id="ccBtn">
-              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-9 9H9.5v-.5h-2v3h2V15H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V15H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z"/></svg>
+              <!-- ئایکۆنی نوێی CC - زیرنووس -->
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H10v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H17v1c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1z"/>
+              </svg>
             </button>
             <div class="popup-menu two-column-menu" id="ccMenu">
               <div class="menu-column">
@@ -750,7 +704,10 @@
           <div class="time-display" id="timeDisplayMobile">0:00 / 0:00</div>
           <div style="position:relative">
             <button class="ctrl-btn" id="ccBtnMobile">
-              <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-9 9H9.5v-.5h-2v3h2V15H11v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V15H18v1c0 .55-.45 1-1 1h-3c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h3c.55 0 1 .45 1 1v1z"/></svg>
+              <!-- ئایکۆنی نوێی CC بۆ مۆبایل -->
+              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                <path d="M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H10v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H17v1c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1z"/>
+              </svg>
             </button>
             <div class="popup-menu two-column-menu" id="ccMenuMobile">
               <div class="menu-column">
@@ -791,84 +748,29 @@
 </div>
 
 <script>
-// ==================================================
-// پلەیەرەکە لینکەکان لە config.json دەخوێنێتەوە
-// ==================================================
-
-// ========== 1. ڕێگری کردن لە کلیکی ڕاست ==========
-document.addEventListener('contextmenu', function(e) {
+// ========== پاراستن - ڕێگری لە کلیکی ڕاست و کلیلە کورتەکان ==========
+document.addEventListener('contextmenu', (e) => e.preventDefault());
+document.addEventListener('keydown', (e) => {
+  // Ctrl+S, Ctrl+P, Ctrl+C, Ctrl+U
+  if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P' || e.key === 'c' || e.key === 'C' || e.key === 'u' || e.key === 'U')) {
     e.preventDefault();
     return false;
-});
-
-// ========== 2. ڕێگری کردن لە کلیلە کورتەکانی داونلۆد و سکرین شۆت ==========
-document.addEventListener('keydown', function(e) {
-    // Ctrl+S, Ctrl+P, Ctrl+C, Ctrl+U, F12, PrtSc
-    if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P' || e.key === 'c' || e.key === 'C' || e.key === 'u' || e.key === 'U')) {
-        e.preventDefault();
-        return false;
-    }
-    // F12 (Developer Tools)
-    if (e.key === 'F12') {
-        e.preventDefault();
-        return false;
-    }
-    // Print Screen (PrtSc)
-    if (e.key === 'PrintScreen') {
-        e.preventDefault();
-        return false;
-    }
-    // Ctrl+Shift+I (Developer Tools)
-    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
-        e.preventDefault();
-        return false;
-    }
-});
-
-// ========== 3. ڕێگری کردن لە سکرین شۆت بە JavaScript ==========
-// ئەمە هەوڵدەدات سکرین شۆت بدۆزێتەوە (بە تەواوی ناتوانێت، بەڵام بەشێکی دەوەستێنێت)
-window.addEventListener('keyup', function(e) {
-    if (e.key === 'PrintScreen') {
-        alert('Screenshots are disabled on this website for copyright protection.');
-        return false;
-    }
-});
-
-// ========== 4. واوەرمارکی داینامیک (لە هەر سکرین شۆت و ڕیکۆردێکدا دەردەکەوێت) ==========
-function updateWatermark() {
-    const watermark = document.getElementById('watermark');
-    if (watermark) {
-        const now = new Date();
-        const userId = localStorage.getItem('user_id') || 'guest_' + Math.random().toString(36).substr(2, 8);
-        const ip = 'visitor'; // ئەگەر دەستت بە IP کەوت، دەتوانی زیاد بکەیت
-        watermark.textContent = `© ${now.getFullYear()} | ${userId} | ${now.toLocaleTimeString()}`;
-    }
-}
-setInterval(updateWatermark, 30000); // هەر 30 چرکەیەک نوێ دەبێتەوە
-updateWatermark();
-
-// ========== 5. کۆنترۆڵکردنی فول سکرین بەبێ ڕێگەدان بە ڕیکۆرد ==========
-let fullscreenChangeCount = 0;
-document.addEventListener('fullscreenchange', function() {
-    fullscreenChangeCount++;
-    if (fullscreenChangeCount > 2) {
-        // دوای چەند جارێک، هۆشداری بدە
-        console.log('Fullscreen toggled multiple times');
-    }
-});
-
-// ========== 6. ڕێگری کردن لە دراگ و درۆپ ==========
-document.addEventListener('dragstart', function(e) {
+  }
+  // F12, PrintScreen
+  if (e.key === 'F12' || e.key === 'PrintScreen') {
     e.preventDefault();
     return false;
-});
-
-document.addEventListener('drop', function(e) {
+  }
+  // Ctrl+Shift+I
+  if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
     e.preventDefault();
     return false;
+  }
 });
+document.addEventListener('dragstart', (e) => e.preventDefault());
+document.addEventListener('drop', (e) => e.preventDefault());
 
-// ========== 7. بەشەکانی پلەیەر (هەمان کۆدی پێشوو) ==========
+// ========== پلەیەرەکە - لینکەکان لە config.json دەخوێنێتەوە ==========
 let hls = null;
 let currentQuality = "1080";
 let currentChunkIndex = 0;
@@ -919,18 +821,12 @@ async function loadConfig() {
     }
 }
 
-// Helper: check if URL is HLS (.m3u8)
 function isHLS(url) {
     return url && url.endsWith('.m3u8');
 }
 
-// Load video with HLS or regular MP4
 function loadVideoWithSource(url) {
-    if (hls) {
-        hls.destroy();
-        hls = null;
-    }
-    
+    if (hls) { hls.destroy(); hls = null; }
     if (isHLS(url)) {
         if (video.canPlayType('application/vnd.apple.mpegurl')) {
             video.src = url;
@@ -938,38 +834,26 @@ function loadVideoWithSource(url) {
             hls = new Hls();
             hls.loadSource(url);
             hls.attachMedia(video);
-        } else {
-            video.src = url;
-        }
-    } else {
-        video.src = url;
-    }
+        } else { video.src = url; }
+    } else { video.src = url; }
 }
 
-// Initialize from loaded data
 async function initFromConfig() {
     const videos = await loadConfig();
     if (!videos || videos.length === 0) {
         console.error('No videos found in config');
         return;
     }
-    
     window.VIDEO_SOURCES = videos;
-    
     currentQuality = "1080";
     currentChunkIndex = 0;
     parts = [];
     chunkStartTimes = [0];
     totalDuration = 0;
-    
     for (let i = 0; i < videos.length; i++) {
-        parts.push({ 
-            url: videos[i].qualities[currentQuality], 
-            duration: 0 
-        });
+        parts.push({ url: videos[i].qualities[currentQuality], duration: 0 });
         chunkStartTimes.push(0);
     }
-    
     calculateChunkTimes();
 }
 
@@ -989,57 +873,37 @@ function calculateChunkTimes() {
 }
 
 function loadChunk(index, seekTime = 0) {
-    if (index < 0 || index >= parts.length) return;
-    if (isLoadingChunk) return;
+    if (index < 0 || index >= parts.length || isLoadingChunk) return;
     isLoadingChunk = true;
-    
     currentChunkIndex = index;
     const url = getCurrentQualityUrl(index);
-    
     if (!url) return;
-    
     video.onended = null;
     loadVideoWithSource(url);
     setLoading(true);
-    
     const onMetadata = function() {
         video.removeEventListener('loadedmetadata', onMetadata);
-        
         if (parts[index].duration === 0) {
             parts[index].duration = video.duration;
             calculateChunkTimes();
         }
-        
-        const maxTime = video.duration - 0.05;
-        const targetSeek = Math.min(seekTime, maxTime);
-        if (targetSeek > 0) {
-            video.currentTime = targetSeek;
-        }
-        
-        if (!video.paused) {
-            video.play().catch(e => console.log('Play error:', e));
-        }
+        if (seekTime > 0) video.currentTime = Math.min(seekTime, video.duration - 0.05);
+        if (!video.paused) video.play().catch(() => {});
         isLoadingChunk = false;
         setLoading(false);
     };
-    
     video.addEventListener('loadedmetadata', onMetadata);
-    
-    video.onended = function() {
-        onChunkEnd();
+    video.onended = () => {
+        if (currentChunkIndex < parts.length - 1) {
+            loadChunk(currentChunkIndex + 1, 0);
+            hideAllControls();
+        } else {
+            setPlayIcon(false);
+            posterOverlay.classList.remove('hidden');
+            isVideoStarted = false;
+            hideAllControls();
+        }
     };
-}
-
-function onChunkEnd() {
-    if (currentChunkIndex < parts.length - 1) {
-        loadChunk(currentChunkIndex + 1, 0);
-        hideAllControls();
-    } else {
-        setPlayIcon(false);
-        posterOverlay.classList.remove('hidden');
-        isVideoStarted = false;
-        hideAllControls();
-    }
 }
 
 function startVideo() {
@@ -1058,29 +922,21 @@ function setQuality(quality, isMobile = false) {
         closeAllMenus();
         return;
     }
-    
     wasPlayingBeforeQualityChange = !video.paused;
     const currentTime = getGlobalTime();
     const currentChunk = currentChunkIndex;
-    
     currentQuality = quality;
     updateQualityMenuUI(quality, isMobile);
     closeAllMenus();
-    
-    for (let i = 0; i < parts.length; i++) {
-        parts[i].url = getCurrentQualityUrl(i);
-    }
-    
+    for (let i = 0; i < parts.length; i++) parts[i].url = getCurrentQualityUrl(i);
     const newUrl = getCurrentQualityUrl(currentChunk);
     if (newUrl && video.src !== newUrl) {
         loadVideoWithSource(newUrl);
         setLoading(true);
-        
         video.addEventListener('loadedmetadata', function onLoad() {
             video.removeEventListener('loadedmetadata', onLoad);
             const localTime = currentTime - chunkStartTimes[currentChunk];
-            const seekTime = Math.min(Math.max(0, localTime), video.duration - 0.05);
-            if (seekTime > 0) video.currentTime = seekTime;
+            if (localTime > 0) video.currentTime = Math.min(localTime, video.duration - 0.05);
             if (wasPlayingBeforeQualityChange) video.play().catch(() => {});
             setLoading(false);
         });
@@ -1097,24 +953,17 @@ function updateQualityMenuUI(quality, isMobile = false) {
 
 function getGlobalTime() {
     if (!isVideoStarted) return 0;
-    const localTime = video.currentTime || 0;
-    const chunkStart = chunkStartTimes[currentChunkIndex] || 0;
-    return chunkStart + localTime;
+    return (chunkStartTimes[currentChunkIndex] || 0) + (video.currentTime || 0);
 }
 
 function seekToGlobal(targetTime) {
     if (totalDuration === 0) return;
-    
     let targetChunk = 0;
     for (let i = 0; i < chunkStartTimes.length - 1; i++) {
-        if (targetTime >= chunkStartTimes[i] && targetTime < chunkStartTimes[i+1]) {
-            targetChunk = i;
-            break;
-        }
+        if (targetTime >= chunkStartTimes[i] && targetTime < chunkStartTimes[i+1]) { targetChunk = i; break; }
     }
     if (targetChunk >= parts.length) targetChunk = parts.length - 1;
     const localTime = targetTime - chunkStartTimes[targetChunk];
-    
     if (targetChunk !== currentChunkIndex) {
         currentChunkIndex = targetChunk;
         const url = getCurrentQualityUrl(targetChunk);
@@ -1145,8 +994,7 @@ function togglePlay() {
 
 function seekRelative(secs) {
     if (!isVideoStarted) return;
-    const target = Math.max(0, Math.min(totalDuration, getGlobalTime() + secs));
-    seekToGlobal(target);
+    seekToGlobal(Math.max(0, Math.min(totalDuration, getGlobalTime() + secs)));
     showAllControls();
 }
 
@@ -1156,14 +1004,10 @@ function updateProgress() {
     const pct = (globalTime / totalDuration) * 100;
     progressFill.style.width = pct + '%';
     progressThumb.style.left = pct + '%';
-    
     if (video.buffered.length > 0) {
-        const bufEnd = video.buffered.end(video.buffered.length - 1);
-        const globalBufferEnd = (chunkStartTimes[currentChunkIndex] || 0) + bufEnd;
-        const bufPct = (globalBufferEnd / totalDuration) * 100;
+        const bufPct = ((chunkStartTimes[currentChunkIndex] + video.buffered.end(video.buffered.length-1)) / totalDuration) * 100;
         progressBuffer.style.width = Math.min(bufPct, 100) + '%';
     }
-    
     const ft = formatTime(globalTime);
     const ftt = formatTime(totalDuration);
     if (timeDisplay) timeDisplay.textContent = ft + ' / ' + ftt;
@@ -1266,11 +1110,9 @@ function closeAllMenus() { document.querySelectorAll('.popup-menu').forEach(m =>
 function getProgressPercentFromEvent(e) {
     const rect = progressArea.getBoundingClientRect();
     let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    let x = Math.max(0, Math.min(rect.width, clientX - rect.left));
-    return x / rect.width;
+    return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
 }
 function handleProgressClick(e) { seekToGlobal(getProgressPercentFromEvent(e) * totalDuration); showAllControls(); e.stopPropagation(); }
-
 function startScrub(e) { 
     isScrubbing = true; 
     const pct = getProgressPercentFromEvent(e);
@@ -1308,7 +1150,8 @@ function toggleFullscreen() {
     if (!document.fullscreenElement) wrap.requestFullscreen?.(); else document.exitFullscreen?.();
     showAllControls();
 }
-document.addEventListener('fullscreenchange', () => { const p = document.fullscreenElement ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'; 
+document.addEventListener('fullscreenchange', () => { 
+    const p = document.fullscreenElement ? 'M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z' : 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z'; 
     document.getElementById('fsIcon')?.querySelector('path').setAttribute('d', p); 
     document.getElementById('fsIconMobile')?.querySelector('path').setAttribute('d', p); 
     showAllControls(); 
@@ -1340,7 +1183,6 @@ document.querySelectorAll('#ccMenuMobile .popup-item[data-cc]').forEach(el => { 
 document.querySelectorAll('#ccMenuMobile .popup-item[data-audio]').forEach(el => { el.onclick = () => selectAudio(el.getAttribute('data-audio'), true); });
 document.addEventListener('click', (e) => { if (!e.target.closest('.popup-menu') && !e.target.closest('#settingsBtn') && !e.target.closest('#ccBtn') && !e.target.closest('#settingsBtnMobile') && !e.target.closest('#ccBtnMobile')) closeAllMenus(); });
 
-// Initialize
 async function init() {
     await initFromConfig();
     if (mobileCenterControls) mobileCenterControls.classList.add('hidden-mobile');
@@ -1348,7 +1190,6 @@ async function init() {
     if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
     centerIconDiv.classList.add('hidden-center');
 }
-
 init();
 </script>
 </body>
