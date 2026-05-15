@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Video Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #1a1a2e;
+            font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+            padding: 40px 20px;
+            color: #fff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            margin-bottom: 30px;
+            text-align: center;
+            color: #ff0000;
+        }
+        .part-card {
+            background: #16213e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .part-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #ff0000;
+        }
+        .quality-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .quality-input {
+            flex: 1;
+            min-width: 200px;
+        }
+        .quality-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #aaa;
+        }
+        .quality-input input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #0f0f0f;
+            color: #fff;
+            font-size: 14px;
+        }
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        button {
+            background: #ff0000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #cc0000;
+        }
+        button.secondary {
+            background: #333;
+        }
+        button.secondary:hover {
+            background: #555;
+        }
+        .add-part {
+            background: #00ff00;
+            color: #000;
+            margin-bottom: 20px;
+        }
+        .add-part:hover {
+            background: #00cc00;
+        }
+        .save-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #00ff00;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: none;
+        }
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            background: #0f0f0f;
+            color: #fff;
+            border: none;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .json-preview {
+            margin-top: 30px;
+            background: #0f0f0f;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .json-preview h3 {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Admin Panel - ڕێکخستنی ڤیدیۆکان</h1>
+        
+        <div id="partsContainer"></div>
+        
+        <button class="add-part" id="addPartBtn">+ زیادکردنی بەشی نوێ</button>
+        
+        <div class="button-group">
+            <button id="saveBtn">💾 هەڵگرتنی هەموو گۆڕانکارییەکان</button>
+            <button id="downloadBtn" class="secondary">📥 دابەزاندنی config.json</button>
+        </div>
+        
+        <div class="json-preview">
+            <h3>پێشبینینی فایلی config.json:</h3>
+            <textarea id="jsonPreview" rows="10" readonly></textarea>
+        </div>
+    </div>
+    
+    <div id="saveStatus" class="save-status">✅ هەڵگیرا!</div>
+
+    <script>
+        let parts = [];
+        
+        // Load existing config
+        async function loadConfig() {
+            try {
+                const response = await fetch('config.json?' + Date.now());
+                const data = await response.json();
+                parts = data.videos || [];
+                renderParts();
+            } catch (error) {
+                console.log('No existing config, starting fresh');
+                parts = [
+                    {
+                        name: "بەشی 1",
+                        qualities: {
+                            "1080": "/videos/part1_1080p.m3u8",
+                            "720": "/videos/part1_720p.m3u8",
+                            "480": "/videos/part1_480p.m3u8",
+                            "360": "/videos/part1_360p.m3u8"
+                        }
+                    }
+                ];
+                renderParts();
+            }
+        }
+        
+        function renderParts() {
+            const container = document.getElementById('partsContainer');
+            container.innerHTML = '';
+            
+            parts.forEach((part, index) => {
+                const card = document.createElement('div');
+                card.className = 'part-card';
+                card.innerHTML = `
+                    <div class="part-title">
+                        📁 ${part.name}
+                        <button class="secondary" style="float: right; background:#ff0000; padding:5px 10px;" onclick="removePart(${index})">🗑 لابردن</button>
+                    </div>
+                    <div class="quality-group">
+                        <div class="quality-input">
+                            <label>1080p URL (HLS .m3u8 یان .mp4)</label>
+                            <input type="text" class="quality-1080" value="${escapeHtml(part.qualities['1080'] || '')}" placeholder="/videos/part1_1080p.m3u8">
+                        </div>
+                        <div class="quality-input">
+                            <label>720p URL</label>
+                            <input type="text" class="quality-720" value="${escapeHtml(part.qualities['720'] || '')}" placeholder="/videos/part1_720p.m3u8">
+                        </div>
+                        <div class="quality-input">
+                            <label>480p URL</label>
+                            <input type="text" class="quality-480" value="${escapeHtml(part.qualities['480'] || '')}" placeholder="/videos/part1_480p.m3u8">
+                        </div>
+                        <div class="quality-input">
+                            <label>360p URL</label>
+                            <input type="text" class="quality-360" value="${escapeHtml(part.qualities['360'] || '')}" placeholder="/videos/part1_360p.m3u8">
+                        </div>
+                    </div>
+                    <div class="quality-input">
+                        <label>ناوی بەش (بۆ پلەیەرەکە)</label>
+                        <input type="text" class="part-name" value="${escapeHtml(part.name)}" placeholder="بەشی 1">
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            updateJsonPreview();
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        function updateJsonPreview() {
+            // Collect current values from inputs
+            const cards = document.querySelectorAll('.part-card');
+            const updatedParts = [];
+            
+            cards.forEach((card, idx) => {
+                const nameInput = card.querySelector('.part-name');
+                const quality1080 = card.querySelector('.quality-1080');
+                const quality720 = card.querySelector('.quality-720');
+                const quality480 = card.querySelector('.quality-480');
+                const quality360 = card.querySelector('.quality-360');
+                
+                updatedParts.push({
+                    name: nameInput ? nameInput.value : `بەشی ${idx + 1}`,
+                    qualities: {
+                        "1080": quality1080 ? quality1080.value : '',
+                        "720": quality720 ? quality720.value : '',
+                        "480": quality480 ? quality480.value : '',
+                        "360": quality360 ? quality360.value : ''
+                    }
+                });
+            });
+            
+            const output = { videos: updatedParts };
+            document.getElementById('jsonPreview').value = JSON.stringify(output, null, 2);
+        }
+        
+        function collectParts() {
+            const cards = document.querySelectorAll('.part-card');
+            const updatedParts = [];
+            
+            cards.forEach((card, idx) => {
+                const nameInput = card.querySelector('.part-name');
+                const quality1080 = card.querySelector('.quality-1080');
+                const quality720 = card.querySelector('.quality-720');
+                const quality480 = card.querySelector('.quality-480');
+                const quality360 = card.querySelector('.quality-360');
+                
+                updatedParts.push({
+                    name: nameInput ? nameInput.value : `بەشی ${idx + 1}`,
+                    qualities: {
+                        "1080": quality1080 ? quality1080.value : '',
+                        "720": quality720 ? quality720.value : '',
+                        "480": quality480 ? quality480.value : '',
+                        "360": quality360 ? quality360.value : ''
+                    }
+                });
+            });
+            
+            parts = updatedParts;
+            return { videos: parts };
+        }
+        
+        async function saveConfig() {
+            const data = collectParts();
+            
+            try {
+                const response = await fetch('/api/save-config', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const statusDiv = document.getElementById('saveStatus');
+                    statusDiv.style.display = 'block';
+                    setTimeout(() => {
+                        statusDiv.style.display = 'none';
+                    }, 2000);
+                } else {
+                    alert('هەڵە! تکایە دڵنیا بەرەوە سەرڤەرەکەت APIـی save-config پشتگیری دەکات، یان فایلەکە بە دەست هەڵبگرە.');
+                    downloadConfig();
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                alert('هەڵە! دەتوانیت فایلەکە بە دەست داببەزێنیت و لە ڕێگەی FTP یان فایل مەنیجەرەوە بەرزی بکەیتەوە.');
+                downloadConfig();
+            }
+        }
+        
+        function downloadConfig() {
+            const data = collectParts();
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'config.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function addNewPart() {
+            parts.push({
+                name: `بەشی ${parts.length + 1}`,
+                qualities: {
+                    "1080": "",
+                    "720": "",
+                    "480": "",
+                    "360": ""
+                }
+            });
+            renderParts();
+        }
+        
+        function removePart(index) {
+            parts.splice(index, 1);
+            renderParts();
+        }
+        
+        // Event listeners
+        document.getElementById('addPartBtn').onclick = addNewPart;
+        document.getElementById('saveBtn').onclick = saveConfig;
+        document.getElementById('downloadBtn').onclick = downloadConfig;
+        
+        // Update preview on input changes
+        document.addEventListener('input', function() {
+            updateJsonPreview();
+        });
+        
+        // Load and render
+        loadConfig();
+    </script>
+</body>
+</html>
