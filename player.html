@@ -7,6 +7,71 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
+  /* ========== پاڕاستن ========== */
+  
+  /* 1. ڕێگری کردن لە هەڵبژاردنی تێکست و وێنە */
+  body, .video-container, video {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* 2. ڕێگری کردن لە دراگ کردن و هێنانی وێنە */
+  video {
+    pointer-events: auto;
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+  
+  /* 3. ڕێگری کردن لە سکرین شۆت بە CSS backdrop (ئەمە وێنەیەکی ڕەش لەسەر شاشەکە دادەنێت کاتێک پرتەسکرین دەکرێت) */
+  .video-container {
+    position: relative;
+  }
+  
+  .video-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    pointer-events: none;
+    z-index: 999;
+  }
+  
+  /* 4. ڕێگری کردن لە Save As */
+  img, video {
+    -webkit-touch-callout: none;
+  }
+  
+  /* 5. واوەرمارکی شەفاف لە ناوەڕاستی ڤیدیۆکە (لە سکرین شۆت و ڕیکۆرددا دەردەکەوێت) */
+  .video-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-15deg);
+    color: rgba(255, 255, 255, 0.15);
+    font-size: 18px;
+    font-weight: bold;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 100;
+    font-family: monospace;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+  }
+  
+  @media (min-width: 768px) {
+    .video-watermark {
+      font-size: 32px;
+      letter-spacing: 8px;
+    }
+  }
+  
+  /* پلەیەرەکە بە تەواوەتی - هەمان دیزاینی پێشوو */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
@@ -81,6 +146,7 @@
     transform: scale(1);
   }
 
+  /* پۆستەر */
   .poster-overlay {
     position: absolute;
     inset: 0;
@@ -558,6 +624,9 @@
   <div class="video-container show-cursor" id="videoContainer">
 
     <video id="video" preload="metadata"></video>
+    
+    <!-- واوەرمارکی شەفاف -->
+    <div class="video-watermark" id="watermark">© KURDISH PLAYER</div>
 
     <div class="poster-overlay" id="posterOverlay">
       <button class="poster-play-btn" id="posterPlayBtn">
@@ -725,12 +794,87 @@
 // ==================================================
 // پلەیەرەکە لینکەکان لە config.json دەخوێنێتەوە
 // ==================================================
+
+// ========== 1. ڕێگری کردن لە کلیکی ڕاست ==========
+document.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+// ========== 2. ڕێگری کردن لە کلیلە کورتەکانی داونلۆد و سکرین شۆت ==========
+document.addEventListener('keydown', function(e) {
+    // Ctrl+S, Ctrl+P, Ctrl+C, Ctrl+U, F12, PrtSc
+    if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P' || e.key === 'c' || e.key === 'C' || e.key === 'u' || e.key === 'U')) {
+        e.preventDefault();
+        return false;
+    }
+    // F12 (Developer Tools)
+    if (e.key === 'F12') {
+        e.preventDefault();
+        return false;
+    }
+    // Print Screen (PrtSc)
+    if (e.key === 'PrintScreen') {
+        e.preventDefault();
+        return false;
+    }
+    // Ctrl+Shift+I (Developer Tools)
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
+        e.preventDefault();
+        return false;
+    }
+});
+
+// ========== 3. ڕێگری کردن لە سکرین شۆت بە JavaScript ==========
+// ئەمە هەوڵدەدات سکرین شۆت بدۆزێتەوە (بە تەواوی ناتوانێت، بەڵام بەشێکی دەوەستێنێت)
+window.addEventListener('keyup', function(e) {
+    if (e.key === 'PrintScreen') {
+        alert('Screenshots are disabled on this website for copyright protection.');
+        return false;
+    }
+});
+
+// ========== 4. واوەرمارکی داینامیک (لە هەر سکرین شۆت و ڕیکۆردێکدا دەردەکەوێت) ==========
+function updateWatermark() {
+    const watermark = document.getElementById('watermark');
+    if (watermark) {
+        const now = new Date();
+        const userId = localStorage.getItem('user_id') || 'guest_' + Math.random().toString(36).substr(2, 8);
+        const ip = 'visitor'; // ئەگەر دەستت بە IP کەوت، دەتوانی زیاد بکەیت
+        watermark.textContent = `© ${now.getFullYear()} | ${userId} | ${now.toLocaleTimeString()}`;
+    }
+}
+setInterval(updateWatermark, 30000); // هەر 30 چرکەیەک نوێ دەبێتەوە
+updateWatermark();
+
+// ========== 5. کۆنترۆڵکردنی فول سکرین بەبێ ڕێگەدان بە ڕیکۆرد ==========
+let fullscreenChangeCount = 0;
+document.addEventListener('fullscreenchange', function() {
+    fullscreenChangeCount++;
+    if (fullscreenChangeCount > 2) {
+        // دوای چەند جارێک، هۆشداری بدە
+        console.log('Fullscreen toggled multiple times');
+    }
+});
+
+// ========== 6. ڕێگری کردن لە دراگ و درۆپ ==========
+document.addEventListener('dragstart', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+document.addEventListener('drop', function(e) {
+    e.preventDefault();
+    return false;
+});
+
+// ========== 7. بەشەکانی پلەیەر (هەمان کۆدی پێشوو) ==========
 let hls = null;
 let currentQuality = "1080";
-let currentPartIndex = 0;
+let currentChunkIndex = 0;
 let parts = [];
 let totalDuration = 0;
-let partStartTimes = [];
+let chunkStartTimes = [];
 let isScrubbing = false;
 let controlsTimer = null;
 let isVideoStarted = false;
@@ -766,7 +910,7 @@ const mobileSeekRight = document.getElementById('mobileSeekRight');
 // Load config from JSON file
 async function loadConfig() {
     try {
-        const response = await fetch('config.json?' + Date.now()); // Cache buster
+        const response = await fetch('config.json?' + Date.now());
         const data = await response.json();
         return data.videos;
     } catch (error) {
@@ -810,14 +954,12 @@ async function initFromConfig() {
         return;
     }
     
-    // Convert to old format
     window.VIDEO_SOURCES = videos;
     
-    // Initialize state
     currentQuality = "1080";
-    currentPartIndex = 0;
+    currentChunkIndex = 0;
     parts = [];
-    partStartTimes = [0];
+    chunkStartTimes = [0];
     totalDuration = 0;
     
     for (let i = 0; i < videos.length; i++) {
@@ -825,7 +967,7 @@ async function initFromConfig() {
             url: videos[i].qualities[currentQuality], 
             duration: 0 
         });
-        partStartTimes.push(0);
+        chunkStartTimes.push(0);
     }
     
     calculateChunkTimes();
@@ -1035,7 +1177,6 @@ function formatTime(s) {
     return m + ':' + sc.toString().padStart(2, '0');
 }
 
-// Hide/Show controls functions (same as before)
 function hideAllControls() {
     controlsOverlay.classList.add('hidden');
     container.classList.remove('show-cursor');
@@ -1198,10 +1339,8 @@ document.querySelectorAll('#ccMenu .popup-item[data-audio]').forEach(el => { el.
 document.querySelectorAll('#ccMenuMobile .popup-item[data-cc]').forEach(el => { el.onclick = () => selectCC(el.getAttribute('data-cc'), true); });
 document.querySelectorAll('#ccMenuMobile .popup-item[data-audio]').forEach(el => { el.onclick = () => selectAudio(el.getAttribute('data-audio'), true); });
 document.addEventListener('click', (e) => { if (!e.target.closest('.popup-menu') && !e.target.closest('#settingsBtn') && !e.target.closest('#ccBtn') && !e.target.closest('#settingsBtnMobile') && !e.target.closest('#ccBtnMobile')) closeAllMenus(); });
-document.addEventListener('contextmenu', (e) => e.preventDefault());
-document.addEventListener('selectstart', (e) => e.preventDefault());
 
-// Initialize: load config first
+// Initialize
 async function init() {
     await initFromConfig();
     if (mobileCenterControls) mobileCenterControls.classList.add('hidden-mobile');
