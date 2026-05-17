@@ -160,6 +160,60 @@
                     ]
                 }
             ]
+        },
+        {
+            "id": 3,
+            "title": "تێست",
+            "year": "2021",
+            "poster": "https://raw.githubusercontent.com/rebinalisaeed/kurdflix/refs/heads/main/assets/slides/canva-blue-pink-scrapbook-collage-girls-movie-poster-IZ_ND9-n7pg.jpg",
+            "type": "film",
+            "lang": "kurdish",
+            "videoUrl": "",
+            "trailerUrl": "",
+            "duration": "1:47:00",
+            "description": "کابرایەک هەبوو زۆر دەگریا لۆیە چوو هەندەک گریا",
+            "genres": [
+                "تاوانکاری",
+                "سایکۆلۆژیی",
+                "مێژوویی",
+                "ترسناک"
+            ],
+            "categories": [],
+            "cast": [
+                {
+                    "id": 1779051403607.4585,
+                    "name": "رێبین دەربەندی",
+                    "role": ""
+                },
+                {
+                    "id": 1779051403607.3374,
+                    "name": "باران رێبین",
+                    "role": ""
+                },
+                {
+                    "id": 1779051403607.485,
+                    "name": "لیلە پیکە",
+                    "role": ""
+                }
+            ],
+            "crew": [
+                {
+                    "name": "کابرای نۆتە",
+                    "role": "دەرهێنەر"
+                },
+                {
+                    "name": "کابرای مێزیک",
+                    "role": "نووسەر"
+                }
+            ],
+            "subtitles": [],
+            "audioTracks": [
+                {
+                    "lang": "original",
+                    "label": "Original (ڕەسەن)",
+                    "url": ""
+                }
+            ]
         }
     ],
     "carousel": [
