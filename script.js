@@ -328,13 +328,14 @@ function initModals() {
     window.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.style.display = 'none'; if (e.target === vipModal) vipModal.style.display = 'none'; });
 }
 
-// ========== گۆڕینی بانەڕ بەپێی سکرۆڵ ==========
+// ========== گۆڕینی بانەڕ بەپێی سکرۆڵ (150px) ==========
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
     
     function checkScroll() {
-        if (window.scrollY > 50) {
+        // ئەگەر سکرۆڵ زیاتر لە 150px بوو، کلاسی scrolled زیاد بکە
+        if (window.scrollY > 150) {
             navbar.classList.add('scrolled');
         } else {
             navbar.classList.remove('scrolled');
