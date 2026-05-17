@@ -591,6 +591,14 @@
     width: 100%;
     height: 100%;
   }
+
+  /* ستایلی بۆ مێنیوە داینامیکییەکان */
+  .dynamic-cc-menu {
+    min-width: 200px;
+  }
+  .dynamic-cc-menu .popup-item {
+    justify-content: space-between;
+  }
 </style>
 </head>
 <body>
@@ -600,7 +608,7 @@
     
     <button class="back-btn" onclick="window.location.href='javascript:history.back()'">← گەڕانەوە</button>
 
-    <video id="video" preload="metadata"></video>
+    <video id="video" preload="metadata" crossorigin="anonymous"></video>
 
     <div class="poster-overlay" id="posterOverlay">
       <button class="poster-play-btn" id="posterPlayBtn">
@@ -688,21 +696,8 @@
                 <path d="M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H10v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H17v1c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1z"/>
               </svg>
             </button>
-            <div class="popup-menu two-column-menu" id="ccMenu">
-              <div class="menu-column">
-                <div class="popup-section-label">Subtitles</div>
-                <div class="popup-item active" data-cc="off"><span>Off</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-cc="ku"><span>Kurdish</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-cc="en"><span>English</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-cc="ar"><span>Arabic</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-cc="fa"><span>Persian</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              </div>
-              <div class="menu-column">
-                <div class="popup-section-label">Audio Track</div>
-                <div class="popup-item active" data-audio="original"><span>Original</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-audio="ku"><span>Kurdish</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-audio="en"><span>English</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              </div>
+            <div class="popup-menu dynamic-cc-menu" id="ccMenu">
+              <!-- ژێرنووسەکان لە لایەن JSەوە دادەنرێن -->
             </div>
           </div>
           <div style="position:relative">
@@ -730,21 +725,8 @@
                 <path d="M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H10v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H17v1c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1z"/>
               </svg>
             </button>
-            <div class="popup-menu two-column-menu" id="ccMenuMobile">
-              <div class="menu-column">
-                <div class="popup-section-label">Subtitles</div>
-                <div class="popup-item active" data-cc="off"><span>Off</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-cc="ku"><span>Kurdish</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-cc="en"><span>English</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-cc="ar"><span>Arabic</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-cc="fa"><span>Persian</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              </div>
-              <div class="menu-column">
-                <div class="popup-section-label">Audio Track</div>
-                <div class="popup-item active" data-audio="original"><span>Original</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-audio="ku"><span>Kurdish</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-                <div class="popup-item" data-audio="en"><span>English</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-              </div>
+            <div class="popup-menu dynamic-cc-menu" id="ccMenuMobile">
+              <!-- ژێرنووسەکان لە لایەن JSەوە دادەنرێن -->
             </div>
           </div>
           <div style="position:relative">
@@ -788,7 +770,7 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('dragstart', (e) => e.preventDefault());
 document.addEventListener('drop', (e) => e.preventDefault());
 
-// ========== وەرگرتنی لینکی ڤیدیۆ لە URL ==========
+// ========== وەرگرتنی لینکی ڤیدیۆ و داتاکان لە data.json ==========
 const urlParams = new URLSearchParams(window.location.search);
 const contentId = urlParams.get('id');
 const contentType = urlParams.get('type'); // 'film' or 'series'
@@ -796,6 +778,8 @@ const episodeNum = urlParams.get('episode');
 
 let videoUrl = null;
 let videoTitle = '';
+let currentSubtitles = [];
+let currentAudioTracks = [];
 
 async function loadVideoFromData() {
     try {
@@ -808,6 +792,8 @@ async function loadVideoFromData() {
             if (film) {
                 videoUrl = film.videoUrl;
                 videoTitle = film.title;
+                currentSubtitles = film.subtitles || [];
+                currentAudioTracks = film.audioTracks || [];
             }
         } else if (contentType === 'series') {
             const series = movies.find(m => m.id == contentId && m.type === 'series');
@@ -816,15 +802,20 @@ async function loadVideoFromData() {
                 if (episode) {
                     videoUrl = episode.videoUrl;
                     videoTitle = `${series.title} - ئەڵقەی ${episodeNum}`;
+                    currentSubtitles = episode.subtitles || [];
+                    currentAudioTracks = episode.audioTracks || [];
                 }
             } else if (series) {
                 videoUrl = series.videoUrl;
                 videoTitle = series.title;
+                currentSubtitles = series.subtitles || [];
+                currentAudioTracks = series.audioTracks || [];
             }
         }
         
         if (videoUrl) {
             initPlayer(videoUrl);
+            initSubtitlesAndAudio();
         } else {
             console.error('ڤیدیۆ نەدۆزرایەوە');
             document.getElementById('posterOverlay').innerHTML = '<div style="color:white; text-align:center;"><p>ڤیدیۆ نەدۆزرایەوە</p><button onclick="window.location.href=\'index.html\'" style="background:#E50914; border:none; padding:10px 20px; border-radius:5px; color:white; margin-top:20px;">گەڕانەوە بۆ پەڕەی سەرەکی</button></div>';
@@ -832,6 +823,130 @@ async function loadVideoFromData() {
     } catch (error) {
         console.error('Error loading video data:', error);
     }
+}
+
+// ========== ژێرنووس و دەنگ ==========
+function initSubtitlesAndAudio() {
+    const video = document.getElementById('video');
+    
+    // ژێرنووسەکان
+    if (currentSubtitles && currentSubtitles.length > 0) {
+        // پاککردنەوەی تڕاکەکانی پێشوو
+        while (video.textTracks.length > 0) {
+            video.removeTextTrack(video.textTracks[0]);
+        }
+        
+        currentSubtitles.forEach(sub => {
+            try {
+                const track = video.addTextTrack('subtitles', sub.label, sub.lang);
+                track.mode = 'hidden';
+                // بارکردنی فایلی .vtt
+                fetch(sub.url)
+                    .then(response => response.text())
+                    .then(vttContent => {
+                        const blob = new Blob([vttContent], { type: 'text/vtt' });
+                        const url = URL.createObjectURL(blob);
+                        const tempTrack = document.createElement('track');
+                        tempTrack.src = url;
+                        tempTrack.kind = 'subtitles';
+                        tempTrack.srclang = sub.lang;
+                        tempTrack.label = sub.label;
+                        tempTrack.onload = () => {
+                            for (let i = 0; i < video.textTracks.length; i++) {
+                                if (video.textTracks[i].label === sub.label) {
+                                    video.textTracks[i].mode = 'hidden';
+                                }
+                            }
+                            URL.revokeObjectURL(url);
+                        };
+                        document.querySelector('video').appendChild(tempTrack);
+                    })
+                    .catch(err => console.error(`Error loading subtitle ${sub.url}:`, err));
+            } catch (e) {
+                console.error('Error adding text track:', e);
+            }
+        });
+        
+        // دوای کەمێک چاوەڕوانی، مێنیوەکە دروست بکە
+        setTimeout(() => {
+            buildSubtitleMenus();
+        }, 500);
+    } else {
+        buildSubtitleMenus(); // مێنیوی بەتاڵ
+    }
+    
+    // دەنگەکان - لە پلەیەری HTML5 دا بە ئاسانی ناتوانرێت تڕاکی دەنگ زیاد بکرێت
+    // بۆ ئەم کارە پێویستە ڤیدیۆکە چەند تڕاکی دەنگی هەبێت یان بە MediaSource API
+    buildAudioMenus();
+}
+
+function buildSubtitleMenus() {
+    const video = document.getElementById('video');
+    const tracks = video.textTracks;
+    const ccMenu = document.getElementById('ccMenu');
+    const ccMenuMobile = document.getElementById('ccMenuMobile');
+    
+    if (!ccMenu) return;
+    
+    let menuHtml = '<div class="menu-column"><div class="popup-section-label">Subtitles</div>';
+    menuHtml += `<div class="popup-item cc-option" data-track="off"><span>خاموش</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>`;
+    
+    for (let i = 0; i < tracks.length; i++) {
+        const track = tracks[i];
+        if (track.kind === 'subtitles') {
+            menuHtml += `<div class="popup-item cc-option" data-track="${i}"><span>${track.label}</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>`;
+        }
+    }
+    menuHtml += '</div>';
+    
+    // بەشی Audio Track (تەنها بۆ نمایش - پێویستی بە پشتگیری سێرڤەری هەیە)
+    menuHtml += '<div class="menu-column"><div class="popup-section-label">Audio Track</div>';
+    if (currentAudioTracks && currentAudioTracks.length > 0) {
+        currentAudioTracks.forEach((audio, idx) => {
+            menuHtml += `<div class="popup-item audio-option" data-audio="${idx}"><span>${audio.label}</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>`;
+        });
+    } else {
+        menuHtml += `<div class="popup-item"><span>Original Only</span><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>`;
+    }
+    menuHtml += '</div>';
+    
+    ccMenu.innerHTML = menuHtml;
+    ccMenuMobile.innerHTML = menuHtml;
+    
+    // زیادکردن ئیڤێنت بۆ هەڵبژاردنی ژێرنووس
+    document.querySelectorAll('.cc-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            const trackIndex = opt.dataset.track;
+            const video = document.getElementById('video');
+            for (let i = 0; i < video.textTracks.length; i++) {
+                video.textTracks[i].mode = 'hidden';
+            }
+            if (trackIndex !== 'off') {
+                if (video.textTracks[trackIndex]) {
+                    video.textTracks[trackIndex].mode = 'showing';
+                }
+            }
+            document.querySelectorAll('.cc-option').forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            closeAllMenus();
+            showAllControls();
+        });
+    });
+    
+    // زیادکردن ئیڤێنت بۆ دەنگ (بە شێوەی سادە)
+    document.querySelectorAll('.audio-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+            document.querySelectorAll('.audio-option').forEach(o => o.classList.remove('active'));
+            opt.classList.add('active');
+            closeAllMenus();
+            showAllControls();
+            // تێبینی: گۆڕینی دەنگ پێویستی بە پشتگیری سێرڤەری هەیە
+        });
+    });
+}
+
+function buildAudioMenus() {
+    // ئەمە تەنها بۆ نمایش - گۆڕینی دەنگ پێویستی بە سۆرسی جیای ڤیدیۆ یان MediaSource API هەیە
 }
 
 // ========== پلەیەر ==========
@@ -866,7 +981,7 @@ const mobileSeekLeft = document.getElementById('mobileSeekLeft');
 const mobileSeekRight = document.getElementById('mobileSeekRight');
 
 function isHLS(url) {
-    return url && url.endsWith('.m3u8');
+    return url && (url.endsWith('.m3u8') || url.includes('.m3u8'));
 }
 
 function initPlayer(url) {
@@ -1038,6 +1153,11 @@ video.addEventListener('canplay', () => setLoading(false));
 video.addEventListener('playing', () => setLoading(false));
 video.addEventListener('progress', updateProgress);
 video.addEventListener('loadedmetadata', updateProgress);
+video.addEventListener('loadeddata', () => {
+    if (currentSubtitles && currentSubtitles.length > 0) {
+        buildSubtitleMenus();
+    }
+});
 
 function toggleFullscreen() { 
     const wrap = document.getElementById('playerWrapper');
