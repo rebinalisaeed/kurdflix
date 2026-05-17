@@ -34,7 +34,7 @@ async function loadData() {
 function loadSampleData() {
     allMovies = [
         { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "https://picsum.photos/200/300?random=1", type: "film", lang: "kurdish", categories: ["kurdish-film"], description: "فیلمێکی کوردی", genres: ["دراما", "ئاکشن"], videoUrl: "https://vidmoly.com/e/example1" },
-        { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "https://picsum.photos/200/300?random=2", type: "series", lang: "turkish", categories: ["turkish-series"], description: "زنجیرەیەکی درامایی", genres: ["دراما", "ڕۆمانسی"], videoUrl: "https://streamsb.com/e/example2", episodes: [{ number: 1, title: "ئەڵقەی یەکەم", videoUrl: "https://streamsb.com/e/ep1" }] }
+        { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "https://picsum.photos/200/300?random=2", type: "series", lang: "turkish", categories: ["turkish-series"], description: "زنجیرەیەکی درامایی", genres: ["دراما", "ڕۆمانسی"], videoUrl: "https://streamsb.com/e/example2" }
     ];
     carouselSlides = [
         { id: 1, title: "ئەفسانەی کوێستان", year: "2024", description: "فیلمێکی کوردی", images: { mobile: "https://picsum.photos/1080/1920?random=1", tablet: "https://picsum.photos/1200/1600?random=1", desktop: "https://picsum.photos/1920/1080?random=1" }, movieId: 1, genres: ["دراما", "ئاکشن"] }
@@ -328,13 +328,75 @@ function initModals() {
     window.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.style.display = 'none'; if (e.target === vipModal) vipModal.style.display = 'none'; });
 }
 
+// ========== گۆڕینی گرادێنتی بانەڕ بەپێی ڕێژەی سکرۆڵ (ستوونی) ==========
+function initNavbarGradient() {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
+    
+    function updateNavbarGradient() {
+        const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+        
+        let topColorPercent = 0;
+        let bottomColorPercent = 0;
+        
+        if (scrollPercent <= 1) {
+            topColorPercent = 100;
+            bottomColorPercent = 0;
+        } else if (scrollPercent <= 2) {
+            topColorPercent = 99;
+            bottomColorPercent = 1;
+        } else if (scrollPercent <= 10) {
+            topColorPercent = 80;
+            bottomColorPercent = 20;
+        } else if (scrollPercent <= 25) {
+            topColorPercent = 50;
+            bottomColorPercent = 50;
+        } else if (scrollPercent <= 60) {
+            topColorPercent = 30;
+            bottomColorPercent = 70;
+        } else if (scrollPercent <= 85) {
+            topColorPercent = 10;
+            bottomColorPercent = 90;
+        } else if (scrollPercent >= 86) {
+            topColorPercent = 0;
+            bottomColorPercent = 100;
+        }
+        
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 50) {
+            navbar.classList.add('scrolled');
+        } 
+        else if (scrollPercent >= 86) {
+            navbar.style.backgroundImage = `linear-gradient(to bottom, #292929 0%, transparent 100%)`;
+            navbar.classList.remove('scrolled');
+        }
+        else {
+            navbar.style.backgroundImage = `linear-gradient(to bottom, #292929 ${topColorPercent}%, transparent ${topColorPercent + 10}%)`;
+            navbar.classList.remove('scrolled');
+        }
+    }
+    
+    updateNavbarGradient();
+    window.addEventListener('scroll', updateNavbarGradient);
+    window.addEventListener('resize', updateNavbarGradient);
+}
+
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) navbar.classList.add('scrolled');
-        else navbar.classList.remove('scrolled');
-    });
+    
+    function checkBottom() {
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
+            if (scrollPercent < 86) {
+                navbar.classList.remove('scrolled');
+            }
+        }
+    }
+    
+    window.addEventListener('scroll', checkBottom);
+    checkBottom();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -345,5 +407,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileDropdowns();
     initSearch();
     initModals();
+    initNavbarGradient();
     initNavbarScroll();
 });
