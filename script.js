@@ -334,7 +334,6 @@ function initNavbarScroll() {
     if (!navbar) return;
     
     function checkScroll() {
-        // ئەگەر سکرۆڵ کرابوو، کلاسی scrolled زیاد بکە
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
@@ -342,10 +341,7 @@ function initNavbarScroll() {
         }
     }
     
-    // بانگی فەنکشنی یەکەمجار
     checkScroll();
-    
-    // بانگی فەنکشن کاتێک سکرۆڵ دەکرێت
     window.addEventListener('scroll', checkScroll);
 }
 
