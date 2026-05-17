@@ -73,6 +73,7 @@ async function loadAdminData() {
         renderStats();
         loadSiteDataToForm();
         initDynamicLists();
+        initFileUploads();
     } catch (error) {
         currentData = { movies: [], carousel: [], siteData: { aboutText: "", copyrightText: "", itemsPerPage: 20 } };
         renderGenresCheckbox();
@@ -207,7 +208,10 @@ function setSubtitlesList(subtitles) {
                     <option value="fa" ${sub.lang === 'fa' ? 'selected' : ''}>فارسی</option>
                     <option value="tr" ${sub.lang === 'tr' ? 'selected' : ''}>Türkçe</option>
                 </select>
-                <input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url" value="${escapeHtml(sub.url)}">
+                <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
+                    <input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url" value="${escapeHtml(sub.url)}" style="flex:1">
+                    <button type="button" class="upload-btn-small" data-target-class="subtitle-url" data-type="subtitle">📁</button>
+                </div>
                 <button type="button" class="remove-item remove-subtitle">✖</button>
             `;
             container.appendChild(div);
@@ -244,7 +248,10 @@ function setAudioList(audioTracks) {
                     <option value="fa" ${audio.lang === 'fa' ? 'selected' : ''}>فارسی</option>
                     <option value="tr" ${audio.lang === 'tr' ? 'selected' : ''}>Türkçe</option>
                 </select>
-                <input type="text" placeholder="لینکی فایلی دەنگ (بەتاڵ بێڵە بۆ ڕەسەن)" class="audio-url" value="${escapeHtml(audio.url)}">
+                <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
+                    <input type="text" placeholder="لینکی فایلی دەنگ" class="audio-url" value="${escapeHtml(audio.url)}" style="flex:1">
+                    <button type="button" class="upload-btn-small" data-target-class="audio-url" data-type="audio">📁</button>
+                </div>
                 <button type="button" class="remove-item remove-audio">✖</button>
             `;
             container.appendChild(div);
@@ -276,9 +283,12 @@ function setEpisodesList(episodes) {
             const div = document.createElement('div');
             div.className = 'dynamic-item episode-item';
             div.innerHTML = `
-                <input type="number" placeholder="ژمارەی ئەڵقە" class="episode-number" value="${ep.number}" style="width:100px">
-                <input type="text" placeholder="ناونیشانی ئەڵقە" class="episode-title" value="${escapeHtml(ep.title)}">
-                <input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url" value="${escapeHtml(ep.videoUrl)}">
+                <input type="number" placeholder="ژمارە" class="episode-number" value="${ep.number}" style="width:100px">
+                <input type="text" placeholder="ناونیشان" class="episode-title" value="${escapeHtml(ep.title)}">
+                <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
+                    <input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url" value="${escapeHtml(ep.videoUrl)}" style="flex:1">
+                    <button type="button" class="upload-btn-small" data-target-class="episode-url" data-type="video">📁</button>
+                </div>
                 <button type="button" class="remove-item remove-episode">✖</button>
             `;
             container.appendChild(div);
@@ -356,7 +366,10 @@ function initDynamicLists() {
                 <option value="fa">فارسی</option>
                 <option value="tr">Türkçe</option>
             </select>
-            <input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url">
+            <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
+                <input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url" style="flex:1">
+                <button type="button" class="upload-btn-small" data-target-class="subtitle-url" data-type="subtitle">📁</button>
+            </div>
             <button type="button" class="remove-item remove-subtitle">✖</button>
         `;
         container.appendChild(div);
@@ -377,7 +390,10 @@ function initDynamicLists() {
                 <option value="fa">فارسی</option>
                 <option value="tr">Türkçe</option>
             </select>
-            <input type="text" placeholder="لینکی فایلی دەنگ (بەتاڵ بێڵە بۆ ڕەسەن)" class="audio-url">
+            <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
+                <input type="text" placeholder="لینکی فایلی دەنگ" class="audio-url" style="flex:1">
+                <button type="button" class="upload-btn-small" data-target-class="audio-url" data-type="audio">📁</button>
+            </div>
             <button type="button" class="remove-item remove-audio">✖</button>
         `;
         container.appendChild(div);
@@ -390,13 +406,149 @@ function initDynamicLists() {
         const div = document.createElement('div');
         div.className = 'dynamic-item episode-item';
         div.innerHTML = `
-            <input type="number" placeholder="ژمارەی ئەڵقە" class="episode-number" style="width:100px">
-            <input type="text" placeholder="ناونیشانی ئەڵقە" class="episode-title">
-            <input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url">
+            <input type="number" placeholder="ژمارە" class="episode-number" style="width:100px">
+            <input type="text" placeholder="ناونیشان" class="episode-title">
+            <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
+                <input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url" style="flex:1">
+                <button type="button" class="upload-btn-small" data-target-class="episode-url" data-type="video">📁</button>
+            </div>
             <button type="button" class="remove-item remove-episode">✖</button>
         `;
         container.appendChild(div);
         addRemoveEpisodeListeners();
+    });
+}
+
+// ========== سیستەمی بارکردنی فایل ==========
+async function uploadFile(file, type) {
+    return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('type', type);
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'upload.php', true);
+        
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        resolve(response.url);
+                    } else {
+                        reject(response.error || 'Upload failed');
+                    }
+                } catch (e) {
+                    reject('Invalid response from server');
+                }
+            } else {
+                reject('Server error: ' + xhr.status);
+            }
+        };
+        
+        xhr.onerror = function() {
+            reject('Network error');
+        };
+        
+        xhr.send(formData);
+    });
+}
+
+function initFileUploads() {
+    // دوگمەکانی بارکردن بۆ خانە ئاساییەکان
+    document.querySelectorAll('.upload-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const targetId = btn.dataset.target;
+            const fileType = btn.dataset.type;
+            const targetInput = document.getElementById(targetId);
+            const progressDiv = document.getElementById(`progress-${targetId}`);
+            
+            if (!targetInput) return;
+            
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            
+            if (fileType === 'image') {
+                fileInput.accept = 'image/*';
+            } else if (fileType === 'video') {
+                fileInput.accept = 'video/*';
+            } else if (fileType === 'audio') {
+                fileInput.accept = 'audio/*';
+            } else if (fileType === 'subtitle') {
+                fileInput.accept = '.vtt,.srt,.ass,.ssa';
+            }
+            
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                if (progressDiv) {
+                    progressDiv.classList.add('active');
+                    const bar = progressDiv.querySelector('.upload-progress-bar');
+                    if (bar) bar.style.width = '50%';
+                }
+                
+                try {
+                    const url = await uploadFile(file, fileType);
+                    targetInput.value = url;
+                    if (progressDiv) {
+                        const bar = progressDiv.querySelector('.upload-progress-bar');
+                        if (bar) bar.style.width = '100%';
+                        setTimeout(() => {
+                            progressDiv.classList.remove('active');
+                            if (bar) bar.style.width = '0%';
+                        }, 1000);
+                    }
+                    showMessage('فایل بە سەرکەوتوویی بارکرا!', 'success');
+                } catch (error) {
+                    showMessage('هەڵە لە بارکردنی فایل: ' + error, 'error');
+                    if (progressDiv) {
+                        progressDiv.classList.remove('active');
+                    }
+                }
+            };
+            
+            fileInput.click();
+        });
+    });
+    
+    // دوگمەکانی بارکردن بۆ خانەکانی ناو dynamic list
+    document.querySelectorAll('.upload-btn-small').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const targetClass = btn.dataset.targetClass;
+            const fileType = btn.dataset.type;
+            const targetInput = btn.closest('.dynamic-item')?.querySelector(`.${targetClass}`);
+            
+            if (!targetInput) return;
+            
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            
+            if (fileType === 'image') {
+                fileInput.accept = 'image/*';
+            } else if (fileType === 'video') {
+                fileInput.accept = 'video/*';
+            } else if (fileType === 'audio') {
+                fileInput.accept = 'audio/*';
+            } else if (fileType === 'subtitle') {
+                fileInput.accept = '.vtt,.srt,.ass,.ssa';
+            }
+            
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                try {
+                    const url = await uploadFile(file, fileType);
+                    targetInput.value = url;
+                    showMessage('فایل بە سەرکەوتوویی بارکرا!', 'success');
+                } catch (error) {
+                    showMessage('هەڵە لە بارکردنی فایل: ' + error, 'error');
+                }
+            };
+            
+            fileInput.click();
+        });
     });
 }
 
@@ -415,9 +567,9 @@ function resetMovieForm() {
     document.getElementById('addMovieForm').reset();
     document.getElementById('castList').innerHTML = '<div class="dynamic-item cast-item"><input type="text" placeholder="ناوی ئەکتەر" class="cast-name"><input type="text" placeholder="ڕۆڵ" class="cast-role"><button type="button" class="remove-item remove-cast">✖</button></div>';
     document.getElementById('crewList').innerHTML = '<div class="dynamic-item crew-item"><input type="text" placeholder="ناو" class="crew-name"><input type="text" placeholder="ڕۆڵ" class="crew-role"><button type="button" class="remove-item remove-crew">✖</button></div>';
-    document.getElementById('subtitlesList').innerHTML = '<div class="dynamic-item subtitle-item"><select class="subtitle-lang"><option value="ku">کوردی</option><option value="en">English</option><option value="ar">العربية</option><option value="fa">فارسی</option><option value="tr">Türkçe</option></select><input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url"><button type="button" class="remove-item remove-subtitle">✖</button></div>';
-    document.getElementById('audioList').innerHTML = '<div class="dynamic-item audio-item"><select class="audio-lang"><option value="original">Original (ڕەسەن)</option><option value="ku">کوردی</option><option value="en">English</option><option value="ar">العربية</option><option value="fa">فارسی</option><option value="tr">Türkçe</option></select><input type="text" placeholder="لینکی فایلی دەنگ (بەتاڵ بێڵە بۆ ڕەسەن)" class="audio-url"><button type="button" class="remove-item remove-audio">✖</button></div>';
-    document.getElementById('episodesList').innerHTML = '<div class="dynamic-item episode-item"><input type="number" placeholder="ژمارەی ئەڵقە" class="episode-number" style="width:100px"><input type="text" placeholder="ناونیشانی ئەڵقە" class="episode-title"><input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url"><button type="button" class="remove-item remove-episode">✖</button></div>';
+    document.getElementById('subtitlesList').innerHTML = '<div class="dynamic-item subtitle-item"><select class="subtitle-lang"><option value="ku">کوردی</option><option value="en">English</option><option value="ar">العربية</option><option value="fa">فارسی</option><option value="tr">Türkçe</option></select><div style="flex:2; display:flex; gap:0.5rem; align-items:center;"><input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url" style="flex:1"><button type="button" class="upload-btn-small" data-target-class="subtitle-url" data-type="subtitle">📁</button></div><button type="button" class="remove-item remove-subtitle">✖</button></div>';
+    document.getElementById('audioList').innerHTML = '<div class="dynamic-item audio-item"><select class="audio-lang"><option value="original">Original (ڕەسەن)</option><option value="ku">کوردی</option><option value="en">English</option><option value="ar">العربية</option><option value="fa">فارسی</option><option value="tr">Türkçe</option></select><div style="flex:2; display:flex; gap:0.5rem; align-items:center;"><input type="text" placeholder="لینکی فایلی دەنگ" class="audio-url" style="flex:1"><button type="button" class="upload-btn-small" data-target-class="audio-url" data-type="audio">📁</button></div><button type="button" class="remove-item remove-audio">✖</button></div>';
+    document.getElementById('episodesList').innerHTML = '<div class="dynamic-item episode-item"><input type="number" placeholder="ژمارە" class="episode-number" style="width:100px"><input type="text" placeholder="ناونیشان" class="episode-title"><div style="flex:2; display:flex; gap:0.5rem; align-items:center;"><input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url" style="flex:1"><button type="button" class="upload-btn-small" data-target-class="episode-url" data-type="video">📁</button></div><button type="button" class="remove-item remove-episode">✖</button></div>';
     document.querySelectorAll('#genresCheckbox input').forEach(cb => cb.checked = false);
     document.querySelectorAll('#categoriesCheckbox input').forEach(cb => cb.checked = false);
     addRemoveCastListeners();
@@ -425,6 +577,7 @@ function resetMovieForm() {
     addRemoveSubtitleListeners();
     addRemoveAudioListeners();
     addRemoveEpisodeListeners();
+    initFileUploads();
 }
 
 function populateMovieForm(movie) {
