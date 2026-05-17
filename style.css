@@ -52,21 +52,28 @@ body {
     line-height: 1.6;
 }
 
-/* ========== ناوبار و بانەڕ ========== */
+/* ========== ناوبار و بانەڕ (گرادێنتی ستوونی) ========== */
 .navbar {
     background-color: transparent;
+    background-image: linear-gradient(to bottom, #292929 0%, transparent 100%);
     padding: 0.8rem 2rem;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    transition: background-color 0.3s ease;
+    transition: background-image 0.2s linear;
 }
 
+/* کاتێک سکرۆڵ بە تەواوی کراوە، بانەڕەکە بە تەواوی ڕەنگ دەگرێت */
 .navbar.scrolled {
-    background-color: var(--nav-bg-scroll);
+    background-image: linear-gradient(to bottom, #292929 0%, #292929 100%);
     border-bottom: 1px solid var(--border);
+}
+
+/* لە مۆدی ڕووناکدا */
+[data-theme="light"] .navbar.scrolled {
+    background-image: linear-gradient(to bottom, #E5E5E5 0%, #E5E5E5 100%);
 }
 
 .nav-container {
@@ -285,7 +292,7 @@ input:checked + .slider:before {
     color: white;
 }
 
-/* ========== سلایدی سەرەکی (ڕێژەی 27:40 - 1080x1600) ========== */
+/* ========== سلایدی سەرەکی ========== */
 .hero-carousel {
     position: relative;
     width: 100%;
@@ -326,13 +333,22 @@ input:checked + .slider:before {
     object-position: center;
 }
 
-/* ناوەڕۆکی سلاید - بەبێ پاشەڕەنگ */
+@media (min-width: 769px) {
+    .carousel-bg-img {
+        object-fit: contain;
+        background-color: var(--bg-primary);
+    }
+    .hero-carousel {
+        background-color: var(--bg-primary);
+    }
+}
+
 .carousel-content {
     position: absolute;
     bottom: 4%;
     left: 0;
     right: 0;
-    /* پاشەڕەنگ لابرا */
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
     padding: 2rem 2rem 2.5rem 2rem;
     text-align: center;
     color: white;
@@ -365,7 +381,6 @@ input:checked + .slider:before {
     justify-content: center;
 }
 
-/* چەشنەکان - 10px بەرزتر کراوە */
 .genre-tag {
     background-color: rgba(255,255,255,0.2);
     padding: 0.3rem 0.9rem;
@@ -375,7 +390,6 @@ input:checked + .slider:before {
     backdrop-filter: blur(4px);
 }
 
-/* ساڵ - 10px بەرزتر کراوە */
 .carousel-year {
     font-size: 0.9rem;
     opacity: 0.9;
@@ -385,7 +399,6 @@ input:checked + .slider:before {
     backdrop-filter: blur(4px);
 }
 
-/* کورتە - 10px بەرزتر کراوە */
 .carousel-desc {
     font-size: 1rem;
     max-width: 70%;
@@ -400,7 +413,6 @@ input:checked + .slider:before {
     margin-top: 0.5rem;
 }
 
-/* دوگمەکان - 10px بەرزتر کراوە */
 .carousel-btn {
     padding: 0.6rem 1.8rem;
     border: none;
@@ -841,7 +853,6 @@ footer {
         height: 28px;
     }
     
-    /* سلاید */
     .hero-carousel {
         aspect-ratio: 27 / 40;
     }
@@ -851,7 +862,6 @@ footer {
         gap: 0.5rem;
     }
     
-    /* نوسینەکان لە مۆبایلدا */
     .genre-tag {
         font-size: 0.95rem;
         padding: 0.25rem 0.85rem;
