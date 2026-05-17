@@ -55,7 +55,7 @@ body {
 /* ========== ناوبار و بانەڕ ========== */
 .navbar {
     background-color: transparent;
-    background-image: linear-gradient(to bottom, transparent 0%, #292929 100%);
+    background-image: linear-gradient(to bottom, #292929 0%, transparent 100%);
     padding: 0.8rem 2rem;
     position: fixed;
     top: 0;
@@ -979,4 +979,4 @@ footer {
     .movie-title {
         font-size: 0.85rem;
     }
-}
+        }
