@@ -203,6 +203,47 @@
             cursor: pointer;
             margin-top: 0.5rem;
         }
+        .upload-group {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .upload-btn, .upload-btn-small {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+        .upload-btn-small {
+            padding: 0.3rem 0.8rem;
+        }
+        .upload-btn:hover, .upload-btn-small:hover {
+            background-color: #b20710;
+        }
+        .upload-progress {
+            display: none;
+            width: 100%;
+            height: 4px;
+            background-color: var(--border);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .upload-progress.active {
+            display: block;
+        }
+        .upload-progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--accent);
+            transition: width 0.3s;
+        }
         .success-msg, .error-msg {
             position: fixed;
             bottom: 20px;
@@ -223,6 +264,8 @@
             .admin-container { margin-top: 80px; }
             .form-row, .form-row-3 { grid-template-columns: 1fr; }
             .item-card { flex-direction: column; text-align: center; }
+            .dynamic-item { flex-direction: column; }
+            .upload-group { flex-direction: column; }
         }
         
         #adminAuth {
@@ -337,11 +380,32 @@
                             <div class="form-group"><label>زمان / وڵات *</label><select id="movieLang"><option value="kurdish">کوردی</option><option value="turkish">تورکی</option><option value="persian">فارسی</option><option value="arabic">عەرەبی</option><option value="english">ئینگلیزی</option><option value="korean">کۆری</option><option value="spanish">ئیسپانی</option><option value="indian">هیندی</option><option value="other">دیکە</option></select></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group"><label>لینکی پۆستەر</label><input type="url" id="moviePoster" placeholder="https://example.com/poster.jpg"></div>
-                            <div class="form-group"><label>لینکی ڤیدیۆ</label><input type="url" id="movieVideoUrl" placeholder="https://example.com/video.mp4"></div>
+                            <div class="form-group">
+                                <label>لینکی پۆستەر</label>
+                                <div class="upload-group">
+                                    <input type="url" id="moviePoster" placeholder="https://example.com/poster.jpg">
+                                    <button type="button" class="upload-btn" data-target="moviePoster" data-type="image">📁 بارکردنی وێنە</button>
+                                </div>
+                                <div class="upload-progress" id="progress-moviePoster"><div class="upload-progress-bar"></div></div>
+                            </div>
+                            <div class="form-group">
+                                <label>لینکی ڤیدیۆ</label>
+                                <div class="upload-group">
+                                    <input type="url" id="movieVideoUrl" placeholder="https://example.com/video.mp4">
+                                    <button type="button" class="upload-btn" data-target="movieVideoUrl" data-type="video">📁 بارکردنی ڤیدیۆ</button>
+                                </div>
+                                <div class="upload-progress" id="progress-movieVideoUrl"><div class="upload-progress-bar"></div></div>
+                            </div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group"><label>لینکی ترایلەر</label><input type="url" id="movieTrailerUrl" placeholder="https://www.youtube.com/embed/..."></div>
+                            <div class="form-group">
+                                <label>لینکی ترایلەر</label>
+                                <div class="upload-group">
+                                    <input type="url" id="movieTrailerUrl" placeholder="https://www.youtube.com/embed/...">
+                                    <button type="button" class="upload-btn" data-target="movieTrailerUrl" data-type="video">📁 بارکردنی ڤیدیۆ</button>
+                                </div>
+                                <div class="upload-progress" id="progress-movieTrailerUrl"><div class="upload-progress-bar"></div></div>
+                            </div>
                             <div class="form-group"><label>ماوە (Duration)</label><input type="text" id="movieDuration" placeholder="2h 15min یان 45min"></div>
                         </div>
                         <div class="form-group"><label>کورتە</label><textarea id="movieDescription" rows="3"></textarea></div>
@@ -388,7 +452,10 @@
                                         <option value="fa">فارسی</option>
                                         <option value="tr">Türkçe</option>
                                     </select>
-                                    <input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url">
+                                    <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
+                                        <input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url" style="flex:1">
+                                        <button type="button" class="upload-btn-small" data-target-class="subtitle-url" data-type="subtitle">📁</button>
+                                    </div>
                                     <button type="button" class="remove-item remove-subtitle">✖</button>
                                 </div>
                             </div>
@@ -408,7 +475,10 @@
                                         <option value="fa">فارسی</option>
                                         <option value="tr">Türkçe</option>
                                     </select>
-                                    <input type="text" placeholder="لینکی فایلی دەنگ (بەتاڵ بێڵە بۆ ڕەسەن)" class="audio-url">
+                                    <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
+                                        <input type="text" placeholder="لینکی فایلی دەنگ" class="audio-url" style="flex:1">
+                                        <button type="button" class="upload-btn-small" data-target-class="audio-url" data-type="audio">📁</button>
+                                    </div>
                                     <button type="button" class="remove-item remove-audio">✖</button>
                                 </div>
                             </div>
@@ -421,9 +491,12 @@
                                 <label><i class="fas fa-list"></i> ئەڵقەکان (تەنها بۆ زنجیرە)</label>
                                 <div id="episodesList" class="dynamic-list">
                                     <div class="dynamic-item episode-item">
-                                        <input type="number" placeholder="ژمارەی ئەڵقە" class="episode-number" style="width:100px">
-                                        <input type="text" placeholder="ناونیشانی ئەڵقە" class="episode-title">
-                                        <input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url">
+                                        <input type="number" placeholder="ژمارە" class="episode-number" style="width:100px">
+                                        <input type="text" placeholder="ناونیشان" class="episode-title">
+                                        <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
+                                            <input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url" style="flex:1">
+                                            <button type="button" class="upload-btn-small" data-target-class="episode-url" data-type="video">📁</button>
+                                        </div>
                                         <button type="button" class="remove-item remove-episode">✖</button>
                                     </div>
                                 </div>
@@ -457,9 +530,33 @@
                         </div>
                         <div class="form-group">
                             <label>وێنەکانی سلاید</label>
-                            <div class="image-input-group"><h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل</h4><input type="url" id="slideImageMobile" placeholder="1080x1600"><small>قەبارە: 1080x1600</small></div>
-                            <div class="image-input-group"><h4><i class="fas fa-tablet-alt"></i> وێنەی تابلێت</h4><input type="url" id="slideImageTablet" placeholder="1200x1600"><small>قەبارە: 1200x1600</small></div>
-                            <div class="image-input-group"><h4><i class="fas fa-desktop"></i> وێنەی کۆمپیوتەر</h4><input type="url" id="slideImageDesktop" placeholder="1920x1080"><small>قەبارە: 1920x1080</small></div>
+                            <div class="image-input-group">
+                                <h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل</h4>
+                                <div class="upload-group">
+                                    <input type="url" id="slideImageMobile" placeholder="1080x1600">
+                                    <button type="button" class="upload-btn" data-target="slideImageMobile" data-type="image">📁 بارکردن</button>
+                                </div>
+                                <div class="upload-progress" id="progress-slideImageMobile"><div class="upload-progress-bar"></div></div>
+                                <small>قەبارە: 1080x1600</small>
+                            </div>
+                            <div class="image-input-group">
+                                <h4><i class="fas fa-tablet-alt"></i> وێنەی تابلێت</h4>
+                                <div class="upload-group">
+                                    <input type="url" id="slideImageTablet" placeholder="1200x1600">
+                                    <button type="button" class="upload-btn" data-target="slideImageTablet" data-type="image">📁 بارکردن</button>
+                                </div>
+                                <div class="upload-progress" id="progress-slideImageTablet"><div class="upload-progress-bar"></div></div>
+                                <small>قەبارە: 1200x1600</small>
+                            </div>
+                            <div class="image-input-group">
+                                <h4><i class="fas fa-desktop"></i> وێنەی کۆمپیوتەر</h4>
+                                <div class="upload-group">
+                                    <input type="url" id="slideImageDesktop" placeholder="1920x1080">
+                                    <button type="button" class="upload-btn" data-target="slideImageDesktop" data-type="image">📁 بارکردن</button>
+                                </div>
+                                <div class="upload-progress" id="progress-slideImageDesktop"><div class="upload-progress-bar"></div></div>
+                                <small>قەبارە: 1920x1080</small>
+                            </div>
                         </div>
                         <div class="form-group"><label>کورتە</label><textarea id="slideDescription" rows="2"></textarea></div>
                         <div class="form-group"><label>چەشنەکان</label><div class="checkbox-group" id="slideGenresCheckbox"></div></div>
