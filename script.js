@@ -328,75 +328,25 @@ function initModals() {
     window.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.style.display = 'none'; if (e.target === vipModal) vipModal.style.display = 'none'; });
 }
 
-// ========== گۆڕینی گرادێنتی بانەڕ بەپێی ڕێژەی سکرۆڵ (ستوونی) ==========
-function initNavbarGradient() {
-    const navbar = document.querySelector('.navbar');
-    if (!navbar) return;
-    
-    function updateNavbarGradient() {
-        const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-        
-        let topColorPercent = 0;
-        let bottomColorPercent = 0;
-        
-        if (scrollPercent <= 1) {
-            topColorPercent = 100;
-            bottomColorPercent = 0;
-        } else if (scrollPercent <= 2) {
-            topColorPercent = 99;
-            bottomColorPercent = 1;
-        } else if (scrollPercent <= 10) {
-            topColorPercent = 80;
-            bottomColorPercent = 20;
-        } else if (scrollPercent <= 25) {
-            topColorPercent = 50;
-            bottomColorPercent = 50;
-        } else if (scrollPercent <= 60) {
-            topColorPercent = 30;
-            bottomColorPercent = 70;
-        } else if (scrollPercent <= 85) {
-            topColorPercent = 10;
-            bottomColorPercent = 90;
-        } else if (scrollPercent >= 86) {
-            topColorPercent = 0;
-            bottomColorPercent = 100;
-        }
-        
-        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 50) {
-            navbar.classList.add('scrolled');
-        } 
-        else if (scrollPercent >= 86) {
-            navbar.style.backgroundImage = `linear-gradient(to bottom, #292929 0%, transparent 100%)`;
-            navbar.classList.remove('scrolled');
-        }
-        else {
-            navbar.style.backgroundImage = `linear-gradient(to bottom, #292929 ${topColorPercent}%, transparent ${topColorPercent + 10}%)`;
-            navbar.classList.remove('scrolled');
-        }
-    }
-    
-    updateNavbarGradient();
-    window.addEventListener('scroll', updateNavbarGradient);
-    window.addEventListener('resize', updateNavbarGradient);
-}
-
+// ========== گۆڕینی بانەڕ بەپێی سکرۆڵ ==========
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
     
-    function checkBottom() {
-        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 50) {
+    function checkScroll() {
+        // ئەگەر سکرۆڵ کرابوو، کلاسی scrolled زیاد بکە
+        if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
-            const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-            if (scrollPercent < 86) {
-                navbar.classList.remove('scrolled');
-            }
+            navbar.classList.remove('scrolled');
         }
     }
     
-    window.addEventListener('scroll', checkBottom);
-    checkBottom();
+    // بانگی فەنکشنی یەکەمجار
+    checkScroll();
+    
+    // بانگی فەنکشن کاتێک سکرۆڵ دەکرێت
+    window.addEventListener('scroll', checkScroll);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -407,6 +357,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileDropdowns();
     initSearch();
     initModals();
-    initNavbarGradient();
     initNavbarScroll();
 });
