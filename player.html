@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Kurdish Video Player - Premium</title>
+<title>KurdFlix - بینینی ڤیدیۆ</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
@@ -35,8 +35,8 @@
     --bg-controls: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
     --bg-progress-track: rgba(255,255,255,0.25);
     --bg-progress-buffer: rgba(255,255,255,0.4);
-    --accent: #ff0000;
-    --accent-hover: #cc0000;
+    --accent: #E50914;
+    --accent-hover: #b20710;
     --text-primary: #fff;
     --text-secondary: rgba(255,255,255,0.8);
     --text-muted: rgba(255,255,255,0.5);
@@ -101,6 +101,26 @@
     transform: scale(1);
   }
 
+  .back-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s;
+    font-family: var(--font);
+  }
+  .back-btn:hover {
+    background: var(--accent);
+  }
+
   .poster-overlay {
     position: absolute;
     inset: 0;
@@ -126,7 +146,7 @@
     align-items: center;
     justify-content: center;
     transition: transform 0.2s, background 0.2s;
-    box-shadow: 0 8px 32px rgba(255,0,0,0.35);
+    box-shadow: 0 8px 32px rgba(229,9,20,0.35);
   }
   .poster-play-btn:hover { transform: scale(1.1); background: var(--accent-hover); }
   .poster-play-btn svg { width: 28px; height: 28px; fill: #fff; margin-right: -3px; }
@@ -548,6 +568,7 @@
     .control-row { gap: 8px; }
     .left-controls { gap: 10px; }
     .right-controls { gap: 10px; }
+    .back-btn { top: 10px; right: 10px; padding: 6px 12px; font-size: 12px; }
   }
 
   :fullscreen .player-wrapper,
@@ -576,6 +597,8 @@
 
 <div class="player-wrapper" id="playerWrapper">
   <div class="video-container show-cursor" id="videoContainer">
+    
+    <button class="back-btn" onclick="window.location.href='javascript:history.back()'">← گەڕانەوە</button>
 
     <video id="video" preload="metadata"></video>
 
@@ -661,7 +684,6 @@
           <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
           <div style="position:relative">
             <button class="ctrl-btn" id="ccBtn">
-              <!-- ئایکۆنی نوێی CC - زیرنووس -->
               <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                 <path d="M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H10v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H17v1c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1z"/>
               </svg>
@@ -704,7 +726,6 @@
           <div class="time-display" id="timeDisplayMobile">0:00 / 0:00</div>
           <div style="position:relative">
             <button class="ctrl-btn" id="ccBtnMobile">
-              <!-- ئایکۆنی نوێی CC بۆ مۆبایل -->
               <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                 <path d="M18 4H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-8 7H9.5v-.5h-2v3h2V13H10v1c0 .55-.45 1-1 1H7c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1zm7 0h-1.5v-.5h-2v3h2V13H17v1c0 .55-.45 1-1 1h-2c-.55 0-1-.45-1-1v-4c0-.55.45-1 1-1h2c.55 0 1 .45 1 1v1z"/>
               </svg>
@@ -751,17 +772,14 @@
 // ========== پاراستن - ڕێگری لە کلیکی ڕاست و کلیلە کورتەکان ==========
 document.addEventListener('contextmenu', (e) => e.preventDefault());
 document.addEventListener('keydown', (e) => {
-  // Ctrl+S, Ctrl+P, Ctrl+C, Ctrl+U
   if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.key === 'p' || e.key === 'P' || e.key === 'c' || e.key === 'C' || e.key === 'u' || e.key === 'U')) {
     e.preventDefault();
     return false;
   }
-  // F12, PrintScreen
   if (e.key === 'F12' || e.key === 'PrintScreen') {
     e.preventDefault();
     return false;
   }
-  // Ctrl+Shift+I
   if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) {
     e.preventDefault();
     return false;
@@ -770,22 +788,60 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('dragstart', (e) => e.preventDefault());
 document.addEventListener('drop', (e) => e.preventDefault());
 
-// ========== پلەیەرەکە - لینکەکان لە config.json دەخوێنێتەوە ==========
+// ========== وەرگرتنی لینکی ڤیدیۆ لە URL ==========
+const urlParams = new URLSearchParams(window.location.search);
+const contentId = urlParams.get('id');
+const contentType = urlParams.get('type'); // 'film' or 'series'
+const episodeNum = urlParams.get('episode');
+
+let videoUrl = null;
+let videoTitle = '';
+
+async function loadVideoFromData() {
+    try {
+        const response = await fetch('data.json?t=' + Date.now());
+        const data = await response.json();
+        const movies = data.movies || [];
+        
+        if (contentType === 'film') {
+            const film = movies.find(m => m.id == contentId && m.type === 'film');
+            if (film) {
+                videoUrl = film.videoUrl;
+                videoTitle = film.title;
+            }
+        } else if (contentType === 'series') {
+            const series = movies.find(m => m.id == contentId && m.type === 'series');
+            if (series && series.episodes && episodeNum) {
+                const episode = series.episodes.find(e => e.number == episodeNum);
+                if (episode) {
+                    videoUrl = episode.videoUrl;
+                    videoTitle = `${series.title} - ئەڵقەی ${episodeNum}`;
+                }
+            } else if (series) {
+                videoUrl = series.videoUrl;
+                videoTitle = series.title;
+            }
+        }
+        
+        if (videoUrl) {
+            initPlayer(videoUrl);
+        } else {
+            console.error('ڤیدیۆ نەدۆزرایەوە');
+            document.getElementById('posterOverlay').innerHTML = '<div style="color:white; text-align:center;"><p>ڤیدیۆ نەدۆزرایەوە</p><button onclick="window.location.href=\'index.html\'" style="background:#E50914; border:none; padding:10px 20px; border-radius:5px; color:white; margin-top:20px;">گەڕانەوە بۆ پەڕەی سەرەکی</button></div>';
+        }
+    } catch (error) {
+        console.error('Error loading video data:', error);
+    }
+}
+
+// ========== پلەیەر ==========
 let hls = null;
-let currentQuality = "1080";
-let currentChunkIndex = 0;
-let parts = [];
-let totalDuration = 0;
-let chunkStartTimes = [];
 let isScrubbing = false;
 let controlsTimer = null;
 let isVideoStarted = false;
 let volumeVisible = false;
 let volumeHideTimer = null;
-let isLoadingChunk = false;
-let wasPlayingBeforeQualityChange = false;
 
-// DOM elements
 const video = document.getElementById('video');
 const container = document.getElementById('videoContainer');
 const progressArea = document.getElementById('progressArea');
@@ -809,23 +865,11 @@ const mobileCenterControls = document.getElementById('mobileCenterControls');
 const mobileSeekLeft = document.getElementById('mobileSeekLeft');
 const mobileSeekRight = document.getElementById('mobileSeekRight');
 
-// Load config from JSON file
-async function loadConfig() {
-    try {
-        const response = await fetch('config.json?' + Date.now());
-        const data = await response.json();
-        return data.videos;
-    } catch (error) {
-        console.error('Error loading config:', error);
-        return [];
-    }
-}
-
 function isHLS(url) {
     return url && url.endsWith('.m3u8');
 }
 
-function loadVideoWithSource(url) {
+function initPlayer(url) {
     if (hls) { hls.destroy(); hls = null; }
     if (isHLS(url)) {
         if (video.canPlayType('application/vnd.apple.mpegurl')) {
@@ -838,148 +882,12 @@ function loadVideoWithSource(url) {
     } else { video.src = url; }
 }
 
-async function initFromConfig() {
-    const videos = await loadConfig();
-    if (!videos || videos.length === 0) {
-        console.error('No videos found in config');
-        return;
-    }
-    window.VIDEO_SOURCES = videos;
-    currentQuality = "1080";
-    currentChunkIndex = 0;
-    parts = [];
-    chunkStartTimes = [0];
-    totalDuration = 0;
-    for (let i = 0; i < videos.length; i++) {
-        parts.push({ url: videos[i].qualities[currentQuality], duration: 0 });
-        chunkStartTimes.push(0);
-    }
-    calculateChunkTimes();
-}
-
-function getCurrentQualityUrl(chunkIndex) {
-    if (!window.VIDEO_SOURCES) return null;
-    return window.VIDEO_SOURCES[chunkIndex]?.qualities[currentQuality] || null;
-}
-
-function calculateChunkTimes() {
-    chunkStartTimes = [0];
-    totalDuration = 0;
-    for (let i = 0; i < parts.length; i++) {
-        const duration = parts[i].duration || 10;
-        totalDuration += duration;
-        chunkStartTimes.push(totalDuration);
-    }
-}
-
-function loadChunk(index, seekTime = 0) {
-    if (index < 0 || index >= parts.length || isLoadingChunk) return;
-    isLoadingChunk = true;
-    currentChunkIndex = index;
-    const url = getCurrentQualityUrl(index);
-    if (!url) return;
-    video.onended = null;
-    loadVideoWithSource(url);
-    setLoading(true);
-    const onMetadata = function() {
-        video.removeEventListener('loadedmetadata', onMetadata);
-        if (parts[index].duration === 0) {
-            parts[index].duration = video.duration;
-            calculateChunkTimes();
-        }
-        if (seekTime > 0) video.currentTime = Math.min(seekTime, video.duration - 0.05);
-        if (!video.paused) video.play().catch(() => {});
-        isLoadingChunk = false;
-        setLoading(false);
-    };
-    video.addEventListener('loadedmetadata', onMetadata);
-    video.onended = () => {
-        if (currentChunkIndex < parts.length - 1) {
-            loadChunk(currentChunkIndex + 1, 0);
-            hideAllControls();
-        } else {
-            setPlayIcon(false);
-            posterOverlay.classList.remove('hidden');
-            isVideoStarted = false;
-            hideAllControls();
-        }
-    };
-}
-
 function startVideo() {
     if (isVideoStarted) return;
     posterOverlay.classList.add('hidden');
     isVideoStarted = true;
-    currentChunkIndex = 0;
-    loadChunk(0);
+    video.play().catch(() => {});
     hideAllControls();
-}
-
-function setQuality(quality, isMobile = false) {
-    if (!isVideoStarted) {
-        currentQuality = quality;
-        updateQualityMenuUI(quality, isMobile);
-        closeAllMenus();
-        return;
-    }
-    wasPlayingBeforeQualityChange = !video.paused;
-    const currentTime = getGlobalTime();
-    const currentChunk = currentChunkIndex;
-    currentQuality = quality;
-    updateQualityMenuUI(quality, isMobile);
-    closeAllMenus();
-    for (let i = 0; i < parts.length; i++) parts[i].url = getCurrentQualityUrl(i);
-    const newUrl = getCurrentQualityUrl(currentChunk);
-    if (newUrl && video.src !== newUrl) {
-        loadVideoWithSource(newUrl);
-        setLoading(true);
-        video.addEventListener('loadedmetadata', function onLoad() {
-            video.removeEventListener('loadedmetadata', onLoad);
-            const localTime = currentTime - chunkStartTimes[currentChunk];
-            if (localTime > 0) video.currentTime = Math.min(localTime, video.duration - 0.05);
-            if (wasPlayingBeforeQualityChange) video.play().catch(() => {});
-            setLoading(false);
-        });
-    }
-    showAllControls();
-}
-
-function updateQualityMenuUI(quality, isMobile = false) {
-    const menuId = isMobile ? '#settingsMenuMobile' : '#settingsMenu';
-    document.querySelectorAll(menuId + ' .popup-item').forEach(el => {
-        el.classList.toggle('active', el.getAttribute('data-quality') === quality);
-    });
-}
-
-function getGlobalTime() {
-    if (!isVideoStarted) return 0;
-    return (chunkStartTimes[currentChunkIndex] || 0) + (video.currentTime || 0);
-}
-
-function seekToGlobal(targetTime) {
-    if (totalDuration === 0) return;
-    let targetChunk = 0;
-    for (let i = 0; i < chunkStartTimes.length - 1; i++) {
-        if (targetTime >= chunkStartTimes[i] && targetTime < chunkStartTimes[i+1]) { targetChunk = i; break; }
-    }
-    if (targetChunk >= parts.length) targetChunk = parts.length - 1;
-    const localTime = targetTime - chunkStartTimes[targetChunk];
-    if (targetChunk !== currentChunkIndex) {
-        currentChunkIndex = targetChunk;
-        const url = getCurrentQualityUrl(targetChunk);
-        if (url) {
-            loadVideoWithSource(url);
-            setLoading(true);
-            video.addEventListener('loadedmetadata', function onLoad() {
-                video.removeEventListener('loadedmetadata', onLoad);
-                video.currentTime = Math.min(localTime, video.duration - 0.05);
-                if (!video.paused) video.play().catch(() => {});
-                setLoading(false);
-            });
-        }
-    } else {
-        video.currentTime = Math.min(localTime, video.duration - 0.05);
-    }
 }
 
 function togglePlay() {
@@ -994,22 +902,21 @@ function togglePlay() {
 
 function seekRelative(secs) {
     if (!isVideoStarted) return;
-    seekToGlobal(Math.max(0, Math.min(totalDuration, getGlobalTime() + secs)));
+    video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + secs));
     showAllControls();
 }
 
 function updateProgress() {
-    if (isScrubbing || totalDuration === 0 || !isVideoStarted) return;
-    const globalTime = getGlobalTime();
-    const pct = (globalTime / totalDuration) * 100;
+    if (isScrubbing || !isVideoStarted || !video.duration) return;
+    const pct = (video.currentTime / video.duration) * 100;
     progressFill.style.width = pct + '%';
     progressThumb.style.left = pct + '%';
     if (video.buffered.length > 0) {
-        const bufPct = ((chunkStartTimes[currentChunkIndex] + video.buffered.end(video.buffered.length-1)) / totalDuration) * 100;
+        const bufPct = (video.buffered.end(video.buffered.length-1) / video.duration) * 100;
         progressBuffer.style.width = Math.min(bufPct, 100) + '%';
     }
-    const ft = formatTime(globalTime);
-    const ftt = formatTime(totalDuration);
+    const ft = formatTime(video.currentTime);
+    const ftt = formatTime(video.duration);
     if (timeDisplay) timeDisplay.textContent = ft + ' / ' + ftt;
     if (timeDisplayMobile) timeDisplayMobile.textContent = ft + ' / ' + ftt;
 }
@@ -1061,7 +968,6 @@ function setPlayIcon(playing) {
 
 function setLoading(b) { loadingOverlay.classList.toggle('active', b); }
 
-// Volume controls
 function handleVolumeIconClick() {
     if (!volumeVisible) showVolumeSlider();
     else { video.muted = !video.muted; updateVolIcon(); resetVolumeHideTimer(); }
@@ -1080,24 +986,6 @@ function updateVolIcon() {
     volIcon.querySelector('path').setAttribute('d', d);
 }
 
-function selectCC(lang, isMobile = false) {
-    const menuId = isMobile ? '#ccMenuMobile' : '#ccMenu';
-    document.querySelectorAll(menuId + ' .menu-column:first-child .popup-item').forEach(el => el.classList.remove('active'));
-    const target = document.querySelector(menuId + ' .popup-item[data-cc="' + lang + '"]');
-    if (target) target.classList.add('active');
-    closeAllMenus();
-    showAllControls();
-}
-
-function selectAudio(track, isMobile = false) {
-    const menuId = isMobile ? '#ccMenuMobile' : '#ccMenu';
-    document.querySelectorAll(menuId + ' .menu-column:last-child .popup-item').forEach(el => el.classList.remove('active'));
-    const target = document.querySelector(menuId + ' .popup-item[data-audio="' + track + '"]');
-    if (target) target.classList.add('active');
-    closeAllMenus();
-    showAllControls();
-}
-
 function toggleMenu(menuId) { 
     const menu = document.getElementById(menuId); 
     const isOpen = menu.classList.contains('open'); 
@@ -1112,19 +1000,24 @@ function getProgressPercentFromEvent(e) {
     let clientX = e.touches ? e.touches[0].clientX : e.clientX;
     return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
 }
-function handleProgressClick(e) { seekToGlobal(getProgressPercentFromEvent(e) * totalDuration); showAllControls(); e.stopPropagation(); }
+function handleProgressClick(e) { 
+    const pct = getProgressPercentFromEvent(e);
+    video.currentTime = pct * video.duration;
+    showAllControls(); 
+    e.stopPropagation(); 
+}
 function startScrub(e) { 
     isScrubbing = true; 
     const pct = getProgressPercentFromEvent(e);
     progressFill.style.width = (pct * 100) + '%';
     progressThumb.style.left = (pct * 100) + '%';
     const move = (ev) => { if (isScrubbing) { const p = getProgressPercentFromEvent(ev); progressFill.style.width = (p * 100) + '%'; progressThumb.style.left = (p * 100) + '%'; } };
-    const up = () => { if (isScrubbing) seekToGlobal(parseFloat(progressFill.style.width) / 100 * totalDuration); isScrubbing = false; document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move); document.removeEventListener('mouseup', up); document.removeEventListener('touchend', up); };
+    const up = () => { if (isScrubbing) video.currentTime = parseFloat(progressFill.style.width) / 100 * video.duration; isScrubbing = false; document.removeEventListener('mousemove', move); document.removeEventListener('touchmove', move); document.removeEventListener('mouseup', up); document.removeEventListener('touchend', up); };
     document.addEventListener('mousemove', move); document.addEventListener('touchmove', move, { passive: false }); document.addEventListener('mouseup', up); document.addEventListener('touchend', up); e.preventDefault();
 }
 function hoverProgress(e) { 
     const pct = getProgressPercentFromEvent(e);
-    progressTooltip.textContent = formatTime(pct * totalDuration);
+    progressTooltip.textContent = formatTime(pct * video.duration);
     const rect = progressArea.getBoundingClientRect();
     let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
     progressTooltip.style.right = (rect.width - x) + 'px'; progressTooltip.style.left = 'auto';
@@ -1132,6 +1025,7 @@ function hoverProgress(e) {
 function leaveProgress() {}
 
 function onUserActivity() { if (isVideoStarted && !video.paused) showAllControls(); }
+
 container.addEventListener('mousemove', onUserActivity);
 container.addEventListener('touchstart', onUserActivity);
 container.addEventListener('click', (e) => { if (!e.target.closest('.ctrl-btn') && !e.target.closest('.progress-area') && !e.target.closest('.popup-menu') && !e.target.closest('.mobile-seek-btn') && !e.target.closest('.mobile-play-btn')) togglePlay(); });
@@ -1175,22 +1069,14 @@ document.getElementById('settingsBtnMobile').onclick = () => toggleMenu('setting
 document.getElementById('ccBtnMobile').onclick = () => toggleMenu('ccMenuMobile');
 document.getElementById('fsBtnMobile').onclick = () => toggleFullscreen();
 
-document.querySelectorAll('#settingsMenu .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality'), false); });
-document.querySelectorAll('#settingsMenuMobile .popup-item').forEach(el => { el.onclick = () => setQuality(el.getAttribute('data-quality'), true); });
-document.querySelectorAll('#ccMenu .popup-item[data-cc]').forEach(el => { el.onclick = () => selectCC(el.getAttribute('data-cc'), false); });
-document.querySelectorAll('#ccMenu .popup-item[data-audio]').forEach(el => { el.onclick = () => selectAudio(el.getAttribute('data-audio'), false); });
-document.querySelectorAll('#ccMenuMobile .popup-item[data-cc]').forEach(el => { el.onclick = () => selectCC(el.getAttribute('data-cc'), true); });
-document.querySelectorAll('#ccMenuMobile .popup-item[data-audio]').forEach(el => { el.onclick = () => selectAudio(el.getAttribute('data-audio'), true); });
 document.addEventListener('click', (e) => { if (!e.target.closest('.popup-menu') && !e.target.closest('#settingsBtn') && !e.target.closest('#ccBtn') && !e.target.closest('#settingsBtnMobile') && !e.target.closest('#ccBtnMobile')) closeAllMenus(); });
 
-async function init() {
-    await initFromConfig();
-    if (mobileCenterControls) mobileCenterControls.classList.add('hidden-mobile');
-    if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
-    if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
-    centerIconDiv.classList.add('hidden-center');
-}
-init();
+// Initialize
+loadVideoFromData();
+if (mobileCenterControls) mobileCenterControls.classList.add('hidden-mobile');
+if (mobileSeekLeft) mobileSeekLeft.style.opacity = '0';
+if (mobileSeekRight) mobileSeekRight.style.opacity = '0';
+centerIconDiv.classList.add('hidden-center');
 </script>
 </body>
 </html>
