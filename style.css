@@ -52,26 +52,25 @@ body {
     line-height: 1.6;
 }
 
-/* ========== ناوبار و بانەڕ (گرادێنتی ستوونی) ========== */
+/* ========== ناوبار و بانەڕ ========== */
 .navbar {
     background-color: transparent;
-    background-image: linear-gradient(to bottom, #292929 0%, transparent 100%);
+    background-image: linear-gradient(to bottom, transparent 0%, #292929 100%);
     padding: 0.8rem 2rem;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    transition: background-image 0.2s linear;
+    transition: background-image 0.3s ease;
 }
 
-/* کاتێک سکرۆڵ بە تەواوی کراوە، بانەڕەکە بە تەواوی ڕەنگ دەگرێت */
+/* کاتێک سکرۆڵ کراوە، بانەڕەکە بە تەواوی ڕەنگ دەگرێت */
 .navbar.scrolled {
     background-image: linear-gradient(to bottom, #292929 0%, #292929 100%);
     border-bottom: 1px solid var(--border);
 }
 
-/* لە مۆدی ڕووناکدا */
 [data-theme="light"] .navbar.scrolled {
     background-image: linear-gradient(to bottom, #E5E5E5 0%, #E5E5E5 100%);
 }
