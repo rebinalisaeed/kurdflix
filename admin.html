@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KurdFlix - پەڕەی بەڕێوەبردنی کۆنتێنت</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         .admin-container {
             max-width: 1400px;
@@ -164,6 +164,45 @@
             background-color: var(--bg-primary);
             color: var(--text-primary);
         }
+        .dynamic-list {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .dynamic-item {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .dynamic-item input, .dynamic-item select {
+            flex: 1;
+            padding: 0.5rem;
+            border-radius: 5px;
+            border: 1px solid var(--border);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .remove-item {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.3rem 0.8rem;
+            cursor: pointer;
+        }
+        .add-item {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
         .success-msg, .error-msg {
             position: fixed;
             bottom: 20px;
@@ -184,12 +223,6 @@
             .admin-container { margin-top: 80px; }
             .form-row, .form-row-3 { grid-template-columns: 1fr; }
             .item-card { flex-direction: column; text-align: center; }
-            /* گەورەکردنی سایزی نوسین لە مۆبایلدا */
-            .tab-btn { font-size: 0.9rem; padding: 0.6rem 1rem; }
-            .form-group label { font-size: 0.95rem; }
-            .btn { font-size: 0.9rem; }
-            .item-title { font-size: 1rem; }
-            .item-meta { font-size: 0.9rem; }
         }
         
         #adminAuth {
@@ -290,6 +323,7 @@
                 <button class="tab-btn" data-tab="stats-tab">ئامارەکان</button>
             </div>
             
+            <!-- Tab 1: فیلم و زنجیرەکان -->
             <div id="movies-tab" class="tab-content active">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h3><i class="fas fa-plus-circle"></i> زیادکردنی فیلم/زنجیرەی نوێ</h3>
@@ -304,12 +338,99 @@
                         </div>
                         <div class="form-row">
                             <div class="form-group"><label>لینکی پۆستەر</label><input type="url" id="moviePoster" placeholder="https://example.com/poster.jpg"></div>
-                            <div class="form-group"><label>لینکی ڤیدیۆ</label><input type="url" id="movieVideoUrl" placeholder="https://vidmoly.com/e/..."></div>
+                            <div class="form-group"><label>لینکی ڤیدیۆ</label><input type="url" id="movieVideoUrl" placeholder="https://example.com/video.mp4"></div>
                         </div>
-                        <div class="form-group"><label>لینکی ترایلەر</label><input type="url" id="movieTrailerUrl" placeholder="https://www.youtube.com/embed/..."></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>لینکی ترایلەر</label><input type="url" id="movieTrailerUrl" placeholder="https://www.youtube.com/embed/..."></div>
+                            <div class="form-group"><label>ماوە (Duration)</label><input type="text" id="movieDuration" placeholder="2h 15min یان 45min"></div>
+                        </div>
                         <div class="form-group"><label>کورتە</label><textarea id="movieDescription" rows="3"></textarea></div>
+                        
                         <div class="form-group"><label>چەشنەکان</label><div class="checkbox-group" id="genresCheckbox"></div></div>
+                        
                         <div class="form-group"><label>پۆلە تایبەتییەکان</label><div class="checkbox-group" id="categoriesCheckbox"><label class="checkbox-item"><input type="checkbox" value="kids"> بەرهەمی منداڵان</label><label class="checkbox-item"><input type="checkbox" value="top250"> Top 250</label></div></div>
+                        
+                        <!-- کاست -->
+                        <div class="form-group">
+                            <label><i class="fas fa-users"></i> ئەکتەرەکان (کاست)</label>
+                            <div id="castList" class="dynamic-list">
+                                <div class="dynamic-item cast-item">
+                                    <input type="text" placeholder="ناوی ئەکتەر" class="cast-name">
+                                    <input type="text" placeholder="ڕۆڵ" class="cast-role">
+                                    <button type="button" class="remove-item remove-cast">✖</button>
+                                </div>
+                            </div>
+                            <button type="button" id="addCastBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی ئەکتەر</button>
+                        </div>
+                        
+                        <!-- ستاف -->
+                        <div class="form-group">
+                            <label><i class="fas fa-video"></i> دەرهێنەر و ستاف</label>
+                            <div id="crewList" class="dynamic-list">
+                                <div class="dynamic-item crew-item">
+                                    <input type="text" placeholder="ناو" class="crew-name">
+                                    <input type="text" placeholder="ڕۆڵ (دەرهێنەر، نوسەر، ...)" class="crew-role">
+                                    <button type="button" class="remove-item remove-crew">✖</button>
+                                </div>
+                            </div>
+                            <button type="button" id="addCrewBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی ستاف</button>
+                        </div>
+                        
+                        <!-- ژێرنووس (Subtitles) -->
+                        <div class="form-group">
+                            <label><i class="fas fa-closed-captioning"></i> ژێرنووسەکان (Subtitles)</label>
+                            <div id="subtitlesList" class="dynamic-list">
+                                <div class="dynamic-item subtitle-item">
+                                    <select class="subtitle-lang">
+                                        <option value="ku">کوردی</option>
+                                        <option value="en">English</option>
+                                        <option value="ar">العربية</option>
+                                        <option value="fa">فارسی</option>
+                                        <option value="tr">Türkçe</option>
+                                    </select>
+                                    <input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url">
+                                    <button type="button" class="remove-item remove-subtitle">✖</button>
+                                </div>
+                            </div>
+                            <button type="button" id="addSubtitleBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی ژێرنووس</button>
+                        </div>
+                        
+                        <!-- دەنگ (Audio Tracks) -->
+                        <div class="form-group">
+                            <label><i class="fas fa-headphones"></i> دەنگەکان (Audio Tracks)</label>
+                            <div id="audioList" class="dynamic-list">
+                                <div class="dynamic-item audio-item">
+                                    <select class="audio-lang">
+                                        <option value="original">Original (ڕەسەن)</option>
+                                        <option value="ku">کوردی</option>
+                                        <option value="en">English</option>
+                                        <option value="ar">العربية</option>
+                                        <option value="fa">فارسی</option>
+                                        <option value="tr">Türkçe</option>
+                                    </select>
+                                    <input type="text" placeholder="لینکی فایلی دەنگ (بەتاڵ بێڵە بۆ ڕەسەن)" class="audio-url">
+                                    <button type="button" class="remove-item remove-audio">✖</button>
+                                </div>
+                            </div>
+                            <button type="button" id="addAudioBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی دەنگ</button>
+                        </div>
+                        
+                        <!-- ئەڵقەکان (تەنها بۆ زنجیرە) -->
+                        <div id="episodesSection" style="display: none;">
+                            <div class="form-group">
+                                <label><i class="fas fa-list"></i> ئەڵقەکان (تەنها بۆ زنجیرە)</label>
+                                <div id="episodesList" class="dynamic-list">
+                                    <div class="dynamic-item episode-item">
+                                        <input type="number" placeholder="ژمارەی ئەڵقە" class="episode-number" style="width:100px">
+                                        <input type="text" placeholder="ناونیشانی ئەڵقە" class="episode-title">
+                                        <input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url">
+                                        <button type="button" class="remove-item remove-episode">✖</button>
+                                    </div>
+                                </div>
+                                <button type="button" id="addEpisodeBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی ئەڵقە</button>
+                            </div>
+                        </div>
+                        
                         <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> زیادکردن</button>
                     </form>
                 </div>
@@ -321,6 +442,7 @@
                 </div>
             </div>
             
+            <!-- Tab 2: سلایدەکان -->
             <div id="carousel-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h3><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
@@ -335,7 +457,7 @@
                         </div>
                         <div class="form-group">
                             <label>وێنەکانی سلاید</label>
-                            <div class="image-input-group"><h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل</h4><input type="url" id="slideImageMobile" placeholder="1080x1920"><small>قەبارە: 1080x1920</small></div>
+                            <div class="image-input-group"><h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل</h4><input type="url" id="slideImageMobile" placeholder="1080x1600"><small>قەبارە: 1080x1600</small></div>
                             <div class="image-input-group"><h4><i class="fas fa-tablet-alt"></i> وێنەی تابلێت</h4><input type="url" id="slideImageTablet" placeholder="1200x1600"><small>قەبارە: 1200x1600</small></div>
                             <div class="image-input-group"><h4><i class="fas fa-desktop"></i> وێنەی کۆمپیوتەر</h4><input type="url" id="slideImageDesktop" placeholder="1920x1080"><small>قەبارە: 1920x1080</small></div>
                         </div>
@@ -347,12 +469,14 @@
                 <div><h3><i class="fas fa-images"></i> لیستی سلایدەکان</h3><div id="slidesList" class="items-list"></div></div>
             </div>
             
+            <!-- Tab 3: داتای سایت -->
             <div id="site-tab" class="tab-content">
                 <div class="site-data-section"><h3>دەربارە</h3><textarea id="aboutTextEdit" rows="4"></textarea></div>
                 <div class="site-data-section"><h3>کۆپی‌ڕایت</h3><input type="text" id="copyrightTextEdit" placeholder="kurdflix.com 2026 ©"></div>
                 <div class="site-data-section"><h3>ژمارەی بەرهەم لە هەر پەڕەیەک</h3><input type="number" id="itemsPerPage" min="5" max="50" value="20"></div>
             </div>
             
+            <!-- Tab 4: ئامارەکان -->
             <div id="stats-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px;">
                     <h3><i class="fas fa-chart-bar"></i> ئامارەکان</h3>
