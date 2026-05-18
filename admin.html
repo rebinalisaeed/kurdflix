@@ -161,6 +161,28 @@
             border-radius: 8px;
             padding: 0.5rem 1rem;
             cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-btn:hover {
+            background-color: #b20710;
+        }
+        .upload-progress {
+            display: none;
+            width: 100%;
+            height: 4px;
+            background-color: var(--border);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .upload-progress.active {
+            display: block;
+        }
+        .upload-progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: var(--accent);
+            transition: width 0.3s;
         }
         .dynamic-list {
             background-color: var(--bg-secondary);
@@ -213,6 +235,7 @@
             .admin-container { margin-top: 80px; }
             .form-row, .form-row-3 { grid-template-columns: 1fr; }
             .item-card { flex-direction: column; text-align: center; }
+            .upload-group { flex-direction: column; }
         }
         
         #adminAuth {
@@ -243,6 +266,25 @@
             border: 1px solid var(--border);
             background: var(--bg-primary);
             color: var(--text-primary);
+        }
+        
+        .site-data-section {
+            background-color: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+        }
+        
+        .image-input-group {
+            background-color: var(--bg-primary);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        .image-input-group h4 {
+            margin-bottom: 0.8rem;
+            color: var(--accent);
         }
     </style>
 </head>
@@ -291,7 +333,6 @@
             
             <!-- Tab 1: فیلم و زنجیرەکان -->
             <div id="movies-tab" class="tab-content active">
-                <!-- فۆڕمی زیادکردنی فیلم/زنجیرە -->
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h3><i class="fas fa-plus-circle"></i> زیادکردنی فیلم/زنجیرەی نوێ</h3>
                     <form id="addMovieForm">
@@ -304,8 +345,22 @@
                             <div class="form-group"><label>زمان *</label><select id="movieLang"><option value="kurdish">کوردی</option><option value="turkish">تورکی</option><option value="persian">فارسی</option><option value="arabic">عەرەبی</option><option value="english">ئینگلیزی</option></select></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group"><label>لینکی پۆستەر</label><input type="url" id="moviePoster"></div>
-                            <div class="form-group"><label>لینکی ڤیدیۆ</label><input type="url" id="movieVideoUrl"></div>
+                            <div class="form-group">
+                                <label>لینکی پۆستەر</label>
+                                <div class="upload-group">
+                                    <input type="url" id="moviePoster" placeholder="assets/images/posters/poster.jpg">
+                                    <button type="button" class="upload-btn" data-target="moviePoster" data-type="image">📁 بارکردنی وێنە</button>
+                                </div>
+                                <div class="upload-progress" id="progress-moviePoster"><div class="upload-progress-bar"></div></div>
+                            </div>
+                            <div class="form-group">
+                                <label>لینکی ڤیدیۆ</label>
+                                <div class="upload-group">
+                                    <input type="url" id="movieVideoUrl" placeholder="assets/videos/movie.mp4">
+                                    <button type="button" class="upload-btn" data-target="movieVideoUrl" data-type="video">📁 بارکردنی ڤیدیۆ</button>
+                                </div>
+                                <div class="upload-progress" id="progress-movieVideoUrl"><div class="upload-progress-bar"></div></div>
+                            </div>
                         </div>
                         <div class="form-group"><label>کورتە</label><textarea id="movieDescription" rows="3"></textarea></div>
                         <div class="form-group"><label>چەشنەکان</label><div class="checkbox-group" id="genresCheckbox"></div></div>
@@ -321,26 +376,66 @@
                 </div>
             </div>
             
-            <!-- Tab 2: سلایدەکان -->
+            <!-- Tab 2: سلایدەکان (بە سێ جۆر وێنە) -->
             <div id="carousel-tab" class="tab-content">
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h3><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
                     <form id="addSlideForm">
                         <div class="form-row">
-                            <div class="form-group"><label>ناونیشان *</label><input type="text" id="slideTitle"></div>
-                            <div class="form-group"><label>ساڵ</label><input type="text" id="slideYear"></div>
+                            <div class="form-group"><label>ناونیشان *</label><input type="text" id="slideTitle" required></div>
+                            <div class="form-group"><label>ساڵ</label><input type="text" id="slideYear" placeholder="2024"></div>
                         </div>
                         <div class="form-row">
                             <div class="form-group"><label>پەیوەندی بە فیلم (ID)</label><select id="slideMovieId"></select></div>
+                            <div class="form-group"><label>چەشن (Category)</label><input type="text" id="slideCategory" placeholder="فیلمی کوردی، ..."></div>
                         </div>
-                        <div class="form-group"><label>لینکی وێنەی مۆبایل</label><input type="url" id="slideImageMobile"></div>
-                        <div class="form-group"><label>لینکی وێنەی تابلێت</label><input type="url" id="slideImageTablet"></div>
-                        <div class="form-group"><label>لینکی وێنەی کۆمپیوتەر</label><input type="url" id="slideImageDesktop"></div>
+                        
+                        <!-- سێ جۆر وێنە بۆ سلاید -->
+                        <div class="form-group">
+                            <label>وێنەکانی سلاید (سێ جۆر وێنە بۆ ئامێرە جیاوازەکان)</label>
+                            
+                            <div class="image-input-group">
+                                <h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل (Mobile)</h4>
+                                <div class="upload-group">
+                                    <input type="url" id="slideImageMobile" placeholder="assets/images/slides/mobile.jpg">
+                                    <button type="button" class="upload-btn" data-target="slideImageMobile" data-type="image">📁 بارکردن</button>
+                                </div>
+                                <div class="upload-progress" id="progress-slideImageMobile"><div class="upload-progress-bar"></div></div>
+                                <small>قەبارەی پێشنیارکراو: 1080x1600 پیکسڵ</small>
+                            </div>
+                            
+                            <div class="image-input-group">
+                                <h4><i class="fas fa-tablet-alt"></i> وێنەی تابلێت (Tablet)</h4>
+                                <div class="upload-group">
+                                    <input type="url" id="slideImageTablet" placeholder="assets/images/slides/tablet.jpg">
+                                    <button type="button" class="upload-btn" data-target="slideImageTablet" data-type="image">📁 بارکردن</button>
+                                </div>
+                                <div class="upload-progress" id="progress-slideImageTablet"><div class="upload-progress-bar"></div></div>
+                                <small>قەبارەی پێشنیارکراو: 1200x1600 پیکسڵ</small>
+                            </div>
+                            
+                            <div class="image-input-group">
+                                <h4><i class="fas fa-desktop"></i> وێنەی کۆمپیوتەر (Desktop)</h4>
+                                <div class="upload-group">
+                                    <input type="url" id="slideImageDesktop" placeholder="assets/images/slides/desktop.jpg">
+                                    <button type="button" class="upload-btn" data-target="slideImageDesktop" data-type="image">📁 بارکردن</button>
+                                </div>
+                                <div class="upload-progress" id="progress-slideImageDesktop"><div class="upload-progress-bar"></div></div>
+                                <small>قەبارەی پێشنیارکراو: 1920x1080 پیکسڵ</small>
+                            </div>
+                        </div>
+                        
                         <div class="form-group"><label>کورتە</label><textarea id="slideDescription" rows="2"></textarea></div>
+                        <div class="form-group"><label>چەشنەکان (بۆ سلاید)</label><div class="checkbox-group" id="slideGenresCheckbox"></div></div>
+                        
                         <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> زیادکردنی سلاید</button>
                     </form>
                 </div>
-                <div><h3><i class="fas fa-images"></i> لیستی سلایدەکان</h3><div id="slidesList" class="items-list"></div></div>
+                
+                <div>
+                    <h3><i class="fas fa-images"></i> لیستی سلایدەکان</h3>
+                    <div id="slidesList" class="items-list"></div>
+                </div>
             </div>
             
             <!-- Tab 3: داتای سایت -->
