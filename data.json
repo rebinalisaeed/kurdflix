@@ -7,70 +7,11 @@
             "poster": "assets/posters/poster1.jpg",
             "type": "film",
             "lang": "kurdish",
-            "categories": [
-                "kurdish-film",
-                "all-films"
-            ],
-            "videoUrl": "https://example.com/video.mp4",
+            "categories": ["kurdish-film", "all-films"],
+            "videoUrl": "https://vidmoly.com/e/example1",
             "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا",
             "trailerUrl": "https://www.youtube.com/embed/example1",
-            "duration": "2h 15min",
-            "genres": [
-                "دراما",
-                "ئاکشن",
-                "سەرکێشی"
-            ],
-            "cast": [
-                {
-                    "id": 1,
-                    "name": "هەرێم قادر",
-                    "role": "ڕۆڵی سەرەکی"
-                },
-                {
-                    "id": 2,
-                    "name": "ڕووپەر یەڵماز",
-                    "role": "ڕۆڵی دووەم"
-                }
-            ],
-            "crew": [
-                {
-                    "name": "حەسەن زەکی",
-                    "role": "دەرهێنەر"
-                },
-                {
-                    "name": "سەعید ڕەحمان",
-                    "role": "نوسەر"
-                }
-            ],
-            "subtitles": [
-                {
-                    "lang": "ku",
-                    "label": "کوردی",
-                    "url": "assets/subtitles/movie1_ku.vtt"
-                },
-                {
-                    "lang": "en",
-                    "label": "English",
-                    "url": "assets/subtitles/movie1_en.vtt"
-                },
-                {
-                    "lang": "ar",
-                    "label": "العربية",
-                    "url": "assets/subtitles/movie1_ar.vtt"
-                }
-            ],
-            "audioTracks": [
-                {
-                    "lang": "ku",
-                    "label": "کوردی (دۆبلاژ)",
-                    "url": "assets/audio/movie1_ku.mp3"
-                },
-                {
-                    "lang": "original",
-                    "label": "Original (تورکی)",
-                    "url": ""
-                }
-            ]
+            "genres": ["دراما", "ئاکشن", "سەرکێشی"]
         },
         {
             "id": 2,
@@ -79,184 +20,29 @@
             "poster": "assets/posters/poster2.jpg",
             "type": "series",
             "lang": "turkish",
-            "categories": [
-                "turkish-series",
-                "all-series"
-            ],
+            "categories": ["turkish-series", "all-series"],
             "videoUrl": "https://streamsb.com/e/example2",
-            "description": "زنجیرەیەکی درامایی خێزانی کە چیرۆکی خۆشەویستی و خیانەت دەگێڕێتەوە",
+            "description": "زنجیرەیەکی درامایی و سەرنجڕاکێش",
             "trailerUrl": "https://www.youtube.com/embed/example2",
-            "duration": "45 min per episode",
-            "genres": [
-                "دراما",
-                "ڕۆمانسی",
-                "تراژیدی"
-            ],
-            "cast": [
-                {
-                    "id": 3,
-                    "name": "نەجات ئیسلەر",
-                    "role": "سەرەکی"
-                },
-                {
-                    "id": 4,
-                    "name": "دێران ئاکسۆی",
-                    "role": "سەرەکی"
-                }
-            ],
-            "crew": [
-                {
-                    "name": "تورگوت یەڵماز",
-                    "role": "دەرهێنەر"
-                }
-            ],
-            "episodes": [
-                {
-                    "number": 1,
-                    "title": "ئەڵقەی یەکەم - دەستپێک",
-                    "videoUrl": "https://streamsb.com/e/episode1",
-                    "subtitles": [
-                        {
-                            "lang": "ku",
-                            "label": "کوردی",
-                            "url": "assets/subtitles/series1_ep1_ku.vtt"
-                        }
-                    ],
-                    "audioTracks": [
-                        {
-                            "lang": "original",
-                            "label": "Original (تورکی)",
-                            "url": ""
-                        }
-                    ]
-                },
-                {
-                    "number": 2,
-                    "title": "ئەڵقەی دووەم - ڕازەکان",
-                    "videoUrl": "https://streamsb.com/e/episode2",
-                    "subtitles": [
-                        {
-                            "lang": "ku",
-                            "label": "کوردی",
-                            "url": "assets/subtitles/series1_ep2_ku.vtt"
-                        },
-                        {
-                            "lang": "en",
-                            "label": "English",
-                            "url": "assets/subtitles/series1_ep2_en.vtt"
-                        }
-                    ],
-                    "audioTracks": [
-                        {
-                            "lang": "original",
-                            "label": "Original (تورکی)",
-                            "url": ""
-                        },
-                        {
-                            "lang": "ku",
-                            "label": "کوردی (دۆبلاژ)",
-                            "url": "assets/audio/series1_ep2_ku.mp3"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "id": 3,
-            "title": "تێست",
-            "year": "2021",
-            "poster": "https://raw.githubusercontent.com/rebinalisaeed/kurdflix/refs/heads/main/assets/slides/canva-blue-pink-scrapbook-collage-girls-movie-poster-IZ_ND9-n7pg.jpg",
-            "type": "film",
-            "lang": "kurdish",
-            "videoUrl": "",
-            "trailerUrl": "",
-            "duration": "1:47:00",
-            "description": "کابرایەک هەبوو زۆر دەگریا لۆیە چوو هەندەک گریا",
-            "genres": [
-                "تاوانکاری",
-                "سایکۆلۆژیی",
-                "مێژوویی",
-                "ترسناک"
-            ],
-            "categories": [],
-            "cast": [
-                {
-                    "id": 1779051403607.4585,
-                    "name": "رێبین دەربەندی",
-                    "role": ""
-                },
-                {
-                    "id": 1779051403607.3374,
-                    "name": "باران رێبین",
-                    "role": ""
-                },
-                {
-                    "id": 1779051403607.485,
-                    "name": "لیلە پیکە",
-                    "role": ""
-                }
-            ],
-            "crew": [
-                {
-                    "name": "کابرای نۆتە",
-                    "role": "دەرهێنەر"
-                },
-                {
-                    "name": "کابرای مێزیک",
-                    "role": "نووسەر"
-                }
-            ],
-            "subtitles": [],
-            "audioTracks": [
-                {
-                    "lang": "original",
-                    "label": "Original (ڕەسەن)",
-                    "url": ""
-                }
-            ]
+            "genres": ["دراما", "ڕۆمانسی", "تراژیدی"]
         }
     ],
     "carousel": [
         {
             "id": 1778292633763,
             "title": "Crim 101",
-            "category": "تاوانکاری",
             "year": "2026",
-            "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان، بەو هیوایەی پلانی ئەو دزییە چەندین ملیۆن دۆلارییەیان پووچەڵ بکاتەوە.",
+            "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان",
             "images": {
-                "mobile": "assets/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
-                "tablet": "assets/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
-                "desktop": "assets/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg"
+                "mobile": "assets/slides/slide_mobile.jpg",
+                "tablet": "assets/slides/slide_tablet.jpg",
+                "desktop": "assets/slides/slide_desktop.jpg"
             },
-            "movieId": 1,
-            "genres": [
-                "تاوانکاری",
-                "هەستبزوێن",
-                "دراما"
-            ]
-        },
-        {
-            "id": 1778292974779,
-            "title": "Berlin 2",
-            "category": "درامای ئیسپانی",
-            "year": "2026",
-            "description": "دەستەیەک لە ئیسپانیا گروپێکی دروست دەکەن و هەڵدەکورنە سەر بانکی نێودەوڵەتی ئیسپانیا",
-            "images": {
-                "mobile": "assets/slides/imresizer-1080x1920-money-heist.jpg",
-                "tablet": "assets/slides/imresizer-1080x1920-money-heist.jpg",
-                "desktop": "assets/slides/imresizer-1080x1920-money-heist.jpg"
-            },
-            "movieId": 2,
-            "genres": [
-                "تاوانکاری",
-                "سەرکێشی",
-                "دراما",
-                "هەستبزوێن"
-            ]
+            "movieId": 1
         }
     ],
     "siteData": {
-        "aboutText": "کوردفلێکس پێگەیەکی نوێیە تازەگەری دەکات لە گەیاندنی بەرهەمە سینەماییە خۆماڵیەکان و جیهانیەکان هەروەها ئاشناتان دەکات بە نوێترین بەرهەمی زنجیرە دراماکانی کوردی و دەرەکی.",
+        "aboutText": "کوردفلێکس پێگەیەکی نوێیە تازەگەری دەکات لە گەیاندنی بەرهەمە سینەماییە خۆماڵیەکان و جیهانیەکان",
         "copyrightText": "kurdflix.com 2026 ©",
         "itemsPerPage": 20
     }
