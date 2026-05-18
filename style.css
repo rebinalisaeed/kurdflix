@@ -15,7 +15,7 @@
     font-display: swap;
 }
 
-/* ========== گۆڕاوەکانی ڕەنگ بۆ Dark/Light mode ========== */
+/* ========== گۆڕاوەکانی ڕەنگ (تەنها تاریک) ========== */
 :root {
     --bg-primary: #0A0A0A;
     --bg-secondary: #1A1A1A;
@@ -25,17 +25,6 @@
     --card-bg: #1F1F1F;
     --border: #333;
     --nav-bg-scroll: #292929;
-}
-
-[data-theme="light"] {
-    --bg-primary: #F5F5F5;
-    --bg-secondary: #FFFFFF;
-    --text-primary: #1A1A1A;
-    --text-secondary: #666;
-    --accent: #E50914;
-    --card-bg: #FFFFFF;
-    --border: #DDD;
-    --nav-bg-scroll: #E5E5E5;
 }
 
 * {
@@ -65,14 +54,9 @@ body {
     transition: background-image 0.3s ease;
 }
 
-/* کاتێک سکرۆڵ کراوە (زیاتر لە 150px)، بانەڕەکە بە تەواوی ڕەنگ دەگرێت */
 .navbar.scrolled {
     background-image: linear-gradient(to bottom, #292929 0%, #292929 100%);
     border-bottom: 1px solid var(--border);
-}
-
-[data-theme="light"] .navbar.scrolled {
-    background-image: linear-gradient(to bottom, #E5E5E5 0%, #E5E5E5 100%);
 }
 
 .nav-container {
@@ -83,15 +67,36 @@ body {
 }
 
 .logo {
-    display: flex;
-    align-items: center;
-    line-height: 0;
+    flex-shrink: 0;
+    cursor: pointer;
 }
 
 .logo svg {
     height: 36px;
     width: auto;
     display: block;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    margin-right: auto;
+}
+
+.nav-menu > li > a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.5rem 0;
+    white-space: nowrap;
+    transition: color 0.3s;
+}
+
+.nav-menu > li > a:hover {
+    color: var(--accent);
 }
 
 .hamburger, .mobile-search-icon {
@@ -104,71 +109,11 @@ body {
     padding: 0.5rem;
 }
 
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 1rem;
-    margin: 0;
-    padding: 0;
-}
-
-.nav-menu > li > a {
-    color: var(--text-primary);
-    text-decoration: none;
-    font-size: 0.85rem;
-    padding: 0.5rem 0;
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    white-space: nowrap;
-}
-
-.nav-menu > li > a:hover {
-    color: var(--accent);
-}
-
-.dropdown {
-    position: relative;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background-color: var(--bg-secondary);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    min-width: 200px;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s;
-    z-index: 100;
-    list-style: none;
-    padding: 0.5rem 0;
-}
-
-.dropdown:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-}
-
-.dropdown-menu li a {
-    display: block;
-    padding: 0.5rem 1rem;
-    color: var(--text-primary);
-    text-decoration: none;
-    font-size: 0.85rem;
-}
-
-.dropdown-menu li a:hover {
-    background-color: var(--accent);
-    color: white;
-}
-
 .nav-actions {
     display: flex;
     align-items: center;
     gap: 0.8rem;
+    flex-shrink: 0;
 }
 
 .search-icon, .login-icon {
@@ -193,60 +138,6 @@ body {
     cursor: pointer;
     font-size: 0.8rem;
     white-space: nowrap;
-}
-
-.theme-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-}
-
-.theme-toggle i {
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 40px;
-    height: 20px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #ccc;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 14px;
-    width: 14px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    border-radius: 50%;
-}
-
-input:checked + .slider {
-    background-color: var(--accent);
-}
-
-input:checked + .slider:before {
-    transform: translateX(20px);
 }
 
 .search-form {
@@ -291,7 +182,7 @@ input:checked + .slider:before {
     color: white;
 }
 
-/* ========== سلایدی سەرەکی (بەبێ پاشەڕەنگ) ========== */
+/* ========== سلایدی سەرەکی ========== */
 .hero-carousel {
     position: relative;
     width: 100%;
@@ -342,13 +233,11 @@ input:checked + .slider:before {
     }
 }
 
-/* ناوەڕۆکی سلاید - بەبێ پاشەڕەنگ */
 .carousel-content {
     position: absolute;
     bottom: 4%;
     left: 0;
     right: 0;
-    /* هیچ پاشەڕەنگێک نییە */
     padding: 2rem 2rem 2.5rem 2rem;
     text-align: center;
     color: white;
@@ -636,7 +525,7 @@ input:checked + .slider:before {
 .mobile-nav-links {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
     margin-bottom: 2rem;
 }
 
@@ -646,36 +535,11 @@ input:checked + .slider:before {
     font-size: 1rem;
     padding: 0.5rem 0;
     display: block;
+    transition: color 0.3s;
 }
 
-.mobile-dropdown-toggle {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    background: none;
-    border: none;
-    color: var(--text-primary);
-    font-size: 1rem;
-    padding: 0.5rem 0;
-    cursor: pointer;
-}
-
-.mobile-dropdown-menu {
-    list-style: none;
-    padding-right: 1rem;
-    margin-top: 0.5rem;
-    display: none;
-}
-
-.mobile-dropdown-menu.active {
-    display: block;
-}
-
-.mobile-dropdown-menu li a {
-    font-size: 0.9rem;
-    padding: 0.4rem 0;
-    color: var(--text-secondary);
+.mobile-nav-links a:hover {
+    color: var(--accent);
 }
 
 .mobile-actions {
@@ -702,12 +566,6 @@ input:checked + .slider:before {
     color: #1A1A1A;
     font-weight: bold;
     cursor: pointer;
-}
-
-.mobile-theme-toggle {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 /* ========== فووتەر ========== */
@@ -905,14 +763,6 @@ footer {
         font-size: 1.15rem;
     }
     
-    .mobile-dropdown-toggle {
-        font-size: 1.15rem;
-    }
-    
-    .mobile-dropdown-menu li a {
-        font-size: 1rem;
-    }
-    
     .mobile-login {
         font-size: 1.1rem;
     }
@@ -920,10 +770,6 @@ footer {
     .mobile-vip-btn {
         font-size: 1rem;
         padding: 0.6rem;
-    }
-    
-    .mobile-theme-toggle span {
-        font-size: 1rem;
     }
     
     .social-icons {
