@@ -328,7 +328,7 @@ function initModals() {
     window.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.style.display = 'none'; if (e.target === vipModal) vipModal.style.display = 'none'; });
 }
 
-// ========== گۆڕینی بانەڕ بەپێی ڕێژەی سکرۆڵ ==========
+// ========== گۆڕینی بانەڕ بەپێی ڕێژەی سکرۆڵ (150px) ==========
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
