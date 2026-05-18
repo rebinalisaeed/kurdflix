@@ -72,6 +72,7 @@ async function loadAdminData() {
         updateSlideMovieSelect();
         renderStats();
         loadSiteDataToForm();
+        initFileUploads();
     } catch (error) {
         currentData = { movies: [], carousel: [], siteData: { aboutText: "", copyrightText: "", itemsPerPage: 20 } };
         renderGenresCheckbox();
@@ -81,21 +82,26 @@ async function loadAdminData() {
     }
 }
 
+// ========== چەشنەکان ==========
 function renderGenresCheckbox() {
     const container = document.getElementById('genresCheckbox');
     if (container) {
         container.innerHTML = GENRES_LIST.map(genre => `<label class="checkbox-item"><input type="checkbox" value="${genre}"> ${genre}</label>`).join('');
     }
+    const slideGenresContainer = document.getElementById('slideGenresCheckbox');
+    if (slideGenresContainer) {
+        slideGenresContainer.innerHTML = GENRES_LIST.map(genre => `<label class="checkbox-item"><input type="checkbox" value="${genre}"> ${genre}</label>`).join('');
+    }
 }
 
-function getSelectedGenres() {
+function getSelectedGenres(containerId = 'genresCheckbox') {
     const selected = [];
-    document.querySelectorAll('#genresCheckbox input[type="checkbox"]:checked').forEach(cb => selected.push(cb.value));
+    document.querySelectorAll(`#${containerId} input[type="checkbox"]:checked`).forEach(cb => selected.push(cb.value));
     return selected;
 }
 
-function setSelectedGenres(genres) {
-    document.querySelectorAll('#genresCheckbox input[type="checkbox"]').forEach(cb => {
+function setSelectedGenres(containerId, genres) {
+    document.querySelectorAll(`#${containerId} input[type="checkbox"]`).forEach(cb => {
         cb.checked = genres && genres.includes(cb.value);
     });
 }
@@ -124,7 +130,7 @@ document.getElementById('addMovieForm')?.addEventListener('submit', (e) => {
         lang: document.getElementById('movieLang').value,
         videoUrl: document.getElementById('movieVideoUrl').value,
         description: document.getElementById('movieDescription').value || 'زانیاری زیادە بەم زووانە دەخرێتە ناو سایت',
-        genres: getSelectedGenres(),
+        genres: getSelectedGenres('genresCheckbox'),
         categories: getSelectedCategories()
     };
     
@@ -159,7 +165,7 @@ function editMovie(movie) {
     document.getElementById('movieLang').value = movie.lang || 'other';
     document.getElementById('movieVideoUrl').value = movie.videoUrl || '';
     document.getElementById('movieDescription').value = movie.description || '';
-    setSelectedGenres(movie.genres);
+    setSelectedGenres('genresCheckbox', movie.genres);
     setSelectedCategories(movie.categories);
     document.querySelector('#addMovieForm button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> پاشەکەوتکردنی گۆڕانکارییەکان';
     document.getElementById('movies-tab').scrollIntoView({ behavior: 'smooth' });
@@ -222,6 +228,7 @@ document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     const slideData = {
         title: document.getElementById('slideTitle').value,
+        category: document.getElementById('slideCategory').value,
         year: document.getElementById('slideYear').value,
         description: document.getElementById('slideDescription').value,
         images: {
@@ -229,7 +236,8 @@ document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
             tablet: document.getElementById('slideImageTablet').value,
             desktop: document.getElementById('slideImageDesktop').value
         },
-        movieId: parseInt(document.getElementById('slideMovieId').value)
+        movieId: parseInt(document.getElementById('slideMovieId').value),
+        genres: getSelectedGenres('slideGenresCheckbox')
     };
     
     if (editingSlideId) {
@@ -246,6 +254,7 @@ document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
         showMessage('سلاید بە سەرکەوتوویی زیاد کرا', 'success');
     }
     document.getElementById('addSlideForm').reset();
+    document.querySelectorAll('#slideGenresCheckbox input').forEach(cb => cb.checked = false);
     renderSlidesList();
     renderStats();
 });
@@ -253,12 +262,14 @@ document.getElementById('addSlideForm')?.addEventListener('submit', (e) => {
 function editSlide(slide) {
     editingSlideId = slide.id;
     document.getElementById('slideTitle').value = slide.title;
+    document.getElementById('slideCategory').value = slide.category || '';
     document.getElementById('slideYear').value = slide.year || '';
     document.getElementById('slideDescription').value = slide.description || '';
     document.getElementById('slideImageMobile').value = slide.images?.mobile || '';
     document.getElementById('slideImageTablet').value = slide.images?.tablet || '';
     document.getElementById('slideImageDesktop').value = slide.images?.desktop || '';
     document.getElementById('slideMovieId').value = slide.movieId || '';
+    setSelectedGenres('slideGenresCheckbox', slide.genres);
     document.querySelector('#addSlideForm button[type="submit"]').innerHTML = '<i class="fas fa-save"></i> پاشەکەوتکردنی گۆڕانکارییەکان';
     document.getElementById('carousel-tab').scrollIntoView({ behavior: 'smooth' });
 }
@@ -277,8 +288,9 @@ function renderSlidesList() {
         div.innerHTML = `
             <div class="item-info">
                 <div class="item-title">${escapeHtml(slide.title)}</div>
-                <div class="item-meta">${slide.year || ''} | ID فیلم: ${slide.movieId}</div>
-                <div class="item-meta">وێنەکان: ${slide.images?.mobile ? '✓' : '✗'} | ${slide.images?.tablet ? '✓' : '✗'} | ${slide.images?.desktop ? '✓' : '✗'}</div>
+                <div class="item-meta">${slide.category || '---'} | ${slide.year || ''} | ID فیلم: ${slide.movieId}</div>
+                <div class="item-meta">چەشنەکان: ${slide.genres?.join(', ') || '---'}</div>
+                <div class="item-meta">وێنەکان: ${slide.images?.mobile ? 'مۆبایل ✓' : 'مۆبایل ✗'} | ${slide.images?.tablet ? 'تابلێت ✓' : 'تابلێت ✗'} | ${slide.images?.desktop ? 'کۆمپیوتەر ✓' : 'کۆمپیوتەر ✗'}</div>
             </div>
             <div class="item-actions">
                 <button class="btn btn-warning edit-slide" data-id="${slide.id}"><i class="fas fa-edit"></i> دەستکاری</button>
@@ -333,16 +345,123 @@ function saveSiteData() {
     currentData.siteData.itemsPerPage = parseInt(document.getElementById('itemsPerPage')?.value) || 20;
 }
 
-// ========== پاشەکەوتکردن ==========
-async function saveAllData() {
-    saveSiteData();
-    try {
-        const response = await fetch('save_data.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(currentData) });
-        if (response.ok) showMessage('هەموو گۆڕانکارییەکان بە سەرکەوتوویی پاشەکەوت کرا', 'success');
-        else downloadData();
-    } catch (error) { downloadData(); }
+// ========== سیستەمی بارکردنی فایل ==========
+async function uploadFile(file, type) {
+    return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('type', type);
+        
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', 'upload.php', true);
+        
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    if (response.success) {
+                        resolve(response.url);
+                    } else {
+                        reject(response.error || 'Upload failed');
+                    }
+                } catch (e) {
+                    reject('Invalid response from server');
+                }
+            } else {
+                reject('Server error: ' + xhr.status);
+            }
+        };
+        
+        xhr.onerror = function() {
+            reject('Network error');
+        };
+        
+        xhr.send(formData);
+    });
 }
 
+function initFileUploads() {
+    document.querySelectorAll('.upload-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            const targetId = btn.dataset.target;
+            const fileType = btn.dataset.type;
+            const targetInput = document.getElementById(targetId);
+            const progressDiv = document.getElementById(`progress-${targetId}`);
+            
+            if (!targetInput) return;
+            
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            
+            if (fileType === 'image') {
+                fileInput.accept = 'image/*';
+            } else if (fileType === 'video') {
+                fileInput.accept = 'video/*';
+            } else if (fileType === 'audio') {
+                fileInput.accept = 'audio/*';
+            }
+            
+            fileInput.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                if (progressDiv) {
+                    progressDiv.classList.add('active');
+                    const bar = progressDiv.querySelector('.upload-progress-bar');
+                    if (bar) bar.style.width = '50%';
+                }
+                
+                try {
+                    const url = await uploadFile(file, fileType);
+                    targetInput.value = url;
+                    if (progressDiv) {
+                        const bar = progressDiv.querySelector('.upload-progress-bar');
+                        if (bar) bar.style.width = '100%';
+                        setTimeout(() => {
+                            progressDiv.classList.remove('active');
+                            if (bar) bar.style.width = '0%';
+                        }, 1000);
+                    }
+                    showMessage('فایل بە سەرکەوتوویی بارکرا!', 'success');
+                } catch (error) {
+                    showMessage('هەڵە لە بارکردنی فایل: ' + error, 'error');
+                    if (progressDiv) {
+                        progressDiv.classList.remove('active');
+                    }
+                }
+            };
+            
+            fileInput.click();
+        });
+    });
+}
+
+// ========== Import فایل (هێنانی data.json) ==========
+function initImportFile() {
+    const importFile = document.getElementById('importFile');
+    if (importFile) {
+        importFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const importedData = JSON.parse(event.target.result);
+                    currentData = importedData;
+                    renderMoviesList();
+                    renderSlidesList();
+                    updateSlideMovieSelect();
+                    renderStats();
+                    loadSiteDataToForm();
+                    showMessage('داتاکە بە سەرکەوتوویی هێنرایەوە', 'success');
+                } catch (error) { showMessage('هەڵە لە خوێندنەوەی فایلەکە', 'error'); }
+            };
+            reader.readAsText(file);
+        });
+    }
+}
+
+// ========== دابەزاندنی data.json ==========
 function downloadData() {
     const dataStr = JSON.stringify(currentData, null, 4);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -352,27 +471,8 @@ function downloadData() {
     a.download = 'data.json';
     a.click();
     URL.revokeObjectURL(url);
-    showMessage('داتاکە دابەزێنرا، تکایە بە دەست data.json لەگەڵ فایلەکانی تردا ڕێکبخەرەوە', 'success');
+    showMessage('داتاکە دابەزێنرا', 'success');
 }
-
-document.getElementById('importFile')?.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        try {
-            const importedData = JSON.parse(event.target.result);
-            currentData = importedData;
-            renderMoviesList();
-            renderSlidesList();
-            updateSlideMovieSelect();
-            renderStats();
-            loadSiteDataToForm();
-            showMessage('داتاکە بە سەرکەوتوویی هێنرایەوە', 'success');
-        } catch (error) { showMessage('هەڵە لە خوێندنەوەی فایلەکە', 'error'); }
-    };
-    reader.readAsText(file);
-});
 
 function renderStats() {
     const container = document.getElementById('statsInfo');
@@ -407,6 +507,17 @@ function escapeHtml(str) {
     });
 }
 
+// ========== پاشەکەوتکردن ==========
+async function saveAllData() {
+    saveSiteData();
+    try {
+        const response = await fetch('save_data.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(currentData) });
+        if (response.ok) showMessage('هەموو گۆڕانکارییەکان بە سەرکەوتوویی پاشەکەوت کرا', 'success');
+        else downloadData();
+    } catch (error) { downloadData(); }
+}
+
+// ========== فیلتەر و تابات ==========
 document.getElementById('searchMovies')?.addEventListener('input', () => renderMoviesList());
 document.getElementById('filterType')?.addEventListener('change', () => renderMoviesList());
 
@@ -431,11 +542,14 @@ function cancelEdit() {
 function cancelEditSlide() {
     editingSlideId = null;
     document.getElementById('addSlideForm').reset();
+    document.querySelectorAll('#slideGenresCheckbox input').forEach(cb => cb.checked = false);
     document.querySelector('#addSlideForm button[type="submit"]').innerHTML = '<i class="fas fa-plus"></i> زیادکردنی سلاید';
 }
 
 document.getElementById('saveAllBtn')?.addEventListener('click', saveAllData);
 document.getElementById('exportDataBtn')?.addEventListener('click', downloadData);
 
+// ========== Initialize ==========
 initAdminAuth();
 loadAdminData();
+initImportFile();
