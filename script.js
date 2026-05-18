@@ -221,47 +221,6 @@ function initSliderControls() {
     });
 }
 
-function initTheme() {
-    const themeSwitch = document.getElementById('theme-switch');
-    const mobileThemeSwitch = document.getElementById('mobile-theme-switch');
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-        document.body.setAttribute('data-theme', 'light');
-        if (themeSwitch) themeSwitch.checked = true;
-        if (mobileThemeSwitch) mobileThemeSwitch.checked = true;
-    } else {
-        document.body.setAttribute('data-theme', 'dark');
-        if (themeSwitch) themeSwitch.checked = false;
-        if (mobileThemeSwitch) mobileThemeSwitch.checked = false;
-    }
-    if (themeSwitch) {
-        themeSwitch.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                document.body.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-                if (mobileThemeSwitch) mobileThemeSwitch.checked = true;
-            } else {
-                document.body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                if (mobileThemeSwitch) mobileThemeSwitch.checked = false;
-            }
-        });
-    }
-    if (mobileThemeSwitch) {
-        mobileThemeSwitch.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                document.body.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-                if (themeSwitch) themeSwitch.checked = true;
-            } else {
-                document.body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                if (themeSwitch) themeSwitch.checked = false;
-            }
-        });
-    }
-}
-
 function initHamburger() {
     const hamburger = document.getElementById('hamburgerBtn');
     const closeBtn = document.getElementById('closeMenuBtn');
@@ -288,17 +247,7 @@ function initHamburger() {
 }
 
 function initMobileDropdowns() {
-    document.querySelectorAll('.mobile-dropdown-toggle').forEach(toggle => {
-        toggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            const menu = toggle.parentElement.querySelector('.mobile-dropdown-menu');
-            if (menu) {
-                menu.classList.toggle('active');
-                const icon = toggle.querySelector('i');
-                if (icon) { icon.classList.toggle('fa-chevron-down'); icon.classList.toggle('fa-chevron-up'); }
-            }
-        });
-    });
+    // درۆپ داون لابراوە - ئەم فەنکشنە بەتاڵە
 }
 
 function initSearch() {
@@ -328,13 +277,22 @@ function initModals() {
     window.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.style.display = 'none'; if (e.target === vipModal) vipModal.style.display = 'none'; });
 }
 
+// ========== کرتە کردنی لۆگۆ بۆ گەڕانەوە بۆ پەڕەی سەرەکی ==========
+function initLogoClick() {
+    const logo = document.getElementById('logoBtn');
+    if (logo) {
+        logo.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    }
+}
+
 // ========== گۆڕینی بانەڕ بەپێی ڕێژەی سکرۆڵ (150px) ==========
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
     
     function checkScroll() {
-        // ئەگەر سکرۆڵ زیاتر لە 150px بوو، کلاسی scrolled زیاد بکە
         if (window.scrollY >= 150) {
             navbar.classList.add('scrolled');
         } else {
@@ -342,20 +300,17 @@ function initNavbarScroll() {
         }
     }
     
-    // بانگی فەنکشنی یەکەمجار
     checkScroll();
-    
-    // بانگی فەنکشن کاتێک سکرۆڵ دەکرێت
     window.addEventListener('scroll', checkScroll);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
     initSliderControls();
-    initTheme();
     initHamburger();
     initMobileDropdowns();
     initSearch();
     initModals();
+    initLogoClick();
     initNavbarScroll();
 });
