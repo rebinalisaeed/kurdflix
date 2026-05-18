@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>KurdFlix - دۆبلاژی کوردی</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome 6.5.2 (نوێکراوە) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body data-theme="dark">
@@ -14,7 +13,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></div>
-            <div class="logo">
+            <div class="logo" id="logoBtn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
                     <defs><path id="arcPath" d="M 10,168 Q 450,100 890,168" /></defs>
                     <text font-family="'Arial Black'" font-size="148" font-weight="900" font-style="italic" fill="#E50914" letter-spacing="-3">
@@ -24,51 +23,17 @@
             </div>
             <div class="mobile-search-icon" id="mobileSearchIcon"><i class="fas fa-search"></i></div>
             <ul class="nav-menu" id="navMenu">
-                <li class="dropdown"><a href="#">فیلمەکان <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#" data-category="all-films">هەموو</a></li>
-                        <li><a href="#" data-category="kurdish-film">فیلمی کوردی</a></li>
-                        <li><a href="#" data-category="hollywood">هۆلیوود</a></li>
-                        <li><a href="#" data-category="bollywood">بۆلیوود</a></li>
-                        <li><a href="#" data-category="turkish-film">فیلمی تورکی</a></li>
-                        <li><a href="#" data-category="arabic-film">فیلمی عەرەبی</a></li>
-                        <li><a href="#" data-category="persian-film">فیلمی فارسی</a></li>
-                        <li><a href="#" data-category="korean-film">فیلمی کۆری</a></li>
-                        <li><a href="#" data-category="european-film">فیلمی ئەوروپی</a></li>
-                        <li><a href="#" data-category="anime-film">ئەنیمی و ئەنیمەیشن</a></li>
-                        <li><a href="#" data-category="short-film">کورتە فیلم</a></li>
-                    </ul>
-                </li>
-                <li class="dropdown"><a href="#">زنجیرەکان <i class="fas fa-chevron-down"></i></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#" data-category="all-series">هەموو</a></li>
-                        <li><a href="#" data-category="kurdish-series">زنجیرەی کوردی</a></li>
-                        <li><a href="#" data-category="turkish-series">زنجیرەی تورکی</a></li>
-                        <li><a href="#" data-category="korean-series">زنجیرەی کۆری</a></li>
-                        <li><a href="#" data-category="persian-series">زنجیرەی فارسی</a></li>
-                        <li><a href="#" data-category="arabic-series">زنجیرەی عەرەبی</a></li>
-                        <li><a href="#" data-category="spanish-series">زنجیرەی ئیسپانی</a></li>
-                        <li><a href="#" data-category="indian-series">زنجیرەی هیندی</a></li>
-                        <li><a href="#" data-category="american-series">زنجیرەی ئەمەریکی</a></li>
-                        <li><a href="#" data-category="documentary">بەڵگەنامەیی</a></li>
-                        <li><a href="#" data-category="anime-series">ئەنیمی</a></li>
-                        <li><a href="#" data-category="animation">ئەنیمەیشن</a></li>
-                    </ul>
-                </li>
+                <li><a href="all-movies.html?type=films">فیلمەکان</a></li>
+                <li><a href="all-movies.html?type=series">زنجیرەکان</a></li>
                 <li><a href="#">زنجیرەفیلم</a></li>
                 <li><a href="#">ژێرنووسی کوردی</a></li>
-                <li><a href="#">Top 250</a></li>
+                <li><a href="all-movies.html?top250">Top 250</a></li>
                 <li><a href="staff.html">ستافی کوردفلێکس</a></li>
             </ul>
             <div class="nav-actions">
                 <div class="search-icon" id="searchIcon"><i class="fas fa-search"></i></div>
                 <div class="login-icon" id="loginIcon"><i class="fas fa-user"></i></div>
                 <button class="vip-btn" id="vipBtn">VIP</button>
-                <div class="theme-toggle">
-                    <i class="fas fa-sun"></i>
-                    <label class="switch"><input type="checkbox" id="theme-switch"><span class="slider round"></span></label>
-                    <i class="fas fa-moon"></i>
-                </div>
             </div>
         </div>
         <div class="search-form" id="searchForm" style="display: none;">
@@ -181,54 +146,21 @@
         <div class="mobile-menu-header"><button class="close-menu" id="closeMenuBtn"><i class="fas fa-times"></i></button></div>
         <div class="mobile-menu-content">
             <div class="mobile-nav-links">
-                <div class="mobile-dropdown"><a href="#" class="mobile-dropdown-toggle">فیلمەکان <i class="fas fa-chevron-down"></i></a>
-                    <ul class="mobile-dropdown-menu">
-                        <li><a href="#" data-category="all-films">─ هەموو</a></li>
-                        <li><a href="#" data-category="kurdish-film">─ فیلمی کوردی</a></li>
-                        <li><a href="#" data-category="hollywood">─ هۆلیوود</a></li>
-                        <li><a href="#" data-category="bollywood">─ بۆلیوود</a></li>
-                        <li><a href="#" data-category="turkish-film">─ فیلمی تورکی</a></li>
-                        <li><a href="#" data-category="arabic-film">─ فیلمی عەرەبی</a></li>
-                        <li><a href="#" data-category="persian-film">─ فیلمی فارسی</a></li>
-                        <li><a href="#" data-category="korean-film">─ فیلمی کۆری</a></li>
-                        <li><a href="#" data-category="european-film">─ فیلمی ئەوروپی</a></li>
-                        <li><a href="#" data-category="anime-film">─ ئەنیمی و ئەنیمەیشن</a></li>
-                        <li><a href="#" data-category="short-film">─ کورتە فیلم</a></li>
-                    </ul>
-                </div>
-                <div class="mobile-dropdown"><a href="#" class="mobile-dropdown-toggle">زنجیرەکان <i class="fas fa-chevron-down"></i></a>
-                    <ul class="mobile-dropdown-menu">
-                        <li><a href="#" data-category="all-series">─ هەموو</a></li>
-                        <li><a href="#" data-category="kurdish-series">─ زنجیرەی کوردی</a></li>
-                        <li><a href="#" data-category="turkish-series">─ زنجیرەی تورکی</a></li>
-                        <li><a href="#" data-category="korean-series">─ زنجیرەی کۆری</a></li>
-                        <li><a href="#" data-category="persian-series">─ زنجیرەی فارسی</a></li>
-                        <li><a href="#" data-category="arabic-series">─ زنجیرەی عەرەبی</a></li>
-                        <li><a href="#" data-category="spanish-series">─ زنجیرەی ئیسپانی</a></li>
-                        <li><a href="#" data-category="indian-series">─ زنجیرەی هیندی</a></li>
-                        <li><a href="#" data-category="american-series">─ زنجیرەی ئەمەریکی</a></li>
-                        <li><a href="#" data-category="documentary">─ بەڵگەنامەیی</a></li>
-                        <li><a href="#" data-category="anime-series">─ ئەنیمی</a></li>
-                        <li><a href="#" data-category="animation">─ ئەنیمەیشن</a></li>
-                    </ul>
-                </div>
+                <a href="all-movies.html?type=films">فیلمەکان</a>
+                <a href="all-movies.html?type=series">زنجیرەکان</a>
                 <a href="#">زنجیرەفیلم</a>
                 <a href="#">ژێرنووسی کوردی</a>
-                <a href="#">Top 250</a>
+                <a href="all-movies.html?top250">Top 250</a>
                 <a href="staff.html">ستافی کوردفلێکس</a>
             </div>
             <div class="mobile-actions">
                 <div class="mobile-login" id="mobileLoginIcon"><i class="fas fa-user"></i> چوونە ژوورەوە</div>
                 <button class="mobile-vip-btn" id="mobileVipBtn">VIP</button>
-                <div class="mobile-theme-toggle">
-                    <span>ڕووناکی / تاریکی</span>
-                    <label class="switch"><input type="checkbox" id="mobile-theme-switch"><span class="slider round"></span></label>
-                </div>
             </div>
         </div>
     </div>
 
-    <!-- ==================== فووتەر (بە لۆگۆکانی سۆشیال میدیا) ==================== -->
+    <!-- ==================== فووتەر ==================== -->
     <footer>
         <div class="footer-social">
             <div class="footer-logo">
