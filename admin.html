@@ -88,9 +88,6 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .checkbox-item input {
-            width: auto;
-        }
         .btn {
             padding: 0.8rem 1.5rem;
             border: none;
@@ -150,19 +147,20 @@
             display: flex;
             gap: 0.5rem;
         }
-        .search-filter {
+        .upload-group {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 0.5rem;
+            align-items: center;
             flex-wrap: wrap;
+            margin-top: 0.5rem;
         }
-        .search-filter input, .search-filter select {
-            flex: 1;
-            padding: 0.5rem;
+        .upload-btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
             border-radius: 8px;
-            border: 1px solid var(--border);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            cursor: pointer;
         }
         .dynamic-list {
             background-color: var(--bg-secondary);
@@ -177,14 +175,6 @@
             margin-bottom: 0.5rem;
             align-items: center;
             flex-wrap: wrap;
-        }
-        .dynamic-item input, .dynamic-item select {
-            flex: 1;
-            padding: 0.5rem;
-            border-radius: 5px;
-            border: 1px solid var(--border);
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
         }
         .remove-item {
             background-color: #dc3545;
@@ -202,47 +192,6 @@
             padding: 0.5rem 1rem;
             cursor: pointer;
             margin-top: 0.5rem;
-        }
-        .upload-group {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-top: 0.5rem;
-        }
-        .upload-btn, .upload-btn-small {
-            background-color: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-            transition: all 0.3s;
-        }
-        .upload-btn-small {
-            padding: 0.3rem 0.8rem;
-        }
-        .upload-btn:hover, .upload-btn-small:hover {
-            background-color: #b20710;
-        }
-        .upload-progress {
-            display: none;
-            width: 100%;
-            height: 4px;
-            background-color: var(--border);
-            border-radius: 2px;
-            margin-top: 0.5rem;
-            overflow: hidden;
-        }
-        .upload-progress.active {
-            display: block;
-        }
-        .upload-progress-bar {
-            width: 0%;
-            height: 100%;
-            background-color: var(--accent);
-            transition: width 0.3s;
         }
         .success-msg, .error-msg {
             position: fixed;
@@ -264,8 +213,6 @@
             .admin-container { margin-top: 80px; }
             .form-row, .form-row-3 { grid-template-columns: 1fr; }
             .item-card { flex-direction: column; text-align: center; }
-            .dynamic-item { flex-direction: column; }
-            .upload-group { flex-direction: column; }
         }
         
         #adminAuth {
@@ -297,25 +244,6 @@
             background: var(--bg-primary);
             color: var(--text-primary);
         }
-        
-        .site-data-section {
-            background-color: var(--bg-secondary);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-        }
-        
-        .image-input-group {
-            background-color: var(--bg-primary);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            margin-bottom: 1rem;
-        }
-        .image-input-group h4 {
-            margin-bottom: 0.8rem;
-            color: var(--accent);
-        }
     </style>
 </head>
 <body data-theme="dark">
@@ -334,7 +262,7 @@
     <div id="adminContent" style="display: none;">
         <nav class="navbar">
             <div class="nav-container">
-                <div class="logo">
+                <div class="logo" id="logoBtn">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
                         <defs><path id="arcPath" d="M 10,168 Q 450,100 890,168" /></defs>
                         <text font-family="'Arial Black'" font-size="148" font-weight="900" font-style="italic" fill="#E50914" letter-spacing="-3">
@@ -344,11 +272,6 @@
                 </div>
                 <div class="nav-actions">
                     <a href="index.html" style="color: var(--text-primary);"><i class="fas fa-home"></i> گەڕانەوە</a>
-                    <div class="theme-toggle">
-                        <i class="fas fa-sun"></i>
-                        <label class="switch"><input type="checkbox" id="theme-switch"><span class="slider round"></span></label>
-                        <i class="fas fa-moon"></i>
-                    </div>
                 </div>
             </div>
         </nav>
@@ -368,142 +291,25 @@
             
             <!-- Tab 1: فیلم و زنجیرەکان -->
             <div id="movies-tab" class="tab-content active">
+                <!-- فۆڕمی زیادکردنی فیلم/زنجیرە -->
                 <div style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; margin-bottom: 2rem;">
                     <h3><i class="fas fa-plus-circle"></i> زیادکردنی فیلم/زنجیرەی نوێ</h3>
                     <form id="addMovieForm">
                         <div class="form-row">
-                            <div class="form-group"><label>ناونیشان *</label><input type="text" id="movieTitle" required placeholder="ناوی فیلم یان زنجیرە..."></div>
-                            <div class="form-group"><label>ساڵ *</label><input type="text" id="movieYear" required placeholder="2024"></div>
+                            <div class="form-group"><label>ناونیشان *</label><input type="text" id="movieTitle" required></div>
+                            <div class="form-group"><label>ساڵ *</label><input type="text" id="movieYear" required></div>
                         </div>
                         <div class="form-row">
                             <div class="form-group"><label>جۆر *</label><select id="movieType"><option value="film">فیلم</option><option value="series">زنجیرە</option></select></div>
-                            <div class="form-group"><label>زمان / وڵات *</label><select id="movieLang"><option value="kurdish">کوردی</option><option value="turkish">تورکی</option><option value="persian">فارسی</option><option value="arabic">عەرەبی</option><option value="english">ئینگلیزی</option><option value="korean">کۆری</option><option value="spanish">ئیسپانی</option><option value="indian">هیندی</option><option value="other">دیکە</option></select></div>
+                            <div class="form-group"><label>زمان *</label><select id="movieLang"><option value="kurdish">کوردی</option><option value="turkish">تورکی</option><option value="persian">فارسی</option><option value="arabic">عەرەبی</option><option value="english">ئینگلیزی</option></select></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group">
-                                <label>لینکی پۆستەر</label>
-                                <div class="upload-group">
-                                    <input type="url" id="moviePoster" placeholder="https://example.com/poster.jpg">
-                                    <button type="button" class="upload-btn" data-target="moviePoster" data-type="image">📁 بارکردنی وێنە</button>
-                                </div>
-                                <div class="upload-progress" id="progress-moviePoster"><div class="upload-progress-bar"></div></div>
-                            </div>
-                            <div class="form-group">
-                                <label>لینکی ڤیدیۆ</label>
-                                <div class="upload-group">
-                                    <input type="url" id="movieVideoUrl" placeholder="https://example.com/video.mp4">
-                                    <button type="button" class="upload-btn" data-target="movieVideoUrl" data-type="video">📁 بارکردنی ڤیدیۆ</button>
-                                </div>
-                                <div class="upload-progress" id="progress-movieVideoUrl"><div class="upload-progress-bar"></div></div>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>لینکی ترایلەر</label>
-                                <div class="upload-group">
-                                    <input type="url" id="movieTrailerUrl" placeholder="https://www.youtube.com/embed/...">
-                                    <button type="button" class="upload-btn" data-target="movieTrailerUrl" data-type="video">📁 بارکردنی ڤیدیۆ</button>
-                                </div>
-                                <div class="upload-progress" id="progress-movieTrailerUrl"><div class="upload-progress-bar"></div></div>
-                            </div>
-                            <div class="form-group"><label>ماوە (Duration)</label><input type="text" id="movieDuration" placeholder="2h 15min یان 45min"></div>
+                            <div class="form-group"><label>لینکی پۆستەر</label><input type="url" id="moviePoster"></div>
+                            <div class="form-group"><label>لینکی ڤیدیۆ</label><input type="url" id="movieVideoUrl"></div>
                         </div>
                         <div class="form-group"><label>کورتە</label><textarea id="movieDescription" rows="3"></textarea></div>
-                        
                         <div class="form-group"><label>چەشنەکان</label><div class="checkbox-group" id="genresCheckbox"></div></div>
-                        
                         <div class="form-group"><label>پۆلە تایبەتییەکان</label><div class="checkbox-group" id="categoriesCheckbox"><label class="checkbox-item"><input type="checkbox" value="kids"> بەرهەمی منداڵان</label><label class="checkbox-item"><input type="checkbox" value="top250"> Top 250</label></div></div>
-                        
-                        <!-- کاست -->
-                        <div class="form-group">
-                            <label><i class="fas fa-users"></i> ئەکتەرەکان (کاست)</label>
-                            <div id="castList" class="dynamic-list">
-                                <div class="dynamic-item cast-item">
-                                    <input type="text" placeholder="ناوی ئەکتەر" class="cast-name">
-                                    <input type="text" placeholder="ڕۆڵ" class="cast-role">
-                                    <button type="button" class="remove-item remove-cast">✖</button>
-                                </div>
-                            </div>
-                            <button type="button" id="addCastBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی ئەکتەر</button>
-                        </div>
-                        
-                        <!-- ستاف -->
-                        <div class="form-group">
-                            <label><i class="fas fa-video"></i> دەرهێنەر و ستاف</label>
-                            <div id="crewList" class="dynamic-list">
-                                <div class="dynamic-item crew-item">
-                                    <input type="text" placeholder="ناو" class="crew-name">
-                                    <input type="text" placeholder="ڕۆڵ (دەرهێنەر، نوسەر، ...)" class="crew-role">
-                                    <button type="button" class="remove-item remove-crew">✖</button>
-                                </div>
-                            </div>
-                            <button type="button" id="addCrewBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی ستاف</button>
-                        </div>
-                        
-                        <!-- ژێرنووس (Subtitles) -->
-                        <div class="form-group">
-                            <label><i class="fas fa-closed-captioning"></i> ژێرنووسەکان (Subtitles)</label>
-                            <div id="subtitlesList" class="dynamic-list">
-                                <div class="dynamic-item subtitle-item">
-                                    <select class="subtitle-lang">
-                                        <option value="ku">کوردی</option>
-                                        <option value="en">English</option>
-                                        <option value="ar">العربية</option>
-                                        <option value="fa">فارسی</option>
-                                        <option value="tr">Türkçe</option>
-                                    </select>
-                                    <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
-                                        <input type="text" placeholder="لینکی فایلی .vtt" class="subtitle-url" style="flex:1">
-                                        <button type="button" class="upload-btn-small" data-target-class="subtitle-url" data-type="subtitle">📁</button>
-                                    </div>
-                                    <button type="button" class="remove-item remove-subtitle">✖</button>
-                                </div>
-                            </div>
-                            <button type="button" id="addSubtitleBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی ژێرنووس</button>
-                        </div>
-                        
-                        <!-- دەنگ (Audio Tracks) -->
-                        <div class="form-group">
-                            <label><i class="fas fa-headphones"></i> دەنگەکان (Audio Tracks)</label>
-                            <div id="audioList" class="dynamic-list">
-                                <div class="dynamic-item audio-item">
-                                    <select class="audio-lang">
-                                        <option value="original">Original (ڕەسەن)</option>
-                                        <option value="ku">کوردی</option>
-                                        <option value="en">English</option>
-                                        <option value="ar">العربية</option>
-                                        <option value="fa">فارسی</option>
-                                        <option value="tr">Türkçe</option>
-                                    </select>
-                                    <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
-                                        <input type="text" placeholder="لینکی فایلی دەنگ" class="audio-url" style="flex:1">
-                                        <button type="button" class="upload-btn-small" data-target-class="audio-url" data-type="audio">📁</button>
-                                    </div>
-                                    <button type="button" class="remove-item remove-audio">✖</button>
-                                </div>
-                            </div>
-                            <button type="button" id="addAudioBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی دەنگ</button>
-                        </div>
-                        
-                        <!-- ئەڵقەکان (تەنها بۆ زنجیرە) -->
-                        <div id="episodesSection" style="display: none;">
-                            <div class="form-group">
-                                <label><i class="fas fa-list"></i> ئەڵقەکان (تەنها بۆ زنجیرە)</label>
-                                <div id="episodesList" class="dynamic-list">
-                                    <div class="dynamic-item episode-item">
-                                        <input type="number" placeholder="ژمارە" class="episode-number" style="width:100px">
-                                        <input type="text" placeholder="ناونیشان" class="episode-title">
-                                        <div style="flex:2; display:flex; gap:0.5rem; align-items:center;">
-                                            <input type="url" placeholder="لینکی ڤیدیۆ" class="episode-url" style="flex:1">
-                                            <button type="button" class="upload-btn-small" data-target-class="episode-url" data-type="video">📁</button>
-                                        </div>
-                                        <button type="button" class="remove-item remove-episode">✖</button>
-                                    </div>
-                                </div>
-                                <button type="button" id="addEpisodeBtn" class="add-item"><i class="fas fa-plus"></i> زیادکردنی ئەڵقە</button>
-                            </div>
-                        </div>
-                        
                         <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> زیادکردن</button>
                     </form>
                 </div>
@@ -521,45 +327,16 @@
                     <h3><i class="fas fa-plus-circle"></i> زیادکردنی سلایدی نوێ</h3>
                     <form id="addSlideForm">
                         <div class="form-row">
-                            <div class="form-group"><label>ناونیشان *</label><input type="text" id="slideTitle" required></div>
-                            <div class="form-group"><label>ساڵ</label><input type="text" id="slideYear" placeholder="2024"></div>
+                            <div class="form-group"><label>ناونیشان *</label><input type="text" id="slideTitle"></div>
+                            <div class="form-group"><label>ساڵ</label><input type="text" id="slideYear"></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group"><label>پەیوەندی بە فیلم (ID)</label><select id="slideMovieId"><option value="">-- هەڵبژێرە --</option></select></div>
-                            <div class="form-group"><label>چەشن (Category)</label><input type="text" id="slideCategory" placeholder="فیلمی کوردی، ..."></div>
+                            <div class="form-group"><label>پەیوەندی بە فیلم (ID)</label><select id="slideMovieId"></select></div>
                         </div>
-                        <div class="form-group">
-                            <label>وێنەکانی سلاید</label>
-                            <div class="image-input-group">
-                                <h4><i class="fas fa-mobile-alt"></i> وێنەی مۆبایل</h4>
-                                <div class="upload-group">
-                                    <input type="url" id="slideImageMobile" placeholder="1080x1600">
-                                    <button type="button" class="upload-btn" data-target="slideImageMobile" data-type="image">📁 بارکردن</button>
-                                </div>
-                                <div class="upload-progress" id="progress-slideImageMobile"><div class="upload-progress-bar"></div></div>
-                                <small>قەبارە: 1080x1600</small>
-                            </div>
-                            <div class="image-input-group">
-                                <h4><i class="fas fa-tablet-alt"></i> وێنەی تابلێت</h4>
-                                <div class="upload-group">
-                                    <input type="url" id="slideImageTablet" placeholder="1200x1600">
-                                    <button type="button" class="upload-btn" data-target="slideImageTablet" data-type="image">📁 بارکردن</button>
-                                </div>
-                                <div class="upload-progress" id="progress-slideImageTablet"><div class="upload-progress-bar"></div></div>
-                                <small>قەبارە: 1200x1600</small>
-                            </div>
-                            <div class="image-input-group">
-                                <h4><i class="fas fa-desktop"></i> وێنەی کۆمپیوتەر</h4>
-                                <div class="upload-group">
-                                    <input type="url" id="slideImageDesktop" placeholder="1920x1080">
-                                    <button type="button" class="upload-btn" data-target="slideImageDesktop" data-type="image">📁 بارکردن</button>
-                                </div>
-                                <div class="upload-progress" id="progress-slideImageDesktop"><div class="upload-progress-bar"></div></div>
-                                <small>قەبارە: 1920x1080</small>
-                            </div>
-                        </div>
+                        <div class="form-group"><label>لینکی وێنەی مۆبایل</label><input type="url" id="slideImageMobile"></div>
+                        <div class="form-group"><label>لینکی وێنەی تابلێت</label><input type="url" id="slideImageTablet"></div>
+                        <div class="form-group"><label>لینکی وێنەی کۆمپیوتەر</label><input type="url" id="slideImageDesktop"></div>
                         <div class="form-group"><label>کورتە</label><textarea id="slideDescription" rows="2"></textarea></div>
-                        <div class="form-group"><label>چەشنەکان</label><div class="checkbox-group" id="slideGenresCheckbox"></div></div>
                         <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> زیادکردنی سلاید</button>
                     </form>
                 </div>
