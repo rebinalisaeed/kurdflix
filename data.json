@@ -123,9 +123,9 @@
             "year": "2026",
             "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان، بەو هیوایەی پلانی ئەو دزییە چەندین ملیۆن دۆلارییەیان پووچەڵ بکاتەوە.",
             "images": {
-                "mobile": "assets/images/slides/crim101_mobile.jpg",
-                "tablet": "assets/images/slides/crim101_tablet.jpg",
-                "desktop": "assets/images/slides/crim101_desktop.jpg"
+                "mobile": "assets/images/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
+                "tablet": "assets/images/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
+                "desktop": "assets/images/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg"
             },
             "movieId": 1,
             "genres": ["تاوانکاری", "هەستبزوێن", "دراما"]
@@ -137,9 +137,9 @@
             "year": "2026",
             "description": "دەستەیەک لە ئیسپانیا گروپێکی دروست دەکەن و هەڵدەکورنە سەر بانکی نێودەوڵەتی ئیسپانیا",
             "images": {
-                "mobile": "assets/images/slides/berlin2_mobile.jpg",
-                "tablet": "assets/images/slides/berlin2_tablet.jpg",
-                "desktop": "assets/images/slides/berlin2_desktop.jpg"
+                "mobile": "assets/images/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
+                "tablet": "assets/images/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
+                "desktop": "assets/images/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg"
             },
             "movieId": 2,
             "genres": ["تاوانکاری", "سەرکێشی", "دراما", "هەستبزوێن"]
