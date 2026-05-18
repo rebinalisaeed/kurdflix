@@ -328,17 +328,56 @@ function initModals() {
     window.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.style.display = 'none'; if (e.target === vipModal) vipModal.style.display = 'none'; });
 }
 
-// ========== گۆڕینی بانەڕ بەپێی سکرۆڵ (150px) ==========
+// ========== گۆڕینی بانەڕ بەپێی ڕێژەی سکرۆڵ (هێڵی - بەپێی پیکسڵ) ==========
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
     
-    function checkScroll() {
-        // ئەگەر سکرۆڵ زیاتر لە 150px بوو، کلاسی scrolled زیاد بکە
-        if (window.scrollY > 150) {
+    function updateNavbar() {
+        // وەرگرتنی ڕێژەی سکرۆڵ بە پیکسڵ
+        const scrollY = window.scrollY;
+        
+        // حسابکردنی ڕێژەی تۆخی بانەڕ (لە 0% بۆ 100%)
+        // لە 0px تا 150px، ڕێژەکە لە 0% بۆ 100% دەگۆڕێت
+        // هەر 1px = 0.75% زیادبوون (0.75 * 150 = 100%)
+        let darkPercent = Math.min(100, (scrollY / 150) * 100);
+        
+        // ئەگەر ڕێژەکە 100% بوو، کلاسی scrolled زیاد بکە بۆ ڕەنگی تەواو
+        if (darkPercent >= 100) {
             navbar.classList.add('scrolled');
+            return;
         } else {
             navbar.classList.remove('scrolled');
+        }
+        
+        // حسابکردنی ڕێژەی تۆخی بۆ هەر بەشێک
+        // سەرەوە: darkPercent% تۆخ
+        // خوارەوە: darkPercent * 0.3% تۆخ (بۆ ئەوەی گرادێنتەکە هەر بمێنێتەوە)
+        const topPercent = darkPercent;
+        const bottomPercent = Math.min(100, darkPercent * 0.3);
+        
+        // گۆڕینی گرادێنتەکە بەپێی ڕێژەکە
+        // بە شێوەیەک کە سەرەوەی بانەڕ زوتر تۆخ دەبێت
+        navbar.style.backgroundImage = `linear-gradient(to bottom, #292929 ${topPercent}%, transparent ${Math.min(100, topPercent + 15)}%)`;
+    }
+    
+    // بانگی فەنکشنی یەکەمجار
+    updateNavbar();
+    
+    // بانگی فەنکشن کاتێک سکرۆڵ دەکرێت
+    window.addEventListener('scroll', updateNavbar);
+}
+
+// ========== کۆدی ئاسایی ناوبار بۆ مۆبایل و تابلێت (تەنها زیادکردنی کلاس) ==========
+function initNavbarScrollLegacy() {
+    const navbar = document.querySelector('.navbar');
+    if (!navbar) return;
+    
+    function checkScroll() {
+        if (window.scrollY > 150) {
+            navbar.classList.add('scrolled');
+        } else if (window.scrollY < 150 && !navbar.classList.contains('scrolled')) {
+            // ئەگەر کلاسی scrolled زیاد نەکرابوو، هیچ نەکە
         }
     }
     
@@ -354,5 +393,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initMobileDropdowns();
     initSearch();
     initModals();
-    initNavbarScroll();
+    initNavbarScroll(); // فەنکشنی نوێ بۆ گۆڕینی هێڵی
 });
