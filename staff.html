@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KurdFlix - ستافی کوردفلێکس</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         .staff-container {
             max-width: 1200px;
@@ -69,19 +69,6 @@
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
-            /* گەورەکردنی سایزی نوسین لە مۆبایلدا */
-            .staff-name {
-                font-size: 1.5rem;
-            }
-            .staff-role {
-                font-size: 1rem;
-            }
-            .staff-bio {
-                font-size: 0.95rem;
-            }
-            .back-btn {
-                font-size: 0.95rem;
-            }
         }
     </style>
 </head>
@@ -90,7 +77,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></div>
-            <div class="logo">
+            <div class="logo" id="logoBtn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
                     <defs><path id="arcPath" d="M 10,168 Q 450,100 890,168" /></defs>
                     <text font-family="'Arial Black'" font-size="148" font-weight="900" font-style="italic" fill="#E50914" letter-spacing="-3">
@@ -100,17 +87,17 @@
             </div>
             <div class="mobile-search-icon" id="mobileSearchIcon"><i class="fas fa-search"></i></div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="index.html">گەڕانەوە بۆ پەڕەی سەرەکی</a></li>
+                <li><a href="all-movies.html?type=films">فیلمەکان</a></li>
+                <li><a href="all-movies.html?type=series">زنجیرەکان</a></li>
+                <li><a href="#">زنجیرەفیلم</a></li>
+                <li><a href="#">ژێرنووسی کوردی</a></li>
+                <li><a href="all-movies.html?top250">Top 250</a></li>
+                <li><a href="staff.html">ستافی کوردفلێکس</a></li>
             </ul>
             <div class="nav-actions">
                 <div class="search-icon" id="searchIcon"><i class="fas fa-search"></i></div>
                 <div class="login-icon" id="loginIcon"><i class="fas fa-user"></i></div>
                 <button class="vip-btn" id="vipBtn">VIP</button>
-                <div class="theme-toggle">
-                    <i class="fas fa-sun"></i>
-                    <label class="switch"><input type="checkbox" id="theme-switch"><span class="slider round"></span></label>
-                    <i class="fas fa-moon"></i>
-                </div>
             </div>
         </div>
         <div class="search-form" id="searchForm" style="display: none;">
@@ -148,55 +135,57 @@
     </div>
 
     <footer>
-        <p>© 2025 KurdFlix - هەموو فیلمەکان بە دۆبلاژی کوردین</p>
+        <div class="footer-social">
+            <div class="footer-logo">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" width="180">
+                    <defs><path id="arcPathFooter" d="M 10,168 Q 450,100 890,168" /></defs>
+                    <text font-family="'Arial Black'" font-size="148" font-weight="900" font-style="italic" fill="#E50914" letter-spacing="-3">
+                        <textPath href="#arcPathFooter" startOffset="50%" text-anchor="middle">KURDFLIX</textPath>
+                    </text>
+                </svg>
+            </div>
+            <p class="social-text">دەتوانن لەم شوێنانە لەگەڵمان بن</p>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/kurdflix" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/kurdflix" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://t.me/kurdflix" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+                <a href="https://www.tiktok.com/@kurdflix" target="_blank"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.snapchat.com/add/kurdflix" target="_blank"><i class="fab fa-snapchat-ghost"></i></a>
+                <a href="https://www.threads.net/@kurdflix" target="_blank"><i class="fab fa-threads"></i></a>
+                <a href="https://twitter.com/kurdflix" target="_blank"><i class="fab fa-x-twitter"></i></a>
+                <a href="https://youtube.com/@kurdflix" target="_blank"><i class="fab fa-youtube"></i></a>
+            </div>
+        </div>
+        <div class="footer-about">
+            <h3>دەربارە</h3>
+            <p id="aboutText">کوردفلێکس پێگەیەکی نوێیە تازەگەری دەکات لە گەیاندنی بەرهەمە سینەماییە خۆماڵیەکان و جیهانیەکان هەروەها ئاشناتان دەکات بە نوێترین بەرهەمی زنجیرە دراماکانی کوردی و دەرەکی.</p>
+        </div>
+        <div class="footer-copyright">
+            <p id="copyrightText">kurdflix.com 2026 ©</p>
+        </div>
     </footer>
 
-    <script>
-        function initTheme() {
-            const themeSwitch = document.getElementById('theme-switch');
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                document.body.setAttribute('data-theme', 'light');
-                if (themeSwitch) themeSwitch.checked = true;
-            } else {
-                document.body.setAttribute('data-theme', 'dark');
-                if (themeSwitch) themeSwitch.checked = false;
-            }
-            if (themeSwitch) {
-                themeSwitch.addEventListener('change', (e) => {
-                    if (e.target.checked) {
-                        document.body.setAttribute('data-theme', 'light');
-                        localStorage.setItem('theme', 'light');
-                    } else {
-                        document.body.setAttribute('data-theme', 'dark');
-                        localStorage.setItem('theme', 'dark');
-                    }
-                });
-            }
-        }
-        
-        function initNavbarScroll() {
-            const navbar = document.querySelector('.navbar');
-            if (!navbar) return;
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) navbar.classList.add('scrolled');
-                else navbar.classList.remove('scrolled');
-            });
-        }
-        
-        function initHamburger() {
-            const hamburger = document.getElementById('hamburgerBtn');
-            const navMenu = document.getElementById('navMenu');
-            if (hamburger && navMenu) {
-                hamburger.addEventListener('click', () => navMenu.classList.toggle('active'));
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            initTheme();
-            initNavbarScroll();
-            initHamburger();
-        });
-    </script>
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>چوونە ژوورەوە</h2>
+            <form id="loginForm">
+                <input type="email" placeholder="ئیمەیڵ" required>
+                <input type="password" placeholder="پاسیۆرد" required>
+                <button type="submit">چوونە ژوورەوە</button>
+            </form>
+            <p>هەژمارت نییە؟ <a href="#">تۆمار بکە</a></p>
+        </div>
+    </div>
+
+    <div id="vipModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>VIP - پلانی تایبەت</h2>
+            <p>بە زوو ئەم بەشە کارا دەبێت...</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
