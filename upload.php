@@ -4,25 +4,29 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-$uploadDir = 'uploads/';
+// فۆڵدەرە بنەڕەتییەکان
+$baseDir = 'assets/';
 
-if (!file_exists($uploadDir)) {
-    mkdir($uploadDir, 0777, true);
-}
-
+// ژێر فۆڵدەرەکان
 $typeDirs = [
-    'image' => 'uploads/images/',
-    'video' => 'uploads/videos/',
-    'audio' => 'uploads/audio/',
-    'subtitle' => 'uploads/subtitles/',
-    'other' => 'uploads/other/'
+    'image' => 'assets/images/',
+    'video' => 'assets/videos/',
+    'audio' => 'assets/audio/',
+    'subtitle' => 'assets/subtitles/',
+    'other' => 'assets/other/'
 ];
 
+// دروستکردنی فۆڵدەرەکان ئەگەر بوونیان نەبوو
 foreach ($typeDirs as $dir) {
     if (!file_exists($dir)) {
         mkdir($dir, 0777, true);
     }
 }
+
+// ژێر فۆڵدەرەکان بۆ وێنە (پۆستەر و سلاید و ...)
+if (!file_exists('assets/images/posters/')) mkdir('assets/images/posters/', 0777, true);
+if (!file_exists('assets/images/slides/')) mkdir('assets/images/slides/', 0777, true);
+if (!file_exists('assets/images/thumbnails/')) mkdir('assets/images/thumbnails/', 0777, true);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
@@ -32,14 +36,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $file = $_FILES['file'];
     $fileType = $_POST['type'] ?? 'other';
+    $originalName = pathinfo($file['name'], PATHINFO_FILENAME);
     $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     
+    // دیاریکردنی شوێنی گونجاو بۆ هەڵگرتنی فایل
     $targetDir = $typeDirs['other'];
-    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'mp4', 'mp3', 'vtt', 'srt'];
     
     switch ($fileType) {
         case 'image':
-            $targetDir = $typeDirs['image'];
+            // بۆ وێنە، دەتوانیت لە ژێر فۆڵدەری images دایبنێیت
+            $targetDir = 'assets/images/';
             break;
         case 'video':
             $targetDir = $typeDirs['video'];
@@ -52,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             break;
     }
     
+    // ناوی تایبەت بۆ فایلەکە دروست بکە
     $newFileName = time() . '_' . uniqid() . '.' . $extension;
     $targetPath = $targetDir . $newFileName;
     
@@ -62,6 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo json_encode([
             'success' => true,
             'url' => $baseUrl,
+            'path' => $targetPath,
             'filename' => $newFileName
         ]);
     } else {
