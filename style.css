@@ -65,7 +65,6 @@ body {
     transition: background-image 0.3s ease;
 }
 
-/* کاتێک سکرۆڵ کراوە (زیاتر لە 150px)، بانەڕەکە بە تەواوی ڕەنگ دەگرێت */
 .navbar.scrolled {
     background-image: linear-gradient(to bottom, #292929 0%, #292929 100%);
     border-bottom: 1px solid var(--border);
@@ -291,7 +290,7 @@ input:checked + .slider:before {
     color: white;
 }
 
-/* ========== سلایدی سەرەکی ========== */
+/* ========== سلایدی سەرەکی (بەبێ پاشەڕەنگ) ========== */
 .hero-carousel {
     position: relative;
     width: 100%;
@@ -342,12 +341,13 @@ input:checked + .slider:before {
     }
 }
 
+/* ناوەڕۆکی سلاید - بەبێ پاشەڕەنگ */
 .carousel-content {
     position: absolute;
     bottom: 4%;
     left: 0;
     right: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
+    /* هیچ پاشەڕەنگێک نییە */
     padding: 2rem 2rem 2.5rem 2rem;
     text-align: center;
     color: white;
@@ -381,12 +381,11 @@ input:checked + .slider:before {
 }
 
 .genre-tag {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(0,0,0,0.6);
     padding: 0.3rem 0.9rem;
     border-radius: 25px;
     font-size: 0.9rem;
     font-weight: normal;
-    backdrop-filter: blur(4px);
 }
 
 .carousel-year {
@@ -395,7 +394,6 @@ input:checked + .slider:before {
     background-color: rgba(0,0,0,0.6);
     padding: 0.3rem 0.9rem;
     border-radius: 25px;
-    backdrop-filter: blur(4px);
 }
 
 .carousel-desc {
@@ -429,9 +427,8 @@ input:checked + .slider:before {
 }
 
 .carousel-btn.info {
-    background-color: rgba(255,255,255,0.2);
+    background-color: rgba(0,0,0,0.6);
     color: white;
-    backdrop-filter: blur(4px);
 }
 
 .carousel-btn.trailer:hover, .carousel-btn.info:hover {
@@ -862,23 +859,23 @@ footer {
     }
     
     .genre-tag {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         padding: 0.25rem 0.85rem;
     }
     
     .carousel-year {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         padding: 0.25rem 0.85rem;
     }
     
     .carousel-desc {
-        font-size: 1.05rem;
+        font-size: 0.9rem;
         max-width: 90%;
     }
     
     .carousel-btn {
         padding: 0.5rem 1.4rem;
-        font-size: 1.05rem;
+        font-size: 0.9rem;
     }
     
     .section-header h2 a {
@@ -961,7 +958,7 @@ footer {
     }
     
     .carousel-desc {
-        font-size: 0.95rem;
+        font-size: 0.85rem;
     }
     
     .movie-card {
