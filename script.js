@@ -1,381 +1,980 @@
-// ========== داتاکان ==========
-let allMovies = [];
-let carouselSlides = [];
-let currentCarouselIndex = 0;
-let carouselInterval;
-let touchStartX = 0;
-let touchEndX = 0;
+/* ========== فۆنتەکانی NRT (کوردی) ========== */
+@font-face {
+    font-family: 'NRT';
+    src: url('fonts/NRT-Reg.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 
-// ========== بارکردنی داتاکان لە data.json ==========
-async function loadData() {
-    try {
-        const response = await fetch('data.json?t=' + Date.now());
-        const data = await response.json();
-        allMovies = data.movies || [];
-        carouselSlides = data.carousel || [];
-        
-        renderCarousel();
-        startCarouselAutoPlay();
-        renderAllSections();
-        populateSearchIndex();
-        
-        if (data.siteData) {
-            const aboutP = document.getElementById('aboutText');
-            const copyrightP = document.getElementById('copyrightText');
-            if (aboutP && data.siteData.aboutText) aboutP.textContent = data.siteData.aboutText;
-            if (copyrightP && data.siteData.copyrightText) copyrightP.textContent = data.siteData.copyrightText;
-        }
-    } catch (error) {
-        console.error("Error loading data:", error);
-        loadSampleData();
+@font-face {
+    font-family: 'NRT';
+    src: url('fonts/NRT-Bd.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ========== گۆڕاوەکانی ڕەنگ بۆ Dark/Light mode ========== */
+:root {
+    --bg-primary: #0A0A0A;
+    --bg-secondary: #1A1A1A;
+    --text-primary: #E5E5E5;
+    --text-secondary: #B3B3B3;
+    --accent: #E50914;
+    --card-bg: #1F1F1F;
+    --border: #333;
+    --nav-bg-scroll: #292929;
+}
+
+[data-theme="light"] {
+    --bg-primary: #F5F5F5;
+    --bg-secondary: #FFFFFF;
+    --text-primary: #1A1A1A;
+    --text-secondary: #666;
+    --accent: #E50914;
+    --card-bg: #FFFFFF;
+    --border: #DDD;
+    --nav-bg-scroll: #E5E5E5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: background-color 0.3s, color 0.2s;
+    font-family: 'NRT', sans-serif;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* ========== ناوبار و بانەڕ ========== */
+.navbar {
+    background-color: transparent;
+    background-image: linear-gradient(to bottom, #292929 0%, transparent 100%);
+    padding: 0.8rem 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    transition: background-image 0.3s ease;
+}
+
+/* کاتێک سکرۆڵ کراوە (زیاتر لە 150px)، بانەڕەکە بە تەواوی ڕەنگ دەگرێت */
+.navbar.scrolled {
+    background-image: linear-gradient(to bottom, #292929 0%, #292929 100%);
+    border-bottom: 1px solid var(--border);
+}
+
+[data-theme="light"] .navbar.scrolled {
+    background-image: linear-gradient(to bottom, #E5E5E5 0%, #E5E5E5 100%);
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    line-height: 0;
+}
+
+.logo svg {
+    height: 36px;
+    width: auto;
+    display: block;
+}
+
+.hamburger, .mobile-search-icon {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-primary);
+    padding: 0.5rem;
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-menu > li > a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.nav-menu > li > a:hover {
+    color: var(--accent);
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 100;
+    list-style: none;
+    padding: 0.5rem 0;
+}
+
+.dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+}
+
+.dropdown-menu li a {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 0.85rem;
+}
+
+.dropdown-menu li a:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.search-icon, .login-icon {
+    cursor: pointer;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+}
+
+.search-icon:hover, .login-icon:hover {
+    color: var(--accent);
+}
+
+.vip-btn {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: none;
+    padding: 0.25rem 0.8rem;
+    border-radius: 20px;
+    color: #1A1A1A;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+.theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.theme-toggle i {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 14px;
+    width: 14px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--accent);
+}
+
+input:checked + .slider:before {
+    transform: translateX(20px);
+}
+
+.search-form {
+    position: relative;
+    margin-top: 1rem;
+    padding: 0;
+    display: none;
+}
+
+.search-form input {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'NRT', sans-serif;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.search-results .search-item {
+    padding: 0.8rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    font-family: 'NRT', sans-serif;
+}
+
+.search-results .search-item:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
+/* ========== سلایدی سەرەکی (بەبێ پاشەڕەنگ) ========== */
+.hero-carousel {
+    position: relative;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 27 / 40;
+    overflow: hidden;
+    margin-top: 0;
+    background-color: #000;
+}
+
+.carousel-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.carousel-slide.active {
+    opacity: 1;
+}
+
+.carousel-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media (min-width: 769px) {
+    .carousel-bg-img {
+        object-fit: contain;
+        background-color: var(--bg-primary);
+    }
+    .hero-carousel {
+        background-color: var(--bg-primary);
     }
 }
 
-function loadSampleData() {
-    allMovies = [
-        { id: 1, title: "ئەفسانەی کوێستان", year: "2024", poster: "https://picsum.photos/200/300?random=1", type: "film", lang: "kurdish", categories: ["kurdish-film"], description: "فیلمێکی کوردی", genres: ["دراما", "ئاکشن"], videoUrl: "https://vidmoly.com/e/example1" },
-        { id: 2, title: "قەڵای خەونەکان", year: "2023", poster: "https://picsum.photos/200/300?random=2", type: "series", lang: "turkish", categories: ["turkish-series"], description: "زنجیرەیەکی درامایی", genres: ["دراما", "ڕۆمانسی"], videoUrl: "https://streamsb.com/e/example2" }
-    ];
-    carouselSlides = [
-        { id: 1, title: "ئەفسانەی کوێستان", year: "2024", description: "فیلمێکی کوردی", images: { mobile: "https://picsum.photos/1080/1920?random=1", tablet: "https://picsum.photos/1200/1600?random=1", desktop: "https://picsum.photos/1920/1080?random=1" }, movieId: 1, genres: ["دراما", "ئاکشن"] }
-    ];
-    renderCarousel();
-    startCarouselAutoPlay();
-    renderAllSections();
-    populateSearchIndex();
+/* ناوەڕۆکی سلاید - بەبێ پاشەڕەنگ */
+.carousel-content {
+    position: absolute;
+    bottom: 4%;
+    left: 0;
+    right: 0;
+    /* هیچ پاشەڕەنگێک نییە */
+    padding: 2rem 2rem 2.5rem 2rem;
+    text-align: center;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    z-index: 10;
+    pointer-events: none;
 }
 
-function getResponsiveImage(slide) {
-    const width = window.innerWidth;
-    if (slide.images) {
-        if (width <= 768) return slide.images.mobile || slide.images.desktop;
-        else if (width <= 1024) return slide.images.tablet || slide.images.mobile || slide.images.desktop;
-        else return slide.images.desktop || slide.images.mobile;
+.carousel-content .carousel-btn {
+    pointer-events: auto;
+}
+
+.carousel-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.carousel-genres {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
+.genre-tag {
+    background-color: rgba(0,0,0,0.6);
+    padding: 0.3rem 0.9rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: normal;
+}
+
+.carousel-year {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    background-color: rgba(0,0,0,0.6);
+    padding: 0.3rem 0.9rem;
+    border-radius: 25px;
+}
+
+.carousel-desc {
+    font-size: 1rem;
+    max-width: 70%;
+    margin: 0.25rem 0;
+    line-height: 1.5;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.carousel-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.carousel-btn {
+    padding: 0.6rem 1.8rem;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: 'NRT', sans-serif;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.carousel-btn.trailer {
+    background-color: var(--accent);
+    color: white;
+}
+
+.carousel-btn.info {
+    background-color: rgba(0,0,0,0.6);
+    color: white;
+}
+
+.carousel-btn.trailer:hover, .carousel-btn.info:hover {
+    transform: scale(1.05);
+}
+
+.carousel-dots {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    z-index: 10;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background-color: var(--accent);
+    width: 24px;
+    border-radius: 5px;
+}
+
+/* ========== بەشەکانی فیلم و زنجیرەکان ========== */
+.container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.movies-section {
+    margin-bottom: 2.5rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.section-header h2 a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 1.3rem;
+    border-right: 4px solid var(--accent);
+    padding-right: 0.8rem;
+    transition: color 0.3s;
+}
+
+.section-header h2 a:hover {
+    color: var(--accent);
+}
+
+.slider-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.slider-btn {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.slider-btn:hover {
+    background-color: var(--accent);
+    color: white;
+}
+
+.slider-container {
+    overflow-x: hidden;
+    position: relative;
+}
+
+.movies-slider {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    padding: 0.5rem 0.2rem;
+}
+
+.movies-slider::-webkit-scrollbar {
+    height: 6px;
+}
+
+.movies-slider::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 10px;
+}
+
+.movies-slider::-webkit-scrollbar-thumb {
+    background: var(--accent);
+    border-radius: 10px;
+}
+
+.movie-card {
+    flex: 0 0 160px;
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--border);
+}
+
+.movie-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.movie-poster {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.movie-info {
+    padding: 0.6rem;
+    text-align: center;
+}
+
+.movie-title {
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ========== مێنیوی مۆبایل ========== */
+.mobile-menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2000;
+}
+
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 350px;
+    height: 100%;
+    background-color: var(--bg-secondary);
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+    z-index: 2001;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-menu.active {
+    right: 0;
+}
+
+.mobile-menu-header {
+    display: flex;
+    justify-content: flex-start;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.close-menu {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.mobile-menu-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.mobile-nav-links a {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-size: 1rem;
+    padding: 0.5rem 0;
+    display: block;
+}
+
+.mobile-dropdown-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+    padding: 0.5rem 0;
+    cursor: pointer;
+}
+
+.mobile-dropdown-menu {
+    list-style: none;
+    padding-right: 1rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+.mobile-dropdown-menu.active {
+    display: block;
+}
+
+.mobile-dropdown-menu li a {
+    font-size: 0.9rem;
+    padding: 0.4rem 0;
+    color: var(--text-secondary);
+}
+
+.mobile-actions {
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.mobile-login {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: var(--text-primary);
+}
+
+.mobile-vip-btn {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: none;
+    padding: 0.5rem;
+    border-radius: 8px;
+    color: #1A1A1A;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.mobile-theme-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ========== فووتەر ========== */
+footer {
+    background-color: var(--bg-secondary);
+    padding: 2rem 1rem;
+    text-align: center;
+    margin-top: 3rem;
+    border-top: 1px solid var(--border);
+}
+
+.footer-social {
+    margin-bottom: 1.5rem;
+}
+
+.footer-logo svg {
+    height: 50px;
+    margin-bottom: 1rem;
+}
+
+.social-text {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 1rem 0;
+}
+
+.social-icons a {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.social-icons a:hover {
+    color: var(--accent);
+}
+
+.footer-about {
+    max-width: 600px;
+    margin: 1.5rem auto;
+}
+
+.footer-about h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.footer-about p {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.footer-copyright {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* ========== مۆدال ========== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: var(--bg-secondary);
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-content h2 {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.modal-content button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 0.5rem;
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+    .navbar {
+        padding: 0.5rem 1rem;
     }
-    return slide.poster || "https://picsum.photos/1920/1080";
-}
-
-function renderCarousel() {
-    const container = document.getElementById('carouselContainer');
-    const dotsContainer = document.getElementById('carouselDots');
-    if (!container) return;
     
-    container.innerHTML = '';
-    dotsContainer.innerHTML = '';
-    
-    carouselSlides.forEach((slide, index) => {
-        const slideDiv = document.createElement('div');
-        slideDiv.className = `carousel-slide ${index === 0 ? 'active' : ''}`;
-        const imageUrl = getResponsiveImage(slide);
-        
-        const genresHtml = slide.genres && slide.genres.length > 0 
-            ? `<div class="carousel-genres">${slide.genres.slice(0, 3).map(g => `<span class="genre-tag">${g}</span>`).join('')}</div>` : '';
-        
-        slideDiv.innerHTML = `
-            <img src="${imageUrl}" alt="${slide.title}" class="carousel-bg-img">
-            <div class="carousel-content">
-                <div class="carousel-meta-row">
-                    ${genresHtml}
-                    ${slide.year ? `<span class="carousel-year">${slide.year}</span>` : ''}
-                </div>
-                <p class="carousel-desc">${slide.description || ''}</p>
-                <div class="carousel-buttons">
-                    <button class="carousel-btn trailer" data-id="${slide.movieId}" data-type="movie">🎬 سەیرکردن</button>
-                    <button class="carousel-btn info" data-id="${slide.movieId}" data-type="movie">ℹ️ زانیاری زیاتر</button>
-                </div>
-            </div>
-        `;
-        container.appendChild(slideDiv);
-        
-        const dot = document.createElement('div');
-        dot.className = `dot ${index === 0 ? 'active' : ''}`;
-        dot.dataset.index = index;
-        dot.addEventListener('click', () => goToSlide(index));
-        dotsContainer.appendChild(dot);
-    });
-    
-    document.querySelectorAll('.carousel-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const movieId = parseInt(btn.dataset.id);
-            const movie = allMovies.find(m => m.id === movieId);
-            if (movie && movie.type === 'film') {
-                window.location.href = `movie.html?id=${movieId}`;
-            } else {
-                window.location.href = `series.html?id=${movieId}`;
-            }
-        });
-    });
-    
-    initTouchEvents();
-}
-
-function initTouchEvents() {
-    const carousel = document.querySelector('.hero-carousel');
-    if (!carousel) return;
-    
-    carousel.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-    carousel.addEventListener('touchend', (e) => {
-        touchEndX = e.changedTouches[0].screenX;
-        const swipeThreshold = 50;
-        const diff = touchStartX - touchEndX;
-        if (Math.abs(diff) < swipeThreshold) return;
-        if (diff > 0) goToSlide(currentCarouselIndex + 1);
-        else goToSlide(currentCarouselIndex - 1);
-        resetCarouselAutoPlay();
-    }, { passive: true });
-}
-
-function resetCarouselAutoPlay() {
-    if (carouselInterval) { clearInterval(carouselInterval); startCarouselAutoPlay(); }
-}
-
-window.addEventListener('resize', () => {
-    if (carouselSlides.length > 0 && carouselSlides[0] && carouselSlides[0].images) {
-        document.querySelectorAll('.carousel-slide').forEach((slide, index) => {
-            const slideData = carouselSlides[index];
-            if (slideData && slideData.images) {
-                const img = slide.querySelector('.carousel-bg-img');
-                if (img) img.src = getResponsiveImage(slideData);
-            }
-        });
-    }
-});
-
-function goToSlide(index) {
-    if (index < 0) index = carouselSlides.length - 1;
-    if (index >= carouselSlides.length) index = 0;
-    document.querySelectorAll('.carousel-slide').forEach((slide, i) => slide.classList.toggle('active', i === index));
-    document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === index));
-    currentCarouselIndex = index;
-}
-
-function startCarouselAutoPlay() {
-    if (carouselInterval) clearInterval(carouselInterval);
-    carouselInterval = setInterval(() => goToSlide(currentCarouselIndex + 1), 6000);
-}
-
-function renderSlider(containerId, movies) {
-    const slider = document.getElementById(containerId);
-    if (!slider) return;
-    if (movies.length === 0) { slider.innerHTML = '<div style="padding: 2rem; text-align: center;">هیچ بەرهەمێک نەدۆزرایەوە</div>'; return; }
-    slider.innerHTML = movies.map(movie => {
-        const targetPage = movie.type === 'film' ? 'movie.html' : 'series.html';
-        return `
-            <div class="movie-card" onclick="location.href='${targetPage}?id=${movie.id}'">
-                <img src="${movie.poster}" class="movie-poster" onerror="this.src='https://picsum.photos/200/300?random=1'">
-                <div class="movie-info">
-                    <h3 class="movie-title">${movie.title}</h3>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function renderAllSections() {
-    const latest = [...allMovies].reverse().slice(0, 20);
-    renderSlider('latestMoviesSlider', latest);
-    renderSlider('filmsSlider', allMovies.filter(m => m.type === 'film').slice(0, 20));
-    renderSlider('seriesSlider', allMovies.filter(m => m.type === 'series').slice(0, 20));
-    renderSlider('kidsSlider', allMovies.filter(m => m.categories && m.categories.includes('kids')).slice(0, 20));
-    renderSlider('kurdishSlider', allMovies.filter(m => m.lang === 'kurdish').slice(0, 20));
-    renderSlider('persianSlider', allMovies.filter(m => m.lang === 'persian').slice(0, 20));
-    renderSlider('arabicSlider', allMovies.filter(m => m.lang === 'arabic').slice(0, 20));
-    renderSlider('turkishSlider', allMovies.filter(m => m.lang === 'turkish').slice(0, 20));
-}
-
-let searchIndex = [];
-function populateSearchIndex() { 
-    searchIndex = allMovies.map(m => ({ id: m.id, title: m.title, type: m.type })); 
-}
-
-function searchMovies(query) { 
-    if (!query.trim()) return []; 
-    return searchIndex.filter(item => item.title.toLowerCase().includes(query.toLowerCase())); 
-}
-
-function displaySearchResults(results) {
-    const resultsDiv = document.getElementById('searchResults');
-    if (!resultsDiv) return;
-    if (results.length === 0) { 
-        resultsDiv.innerHTML = '<div class="search-item">هیچ ئەنجامێک نەدۆزرایەوە</div>'; 
-        return; 
-    }
-    resultsDiv.innerHTML = '';
-    results.forEach(result => {
-        const item = document.createElement('div');
-        item.className = 'search-item';
-        const targetPage = result.type === 'film' ? 'movie.html' : 'series.html';
-        item.textContent = `${result.title} (${result.type === 'film' ? 'فیلم' : 'زنجیرە'})`;
-        item.onclick = () => window.location.href = `${targetPage}?id=${result.id}`;
-        resultsDiv.appendChild(item);
-    });
-}
-
-function initSliderControls() {
-    document.querySelectorAll('.slider-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const sliderId = btn.dataset.slider;
-            const slider = document.querySelector(`#${sliderId} .movies-slider`);
-            if (slider) slider.scrollBy({ left: btn.classList.contains('next-btn') ? 300 : -300, behavior: 'smooth' });
-        });
-    });
-}
-
-function initTheme() {
-    const themeSwitch = document.getElementById('theme-switch');
-    const mobileThemeSwitch = document.getElementById('mobile-theme-switch');
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-        document.body.setAttribute('data-theme', 'light');
-        if (themeSwitch) themeSwitch.checked = true;
-        if (mobileThemeSwitch) mobileThemeSwitch.checked = true;
-    } else {
-        document.body.setAttribute('data-theme', 'dark');
-        if (themeSwitch) themeSwitch.checked = false;
-        if (mobileThemeSwitch) mobileThemeSwitch.checked = false;
-    }
-    if (themeSwitch) {
-        themeSwitch.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                document.body.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-                if (mobileThemeSwitch) mobileThemeSwitch.checked = true;
-            } else {
-                document.body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                if (mobileThemeSwitch) mobileThemeSwitch.checked = false;
-            }
-        });
-    }
-    if (mobileThemeSwitch) {
-        mobileThemeSwitch.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                document.body.setAttribute('data-theme', 'light');
-                localStorage.setItem('theme', 'light');
-                if (themeSwitch) themeSwitch.checked = true;
-            } else {
-                document.body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                if (themeSwitch) themeSwitch.checked = false;
-            }
-        });
-    }
-}
-
-function initHamburger() {
-    const hamburger = document.getElementById('hamburgerBtn');
-    const closeBtn = document.getElementById('closeMenuBtn');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const overlay = document.getElementById('mobileMenuOverlay');
-    if (!hamburger || !mobileMenu || !overlay) return;
-    function openMenu() {
-        mobileMenu.classList.add('active');
-        overlay.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        const icon = hamburger.querySelector('i');
-        if (icon) { icon.classList.remove('fa-bars'); icon.classList.add('fa-times'); }
-    }
-    function closeMenu() {
-        mobileMenu.classList.remove('active');
-        overlay.style.display = 'none';
-        document.body.style.overflow = '';
-        const icon = hamburger.querySelector('i');
-        if (icon) { icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); }
-    }
-    hamburger.addEventListener('click', openMenu);
-    if (closeBtn) closeBtn.addEventListener('click', closeMenu);
-    overlay.addEventListener('click', closeMenu);
-}
-
-function initMobileDropdowns() {
-    document.querySelectorAll('.mobile-dropdown-toggle').forEach(toggle => {
-        toggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            const menu = toggle.parentElement.querySelector('.mobile-dropdown-menu');
-            if (menu) {
-                menu.classList.toggle('active');
-                const icon = toggle.querySelector('i');
-                if (icon) { icon.classList.toggle('fa-chevron-down'); icon.classList.toggle('fa-chevron-up'); }
-            }
-        });
-    });
-}
-
-function initSearch() {
-    const searchIcon = document.getElementById('searchIcon');
-    const mobileSearchIcon = document.getElementById('mobileSearchIcon');
-    const searchForm = document.getElementById('searchForm');
-    const searchInput = document.getElementById('searchInput');
-    const searchClose = document.getElementById('searchClose');
-    const openSearch = () => {
-        searchForm.style.display = searchForm.style.display === 'none' ? 'block' : 'none';
-        if (searchForm.style.display === 'block' && searchInput) searchInput.focus();
-    };
-    if (searchIcon) searchIcon.addEventListener('click', openSearch);
-    if (mobileSearchIcon) mobileSearchIcon.addEventListener('click', openSearch);
-    if (searchClose) searchClose.addEventListener('click', () => { searchForm.style.display = 'none'; document.getElementById('searchResults').innerHTML = ''; });
-    if (searchInput) searchInput.addEventListener('input', (e) => displaySearchResults(searchMovies(e.target.value)));
-}
-
-function initModals() {
-    const loginIcons = document.querySelectorAll('#loginIcon, #mobileLoginIcon');
-    const vipBtns = document.querySelectorAll('#vipBtn, #mobileVipBtn');
-    const loginModal = document.getElementById('loginModal');
-    const vipModal = document.getElementById('vipModal');
-    loginIcons.forEach(icon => icon.addEventListener('click', () => { if (loginModal) loginModal.style.display = 'flex'; }));
-    vipBtns.forEach(btn => btn.addEventListener('click', () => { if (vipModal) vipModal.style.display = 'flex'; }));
-    document.querySelectorAll('.close-modal').forEach(close => close.addEventListener('click', () => { if (loginModal) loginModal.style.display = 'none'; if (vipModal) vipModal.style.display = 'none'; }));
-    window.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.style.display = 'none'; if (e.target === vipModal) vipModal.style.display = 'none'; });
-}
-
-// ========== گۆڕینی بانەڕ بەپێی ڕێژەی سکرۆڵ (بەش بەش - لە خوارەوە ڕوون بەرەو سەرەوە تۆخ) ==========
-function initNavbarScroll() {
-    const navbar = document.querySelector('.navbar');
-    if (!navbar) return;
-    
-    function updateNavbar() {
-        const scrollY = window.scrollY;
-        
-        // ئەگەر سکرۆڵ زیاتر لە 150px بوو، کلاسی scrolled زیاد بکە
-        if (scrollY >= 150) {
-            navbar.classList.add('scrolled');
-            navbar.style.backgroundImage = '';
-            return;
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-        
-        // حسابکردنی ڕێژەی تۆخی بانەڕ بەپێی سکرۆڵ (0% تا 100%)
-        // هەر 1px = 0.666% زیادبوون (100% / 150px = 0.666%)
-        let darkPercent = (scrollY / 150) * 100;
-        // بۆ ئەوەی بە شێوەی بەش بەش زیاد بکات، ڕێژەکە بە پلەیی دەخەمێنرێت
-        darkPercent = Math.floor(darkPercent);
-        
-        // دیاریکردنی ڕێژەی تۆخی سەرەوە و خوارەوەی بانەڕ
-        // چونکە لە سەرەتادا سەرەوە تۆخە و خوارەوە ڕوونە
-        // بە زیادبوونی سکرۆڵ، خوارەوەش بەرەو تۆخی دەچێت
-        const topPercent = 100; // سەرەوە هەر 100% تۆخە
-        const bottomPercent = Math.min(100, darkPercent); // خوارەوە بەپێی سکرۆڵ زیاد دەکات
-        
-        // گۆڕینی گرادێنتەکە - لە سەرەوە تۆخ، بەرەو خوارەوە ڕوون
-        // کاتێک bottomPercent زیاد دەکات، بەشی ڕوون کەم دەبێتەوە
-        navbar.style.backgroundImage = `linear-gradient(to top, #292929 ${bottomPercent}%, transparent ${Math.max(0, 100 - bottomPercent)}%)`;
+    .hamburger, .mobile-search-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
     }
     
-    // بانگی فەنکشنی یەکەمجار
-    updateNavbar();
+    .nav-menu, .nav-actions {
+        display: none;
+    }
     
-    // بانگی فەنکشن کاتێک سکرۆڵ دەکرێت
-    window.addEventListener('scroll', updateNavbar);
+    .logo svg {
+        height: 28px;
+    }
+    
+    .hero-carousel {
+        aspect-ratio: 27 / 40;
+    }
+    
+    .carousel-content {
+        padding: 1rem 1rem 1.5rem 1rem;
+        gap: 0.5rem;
+    }
+    
+    .genre-tag {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.85rem;
+    }
+    
+    .carousel-year {
+        font-size: 0.85rem;
+        padding: 0.25rem 0.85rem;
+    }
+    
+    .carousel-desc {
+        font-size: 0.9rem;
+        max-width: 90%;
+    }
+    
+    .carousel-btn {
+        padding: 0.5rem 1.4rem;
+        font-size: 0.9rem;
+    }
+    
+    .section-header h2 a {
+        font-size: 1.15rem;
+    }
+    
+    .slider-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.95rem;
+    }
+    
+    .movie-card {
+        flex: 0 0 140px;
+    }
+    
+    .movie-poster {
+        height: 190px;
+    }
+    
+    .movie-title {
+        font-size: 0.9rem;
+    }
+    
+    .mobile-nav-links a {
+        font-size: 1.15rem;
+    }
+    
+    .mobile-dropdown-toggle {
+        font-size: 1.15rem;
+    }
+    
+    .mobile-dropdown-menu li a {
+        font-size: 1rem;
+    }
+    
+    .mobile-login {
+        font-size: 1.1rem;
+    }
+    
+    .mobile-vip-btn {
+        font-size: 1rem;
+        padding: 0.6rem;
+    }
+    
+    .mobile-theme-toggle span {
+        font-size: 1rem;
+    }
+    
+    .social-icons {
+        gap: 1rem;
+    }
+    
+    .social-icons a {
+        font-size: 1.3rem;
+    }
+    
+    .footer-about p {
+        font-size: 0.95rem;
+    }
+    
+    .footer-copyright {
+        font-size: 0.85rem;
+    }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadData();
-    initSliderControls();
-    initTheme();
-    initHamburger();
-    initMobileDropdowns();
-    initSearch();
-    initModals();
-    initNavbarScroll();
-});
+@media (min-width: 769px) and (max-width: 1024px) {
+    .hero-carousel {
+        aspect-ratio: 27 / 40;
+    }
+    
+    .carousel-desc {
+        max-width: 80%;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-carousel {
+        aspect-ratio: 27 / 40;
+    }
+    
+    .carousel-desc {
+        font-size: 0.85rem;
+    }
+    
+    .movie-card {
+        flex: 0 0 120px;
+    }
+    
+    .movie-poster {
+        height: 160px;
+    }
+    
+    .section-header h2 a {
+        font-size: 1rem;
+    }
+    
+    .movie-title {
+        font-size: 0.85rem;
+    }
+}
