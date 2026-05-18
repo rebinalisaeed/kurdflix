@@ -328,23 +328,10 @@ function initModals() {
     window.addEventListener('click', (e) => { if (e.target === loginModal) loginModal.style.display = 'none'; if (e.target === vipModal) vipModal.style.display = 'none'; });
 }
 
-// ========== گۆڕینی بانەڕ بەپێی ڕێژەی سکرۆڵ (بەش بەش - بەپێی پیکسڵ) ==========
+// ========== گۆڕینی بانەڕ بەپێی ڕێژەی سکرۆڵ (بەش بەش - لە خوارەوە ڕوون بەرەو سەرەوە تۆخ) ==========
 function initNavbarScroll() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
-    
-    // فەنکشن بۆ حسابکردنی ڕێژەی تۆخی بانەڕ بەپێی سکرۆڵ (بەش بەش)
-    function getDarkPercent(scrollY) {
-        // ئەگەر سکرۆڵ زیاتر لە 150px بوو، 100% بگەڕێنێتەوە
-        if (scrollY >= 150) return 100;
-        
-        // هەر 1px = 0.666% زیادبوون (100% / 150px = 0.666%)
-        // بۆ ئەوەی بە شێوەی بەش بەش زیاد بکات، ڕێژەکە بە پلەیی دەژمێرین
-        let percent = (scrollY / 150) * 100;
-        
-        // ڕێژەکە بە نزیکترین ژمارەی تەواو دەخەمێنرێت بۆ ئەوەی بەش بەش زیاد بکات
-        return Math.floor(percent);
-    }
     
     function updateNavbar() {
         const scrollY = window.scrollY;
@@ -359,16 +346,20 @@ function initNavbarScroll() {
         }
         
         // حسابکردنی ڕێژەی تۆخی بانەڕ بەپێی سکرۆڵ (0% تا 100%)
-        let darkPercent = getDarkPercent(scrollY);
+        // هەر 1px = 0.666% زیادبوون (100% / 150px = 0.666%)
+        let darkPercent = (scrollY / 150) * 100;
+        // بۆ ئەوەی بە شێوەی بەش بەش زیاد بکات، ڕێژەکە بە پلەیی دەخەمێنرێت
+        darkPercent = Math.floor(darkPercent);
         
-        // سەرەوەی بانەڕ: هەر 100% تۆخە (بۆ ئەوەی نوسینەکان لەسەر سلاید دیار بن)
-        // خوارەوەی بانەڕ: بەپێی ڕێژەی سکرۆڵ (0% تا 100%) تۆخ دەبێت
-        const topPercent = 100;
-        const bottomPercent = darkPercent;
+        // دیاریکردنی ڕێژەی تۆخی سەرەوە و خوارەوەی بانەڕ
+        // چونکە لە سەرەتادا سەرەوە تۆخە و خوارەوە ڕوونە
+        // بە زیادبوونی سکرۆڵ، خوارەوەش بەرەو تۆخی دەچێت
+        const topPercent = 100; // سەرەوە هەر 100% تۆخە
+        const bottomPercent = Math.min(100, darkPercent); // خوارەوە بەپێی سکرۆڵ زیاد دەکات
         
-        // گۆڕینی گرادێنتەکە - لە سەرەوە تۆخ، بەرەو خوارەوە بەپێی سکرۆڵ
-        // کاتێک bottomPercent زیاد دەکات، بەشی تۆخ زیاتر دەبێت
-        navbar.style.backgroundImage = `linear-gradient(to bottom, #292929 ${topPercent}%, transparent ${100 - bottomPercent}%)`;
+        // گۆڕینی گرادێنتەکە - لە سەرەوە تۆخ، بەرەو خوارەوە ڕوون
+        // کاتێک bottomPercent زیاد دەکات، بەشی ڕوون کەم دەبێتەوە
+        navbar.style.backgroundImage = `linear-gradient(to top, #292929 ${bottomPercent}%, transparent ${Math.max(0, 100 - bottomPercent)}%)`;
     }
     
     // بانگی فەنکشنی یەکەمجار
