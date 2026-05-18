@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KurdFlix - هەموو بەرهەمەکان</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         .all-movies-container {
             max-width: 1400px;
@@ -89,18 +89,6 @@
             .filter-bar select, .filter-bar input {
                 width: 100%;
             }
-            /* گەورەکردنی سایزی نوسین لە مۆبایلدا */
-            .page-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.9rem;
-            }
-            .filter-bar select, .filter-bar input {
-                font-size: 0.9rem;
-                padding: 0.6rem;
-            }
-            .back-btn {
-                font-size: 0.9rem;
-            }
         }
     </style>
 </head>
@@ -109,7 +97,7 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></div>
-            <div class="logo">
+            <div class="logo" id="logoBtn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
                     <defs><path id="arcPath" d="M 10,168 Q 450,100 890,168" /></defs>
                     <text font-family="'Arial Black'" font-size="148" font-weight="900" font-style="italic" fill="#E50914" letter-spacing="-3">
@@ -119,17 +107,17 @@
             </div>
             <div class="mobile-search-icon" id="mobileSearchIcon"><i class="fas fa-search"></i></div>
             <ul class="nav-menu" id="navMenu">
-                <li><a href="index.html">گەڕانەوە بۆ پەڕەی سەرەکی</a></li>
+                <li><a href="all-movies.html?type=films">فیلمەکان</a></li>
+                <li><a href="all-movies.html?type=series">زنجیرەکان</a></li>
+                <li><a href="#">زنجیرەفیلم</a></li>
+                <li><a href="#">ژێرنووسی کوردی</a></li>
+                <li><a href="all-movies.html?top250">Top 250</a></li>
+                <li><a href="staff.html">ستافی کوردفلێکس</a></li>
             </ul>
             <div class="nav-actions">
                 <div class="search-icon" id="searchIcon"><i class="fas fa-search"></i></div>
                 <div class="login-icon" id="loginIcon"><i class="fas fa-user"></i></div>
                 <button class="vip-btn" id="vipBtn">VIP</button>
-                <div class="theme-toggle">
-                    <i class="fas fa-sun"></i>
-                    <label class="switch"><input type="checkbox" id="theme-switch"><span class="slider round"></span></label>
-                    <i class="fas fa-moon"></i>
-                </div>
             </div>
         </div>
         <div class="search-form" id="searchForm" style="display: none;">
@@ -157,9 +145,6 @@
                 <option value="persian">فارسی</option>
                 <option value="arabic">عەرەبی</option>
                 <option value="english">ئینگلیزی</option>
-                <option value="korean">کۆری</option>
-                <option value="spanish">ئیسپانی</option>
-                <option value="indian">هیندی</option>
             </select>
             <select id="genreFilter">
                 <option value="all">هەموو چەشنەکان</option>
@@ -195,12 +180,16 @@
                 const typeParam = urlParams.get('type');
                 const categoryParam = urlParams.get('category');
                 const langParam = urlParams.get('lang');
+                const top250Param = urlParams.get('top250');
                 
                 if (typeParam === 'films') currentFilters.type = 'film';
                 if (typeParam === 'series') currentFilters.type = 'series';
                 if (typeParam === 'latest') currentFilters.type = 'all';
                 if (langParam) currentFilters.lang = langParam;
                 if (categoryParam === 'kids') currentFilters.genre = 'kids';
+                if (top250Param === '') {
+                    currentFilters.genre = 'top250';
+                }
                 
                 const titleEl = document.getElementById('pageTitle');
                 if (typeParam === 'films') titleEl.textContent = 'هەموو فیلمەکان';
@@ -210,6 +199,7 @@
                 if (langParam === 'arabic') titleEl.textContent = 'هەموو بەرهەمی عەرەبی';
                 if (langParam === 'turkish') titleEl.textContent = 'هەموو بەرهەمی تورکی';
                 if (categoryParam === 'kids') titleEl.textContent = 'بەرهەمی منداڵان';
+                if (top250Param === '') titleEl.textContent = '٢٥٠ باشترین فیلم';
                 
                 applyFiltersAndRender();
             } catch (error) {
@@ -222,9 +212,14 @@
                 const matchSearch = movie.title.toLowerCase().includes(currentFilters.search.toLowerCase());
                 const matchType = currentFilters.type === 'all' || movie.type === currentFilters.type;
                 const matchLang = currentFilters.lang === 'all' || movie.lang === currentFilters.lang;
-                const matchGenre = currentFilters.genre === 'all' || 
-                    (movie.genres && movie.genres.includes(currentFilters.genre)) ||
-                    (currentFilters.genre === 'kids' && movie.categories && movie.categories.includes('kids'));
+                let matchGenre = currentFilters.genre === 'all' || 
+                    (movie.genres && movie.genres.includes(currentFilters.genre));
+                if (currentFilters.genre === 'kids') {
+                    matchGenre = movie.categories && movie.categories.includes('kids');
+                }
+                if (currentFilters.genre === 'top250') {
+                    matchGenre = movie.categories && movie.categories.includes('top250');
+                }
                 return matchSearch && matchType && matchLang && matchGenre;
             });
         }
@@ -246,15 +241,18 @@
                 grid.innerHTML = '<div class="no-results">هیچ بەرهەمێک نەدۆزرایەوە</div>';
                 return;
             }
-            grid.innerHTML = movies.map(movie => `
-                <div class="movie-card" onclick="location.href='movie.html?id=${movie.id}'">
-                    <img src="${movie.poster}" class="movie-poster" onerror="this.src='https://via.placeholder.com/200x300?text=No+Poster'">
-                    <div class="movie-info">
-                        <h3 class="movie-title">${movie.title}</h3>
-                        <p class="movie-year">${movie.year}</p>
+            grid.innerHTML = movies.map(movie => {
+                const targetPage = movie.type === 'film' ? 'movie.html' : 'series.html';
+                return `
+                    <div class="movie-card" onclick="location.href='${targetPage}?id=${movie.id}'">
+                        <img src="${movie.poster}" class="movie-poster" onerror="this.src='https://via.placeholder.com/200x300?text=No+Poster'">
+                        <div class="movie-info">
+                            <h3 class="movie-title">${movie.title}</h3>
+                            <p class="movie-year">${movie.year}</p>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
         
         function renderPagination(totalPages) {
@@ -317,33 +315,15 @@
             }
         }
         
-        function initTheme() {
-            const themeSwitch = document.getElementById('theme-switch');
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'light') {
-                document.body.setAttribute('data-theme', 'light');
-                if (themeSwitch) themeSwitch.checked = true;
-            }
-            if (themeSwitch) {
-                themeSwitch.addEventListener('change', (e) => {
-                    if (e.target.checked) {
-                        document.body.setAttribute('data-theme', 'light');
-                        localStorage.setItem('theme', 'light');
-                    } else {
-                        document.body.setAttribute('data-theme', 'dark');
-                        localStorage.setItem('theme', 'dark');
-                    }
-                });
-            }
-        }
-        
         function initNavbarScroll() {
             const navbar = document.querySelector('.navbar');
             if (!navbar) return;
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) navbar.classList.add('scrolled');
+            function checkScroll() {
+                if (window.scrollY >= 150) navbar.classList.add('scrolled');
                 else navbar.classList.remove('scrolled');
-            });
+            }
+            checkScroll();
+            window.addEventListener('scroll', checkScroll);
         }
         
         function initHamburger() {
@@ -354,12 +334,19 @@
             }
         }
         
+        function initLogoClick() {
+            const logo = document.getElementById('logoBtn');
+            if (logo) {
+                logo.addEventListener('click', () => { window.location.href = 'index.html'; });
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', () => {
             loadAllMovies();
             initFilters();
-            initTheme();
             initNavbarScroll();
             initHamburger();
+            initLogoClick();
         });
     </script>
 </body>
