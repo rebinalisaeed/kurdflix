@@ -55,23 +55,24 @@ body {
 /* ========== ناوبار و بانەڕ ========== */
 .navbar {
     background-color: transparent;
-    background-image: linear-gradient(to bottom, #292929 0%, transparent 100%);
+    background-image: linear-gradient(to top, #292929 0%, transparent 100%);
     padding: 0.8rem 2rem;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    transition: background-image 0.3s ease;
+    transition: background-image 0.2s ease;
 }
 
+/* کاتێک سکرۆڵ کراوە (زیاتر لە 150px)، بانەڕەکە بە تەواوی ڕەنگ دەگرێت */
 .navbar.scrolled {
-    background-image: linear-gradient(to bottom, #292929 0%, #292929 100%);
+    background-image: linear-gradient(to top, #292929 0%, #292929 100%);
     border-bottom: 1px solid var(--border);
 }
 
 [data-theme="light"] .navbar.scrolled {
-    background-image: linear-gradient(to bottom, #E5E5E5 0%, #E5E5E5 100%);
+    background-image: linear-gradient(to top, #E5E5E5 0%, #E5E5E5 100%);
 }
 
 .nav-container {
