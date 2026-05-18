@@ -4,45 +4,163 @@
             "id": 1,
             "title": "ئەفسانەی کوێستان",
             "year": "2024",
-            "poster": "assets/posters/poster1.jpg",
+            "poster": "assets/images/posters/poster1.jpg",
             "type": "film",
             "lang": "kurdish",
             "categories": ["kurdish-film", "all-films"],
-            "videoUrl": "https://vidmoly.com/e/example1",
-            "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا",
+            "videoUrl": "assets/videos/movie1.mp4",
+            "description": "چیرۆکی شەڕ و خۆشەویستی لە دڵی چیاکاندا، گەنجێک بۆ پاراستنی گوندەکەی دەجەنگێت...",
             "trailerUrl": "https://www.youtube.com/embed/example1",
-            "genres": ["دراما", "ئاکشن", "سەرکێشی"]
+            "duration": "2h 15min",
+            "genres": ["دراما", "ئاکشن", "سەرکێشی"],
+            "cast": [
+                { "id": 1, "name": "هەرێم قادر", "role": "ڕۆڵی سەرەکی" },
+                { "id": 2, "name": "ڕووپەر یەڵماز", "role": "ڕۆڵی دووەم" }
+            ],
+            "crew": [
+                { "name": "حەسەن زەکی", "role": "دەرهێنەر" },
+                { "name": "سەعید ڕەحمان", "role": "نوسەر" }
+            ],
+            "subtitles": [
+                { "lang": "ku", "label": "کوردی", "url": "assets/subtitles/movie1_ku.vtt" },
+                { "lang": "en", "label": "English", "url": "assets/subtitles/movie1_en.vtt" }
+            ],
+            "audioTracks": [
+                { "lang": "ku", "label": "کوردی (دۆبلاژ)", "url": "assets/audio/movie1_ku.mp3" },
+                { "lang": "original", "label": "Original (ڕەسەن)", "url": "" }
+            ]
         },
         {
             "id": 2,
             "title": "قەڵای خەونەکان",
             "year": "2023",
-            "poster": "assets/posters/poster2.jpg",
+            "poster": "assets/images/posters/poster2.jpg",
             "type": "series",
             "lang": "turkish",
             "categories": ["turkish-series", "all-series"],
-            "videoUrl": "https://streamsb.com/e/example2",
-            "description": "زنجیرەیەکی درامایی و سەرنجڕاکێش",
+            "videoUrl": "assets/videos/series1_ep1.mp4",
+            "description": "زنجیرەیەکی درامایی خێزانی کە چیرۆکی خۆشەویستی و خیانەت دەگێڕێتەوە",
             "trailerUrl": "https://www.youtube.com/embed/example2",
-            "genres": ["دراما", "ڕۆمانسی", "تراژیدی"]
+            "duration": "45 min per episode",
+            "genres": ["دراما", "ڕۆمانسی", "تراژیدی"],
+            "cast": [
+                { "id": 3, "name": "نەجات ئیسلەر", "role": "سەرەکی" },
+                { "id": 4, "name": "دێران ئاکسۆی", "role": "سەرەکی" }
+            ],
+            "crew": [
+                { "name": "تورگوت یەڵماز", "role": "دەرهێنەر" }
+            ],
+            "episodes": [
+                {
+                    "number": 1,
+                    "title": "ئەڵقەی یەکەم - دەستپێک",
+                    "videoUrl": "assets/videos/series1_ep1.mp4",
+                    "subtitles": [
+                        { "lang": "ku", "label": "کوردی", "url": "assets/subtitles/series1_ep1_ku.vtt" }
+                    ],
+                    "audioTracks": [
+                        { "lang": "original", "label": "Original (تورکی)", "url": "" }
+                    ]
+                },
+                {
+                    "number": 2,
+                    "title": "ئەڵقەی دووەم - ڕازەکان",
+                    "videoUrl": "assets/videos/series1_ep2.mp4",
+                    "subtitles": [
+                        { "lang": "ku", "label": "کوردی", "url": "assets/subtitles/series1_ep2_ku.vtt" },
+                        { "lang": "en", "label": "English", "url": "assets/subtitles/series1_ep2_en.vtt" }
+                    ],
+                    "audioTracks": [
+                        { "lang": "original", "label": "Original (تورکی)", "url": "" },
+                        { "lang": "ku", "label": "کوردی (دۆبلاژ)", "url": "assets/audio/series1_ep2_ku.mp3" }
+                    ]
+                },
+                {
+                    "number": 3,
+                    "title": "ئەڵقەی سێیەم - بڕیارەکان",
+                    "videoUrl": "assets/videos/series1_ep3.mp4",
+                    "subtitles": [
+                        { "lang": "ku", "label": "کوردی", "url": "assets/subtitles/series1_ep3_ku.vtt" }
+                    ],
+                    "audioTracks": [
+                        { "lang": "original", "label": "Original (تورکی)", "url": "" }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": 3,
+            "title": "تاڵانی پارە",
+            "year": "2025",
+            "poster": "assets/images/posters/poster3.jpg",
+            "type": "film",
+            "lang": "turkish",
+            "categories": ["turkish-film", "all-films"],
+            "videoUrl": "assets/videos/movie3.mp4",
+            "description": "فیلمێکی ئەکشنی خێرا و پڕ لە سەرکێشی، چیرۆکی تاڵانکاری گەورە لە ستەمبوڵ",
+            "trailerUrl": "https://www.youtube.com/embed/example3",
+            "duration": "2h 10min",
+            "genres": ["ئاکشن", "هەستبزوێن", "تاوانکاری"],
+            "cast": [
+                { "id": 5, "name": "بوراک ئۆزچیویت", "role": "سەرەکی" }
+            ],
+            "crew": [
+                { "name": "عەلی بیلگین", "role": "دەرهێنەر" }
+            ],
+            "subtitles": [
+                { "lang": "ku", "label": "کوردی", "url": "assets/subtitles/movie3_ku.vtt" }
+            ],
+            "audioTracks": [
+                { "lang": "original", "label": "Original (تورکی)", "url": "" }
+            ]
         }
     ],
     "carousel": [
         {
             "id": 1778292633763,
             "title": "Crim 101",
+            "category": "تاوانکاری",
             "year": "2026",
-            "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان",
+            "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان، بەو هیوایەی پلانی ئەو دزییە چەندین ملیۆن دۆلارییەیان پووچەڵ بکاتەوە.",
             "images": {
-                "mobile": "assets/slides/slide_mobile.jpg",
-                "tablet": "assets/slides/slide_tablet.jpg",
-                "desktop": "assets/slides/slide_desktop.jpg"
+                "mobile": "assets/images/slides/crim101_mobile.jpg",
+                "tablet": "assets/images/slides/crim101_tablet.jpg",
+                "desktop": "assets/images/slides/crim101_desktop.jpg"
             },
-            "movieId": 1
+            "movieId": 1,
+            "genres": ["تاوانکاری", "هەستبزوێن", "دراما"]
+        },
+        {
+            "id": 1778292974779,
+            "title": "Berlin 2",
+            "category": "درامای ئیسپانی",
+            "year": "2026",
+            "description": "دەستەیەک لە ئیسپانیا گروپێکی دروست دەکەن و هەڵدەکورنە سەر بانکی نێودەوڵەتی ئیسپانیا",
+            "images": {
+                "mobile": "assets/images/slides/berlin2_mobile.jpg",
+                "tablet": "assets/images/slides/berlin2_tablet.jpg",
+                "desktop": "assets/images/slides/berlin2_desktop.jpg"
+            },
+            "movieId": 2,
+            "genres": ["تاوانکاری", "سەرکێشی", "دراما", "هەستبزوێن"]
+        },
+        {
+            "id": 1778293074852,
+            "title": "تاڵانی پارە",
+            "category": "فیلمی تورکی",
+            "year": "2025",
+            "description": "فیلمێکی ئەکشنی خێرا پڕ لە سەرکێشی و تاڵانکاری گەورە",
+            "images": {
+                "mobile": "assets/images/slides/moneyheist_mobile.jpg",
+                "tablet": "assets/images/slides/moneyheist_tablet.jpg",
+                "desktop": "assets/images/slides/moneyheist_desktop.jpg"
+            },
+            "movieId": 3,
+            "genres": ["ئاکشن", "هەستبزوێن", "تاوانکاری"]
         }
     ],
     "siteData": {
-        "aboutText": "کوردفلێکس پێگەیەکی نوێیە تازەگەری دەکات لە گەیاندنی بەرهەمە سینەماییە خۆماڵیەکان و جیهانیەکان",
+        "aboutText": "کوردفلێکس پێگەیەکی نوێیە تازەگەری دەکات لە گەیاندنی بەرهەمە سینەماییە خۆماڵیەکان و جیهانیەکان هەروەها ئاشناتان دەکات بە نوێترین بەرهەمی زنجیرە دراماکانی کوردی و دەرەکی.",
         "copyrightText": "kurdflix.com 2026 ©",
         "itemsPerPage": 20
     }
