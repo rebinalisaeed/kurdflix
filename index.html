@@ -12,7 +12,17 @@
     <!-- ==================== ناوبار (بانەڕ) ==================== -->
     <nav class="navbar">
         <div class="nav-container">
-            <div class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></div>
+            <!-- لای چەپ: هەمبەرگەر و ئایکۆنی گەڕان بۆ مۆبایل -->
+            <div class="nav-left">
+                <div class="hamburger" id="hamburgerBtn"><i class="fas fa-bars"></i></div>
+                <div class="mobile-search-icon" id="mobileSearchIcon"><i class="fas fa-search"></i></div>
+                <!-- ئەم ئەکشنانە تەنها لە کۆمپیوتەر و تابلێتدا دەردەکەون -->
+                <div class="search-icon" id="searchIcon"><i class="fas fa-search"></i></div>
+                <div class="login-icon" id="loginIcon"><i class="fas fa-user"></i></div>
+                <button class="vip-btn" id="vipBtn">VIP</button>
+            </div>
+
+            <!-- ناوەڕاست: لۆگۆ -->
             <div class="logo" id="logoBtn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 195" class="logo-svg">
                     <defs><path id="arcPath" d="M 10,168 Q 450,100 890,168" /></defs>
@@ -21,7 +31,8 @@
                     </text>
                 </svg>
             </div>
-            <div class="mobile-search-icon" id="mobileSearchIcon"><i class="fas fa-search"></i></div>
+
+            <!-- لای ڕاست: مینیو -->
             <ul class="nav-menu" id="navMenu">
                 <li><a href="all-movies.html?type=films">فیلمەکان</a></li>
                 <li><a href="all-movies.html?type=series">زنجیرەکان</a></li>
@@ -30,18 +41,35 @@
                 <li><a href="all-movies.html?top250">Top 250</a></li>
                 <li><a href="staff.html">ستافی کوردفلێکس</a></li>
             </ul>
-            <div class="nav-actions">
-                <div class="search-icon" id="searchIcon"><i class="fas fa-search"></i></div>
-                <div class="login-icon" id="loginIcon"><i class="fas fa-user"></i></div>
-                <button class="vip-btn" id="vipBtn">VIP</button>
-            </div>
         </div>
+        
+        <!-- فۆرمی گەڕان -->
         <div class="search-form" id="searchForm" style="display: none;">
             <input type="text" id="searchInput" placeholder="گەڕان بە ناوی فیلم یان زنجیرە...">
             <button id="searchClose"><i class="fas fa-times"></i></button>
             <div id="searchResults" class="search-results"></div>
         </div>
     </nav>
+
+    <!-- ==================== مێنیوی مۆبایل ==================== -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header"><button class="close-menu" id="closeMenuBtn"><i class="fas fa-times"></i></button></div>
+        <div class="mobile-menu-content">
+            <div class="mobile-nav-links">
+                <a href="all-movies.html?type=films">فیلمەکان</a>
+                <a href="all-movies.html?type=series">زنجیرەکان</a>
+                <a href="#">زنجیرەفیلم</a>
+                <a href="#">ژێرنووسی کوردی</a>
+                <a href="all-movies.html?top250">Top 250</a>
+                <a href="staff.html">ستافی کوردفلێکس</a>
+            </div>
+            <div class="mobile-actions">
+                <div class="mobile-login" id="mobileLoginIcon"><i class="fas fa-user"></i> چوونە ژوورەوە</div>
+                <button class="mobile-vip-btn" id="mobileVipBtn">VIP</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ==================== سلایدی سەرەکی ==================== -->
     <section class="hero-carousel">
@@ -139,26 +167,6 @@
             <div class="slider-container" id="turkish-slider"><div class="movies-slider" id="turkishSlider"></div></div>
         </section>
     </main>
-
-    <!-- ==================== مێنیوی مۆبایل ==================== -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-header"><button class="close-menu" id="closeMenuBtn"><i class="fas fa-times"></i></button></div>
-        <div class="mobile-menu-content">
-            <div class="mobile-nav-links">
-                <a href="all-movies.html?type=films">فیلمەکان</a>
-                <a href="all-movies.html?type=series">زنجیرەکان</a>
-                <a href="#">زنجیرەفیلم</a>
-                <a href="#">ژێرنووسی کوردی</a>
-                <a href="all-movies.html?top250">Top 250</a>
-                <a href="staff.html">ستافی کوردفلێکس</a>
-            </div>
-            <div class="mobile-actions">
-                <div class="mobile-login" id="mobileLoginIcon"><i class="fas fa-user"></i> چوونە ژوورەوە</div>
-                <button class="mobile-vip-btn" id="mobileVipBtn">VIP</button>
-            </div>
-        </div>
-    </div>
 
     <!-- ==================== فووتەر ==================== -->
     <footer>
