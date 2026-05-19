@@ -833,8 +833,13 @@ footer {
     /* نوسینەکانی سلاید - 5px بەرزتر */
     .carousel-content {
         bottom: 5px;
-        padding: 0.5rem 1rem 1rem 1rem;
+        padding: 0.5rem 1rem 2rem 1rem;
         gap: 0.4rem;
+    }
+    
+    /* دۆتەکان بەرزتر بکە بۆ سەرەوە */
+    .carousel-dots {
+        bottom: 8px;
     }
     
     .genre-tag {
@@ -855,6 +860,7 @@ footer {
     .carousel-btn {
         padding: 0.4rem 1.2rem;
         font-size: 0.85rem;
+        margin-bottom: 0.5rem;
     }
     
     .section-header h2 a {
