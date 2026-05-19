@@ -124,8 +124,8 @@
             "description": "لێکۆڵەرێکی کۆڵنەدەر دەکەوێتە شوێنپێیان، بەو هیوایەی پلانی ئەو دزییە چەندین ملیۆن دۆلارییەیان پووچەڵ بکاتەوە.",
             "images": {
                 "mobile": "assets/images/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
-                "tablet": "assets/images/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg",
-                "desktop": "assets/images/slides/1080x1920_CAN_StyleC_V1_Crime101_RGB.jpg"
+                "tablet": "assets/images/slides/crim1011600x1200.jpg",
+                "desktop": "assets/images/slides/crim1011920x1080.jpg"
             },
             "movieId": 1,
             "genres": ["تاوانکاری", "هەستبزوێن", "دراما"]
