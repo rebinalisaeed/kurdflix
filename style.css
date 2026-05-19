@@ -21,11 +21,11 @@
     --bg-secondary: #1A1A1A;
     --text-primary: #E5E5E5;
     --text-secondary: #B3B3B3;
-    --accent: #E50914;
     --accent-gold: linear-gradient(135deg, #FFD700, #FFA500);
     --card-bg: #1F1F1F;
     --border: #333;
     --nav-bg-scroll: #292929;
+    --hover-bg: rgba(59, 59, 59, 0.6);
 }
 
 * {
@@ -91,13 +91,15 @@ body {
     color: var(--text-primary);
     text-decoration: none;
     font-size: 0.85rem;
-    padding: 0.5rem 0;
+    padding: 0.5rem 0.6rem;
     white-space: nowrap;
-    transition: none;
+    transition: background-color 0.2s;
+    border-radius: 5px;
 }
 
 .nav-menu > li > a:hover {
     color: var(--text-primary);
+    background-color: var(--hover-bg);
 }
 
 .hamburger, .mobile-search-icon {
@@ -123,13 +125,17 @@ body {
     color: var(--text-primary);
     display: flex;
     align-items: center;
+    padding: 0.3rem;
+    border-radius: 5px;
+    transition: background-color 0.2s;
 }
 
 .search-icon:hover, .login-icon:hover {
     color: var(--text-primary);
+    background-color: var(--hover-bg);
 }
 
-/* دوگمەی VIP - ڕەنگی زێڕین */
+/* دوگمەی VIP */
 .vip-btn {
     background: linear-gradient(135deg, #FFD700, #FFA500);
     border: none;
@@ -183,10 +189,11 @@ body {
     cursor: pointer;
     border-bottom: 1px solid var(--border);
     font-family: 'NRT', sans-serif;
+    transition: background-color 0.2s;
 }
 
 .search-results .search-item:hover {
-    background-color: var(--border);
+    background-color: var(--hover-bg);
     color: var(--text-primary);
 }
 
@@ -334,7 +341,6 @@ body {
     margin-top: 0.5rem;
 }
 
-/* دوگمەکانی سلاید - ڕەنگی زێڕین */
 .carousel-btn {
     padding: 0.6rem 1.8rem;
     border: none;
@@ -416,11 +422,13 @@ body {
     font-size: 1.3rem;
     border-right: 4px solid #FFD700;
     padding-right: 0.8rem;
-    transition: none;
+    transition: background-color 0.2s;
+    border-radius: 5px;
 }
 
 .section-header h2 a:hover {
     color: var(--text-primary);
+    background-color: var(--hover-bg);
 }
 
 .slider-controls {
@@ -440,11 +448,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
 }
 
 .slider-btn:hover {
-    background-color: var(--bg-secondary);
+    background-color: var(--hover-bg);
     color: var(--text-primary);
     transform: scale(1.05);
 }
@@ -580,13 +588,15 @@ body {
     color: var(--text-primary);
     text-decoration: none;
     font-size: 1rem;
-    padding: 0.5rem 0;
+    padding: 0.5rem 0.6rem;
     display: block;
-    transition: none;
+    transition: background-color 0.2s;
+    border-radius: 5px;
 }
 
 .mobile-nav-links a:hover {
     color: var(--text-primary);
+    background-color: var(--hover-bg);
 }
 
 .mobile-actions {
@@ -603,6 +613,13 @@ body {
     gap: 0.5rem;
     cursor: pointer;
     color: var(--text-primary);
+    padding: 0.3rem;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.mobile-login:hover {
+    background-color: var(--hover-bg);
 }
 
 .mobile-vip-btn {
@@ -654,11 +671,14 @@ footer {
 .social-icons a {
     color: var(--text-primary);
     font-size: 1.5rem;
-    transition: none;
+    transition: color 0.2s;
+    padding: 0.3rem;
+    border-radius: 5px;
 }
 
 .social-icons a:hover {
     color: #FFD700;
+    background-color: var(--hover-bg);
 }
 
 .footer-about {
@@ -755,10 +775,14 @@ footer {
 .modal-content a {
     color: #FFD700;
     text-decoration: none;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    transition: background-color 0.2s;
 }
 
 .modal-content a:hover {
     color: #FFD700;
+    background-color: var(--hover-bg);
 }
 
 /* ========== پەڕەی وردەکاری فیلم/زنجیرە ========== */
@@ -795,6 +819,14 @@ footer {
     color: #FFD700;
 }
 
+.episode-item {
+    transition: background-color 0.2s;
+}
+
+.episode-item:hover {
+    background-color: var(--hover-bg);
+}
+
 .watch-episode-btn {
     background: linear-gradient(135deg, #FFD700, #FFA500);
     color: #1A1A1A;
@@ -820,7 +852,7 @@ footer {
     color: var(--text-primary);
     cursor: pointer;
     border-radius: 5px;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
 }
 
 .page-btn.active {
@@ -830,13 +862,58 @@ footer {
 }
 
 .page-btn:hover:not(.active) {
-    background-color: var(--border);
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
     transform: scale(1.02);
 }
 
 /* ========== پەڕەی ستاف ========== */
 .staff-role {
     color: #FFD700;
+}
+
+.cast-item, .crew-item {
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.cast-item:hover, .crew-item:hover {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+/* ========== پەڕەی ئەدمین ========== */
+.tab-btn {
+    transition: background-color 0.2s;
+}
+
+.tab-btn:hover:not(.active) {
+    background-color: var(--hover-bg);
+    color: var(--text-primary);
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: #1A1A1A;
+    border: none;
+    transition: transform 0.2s;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800;
+    transform: scale(1.02);
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    transition: transform 0.2s;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    transform: scale(1.02);
 }
 
 /* ========== Responsive ========== */
