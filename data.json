@@ -144,19 +144,6 @@
             "movieId": 2,
             "genres": ["تاوانکاری", "سەرکێشی", "دراما", "هەستبزوێن"]
         },
-        {
-            "id": 1778293074852,
-            "title": "تاڵانی پارە",
-            "category": "فیلمی تورکی",
-            "year": "2025",
-            "description": "فیلمێکی ئەکشنی خێرا پڕ لە سەرکێشی و تاڵانکاری گەورە",
-            "images": {
-                "mobile": "assets/images/slides/moneyheist_mobile.jpg",
-                "tablet": "assets/images/slides/moneyheist_tablet.jpg",
-                "desktop": "assets/images/slides/moneyheist_desktop.jpg"
-            },
-            "movieId": 3,
-            "genres": ["ئاکشن", "هەستبزوێن", "تاوانکاری"]
         }
     ],
     "siteData": {
