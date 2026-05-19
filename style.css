@@ -15,13 +15,14 @@
     font-display: swap;
 }
 
-/* ========== گۆڕاوەکانی ڕەنگ (تەنها تاریک) ========== */
+/* ========== گۆڕاوەکانی ڕەنگ ========== */
 :root {
     --bg-primary: #0A0A0A;
     --bg-secondary: #1A1A1A;
     --text-primary: #E5E5E5;
     --text-secondary: #B3B3B3;
     --accent: #E50914;
+    --accent-gold: linear-gradient(135deg, #FFD700, #FFA500);
     --card-bg: #1F1F1F;
     --border: #333;
     --nav-bg-scroll: #292929;
@@ -92,11 +93,11 @@ body {
     font-size: 0.85rem;
     padding: 0.5rem 0;
     white-space: nowrap;
-    transition: color 0.3s;
+    transition: none;
 }
 
 .nav-menu > li > a:hover {
-    color: var(--accent);
+    color: var(--text-primary);
 }
 
 .hamburger, .mobile-search-icon {
@@ -125,9 +126,10 @@ body {
 }
 
 .search-icon:hover, .login-icon:hover {
-    color: var(--accent);
+    color: var(--text-primary);
 }
 
+/* دوگمەی VIP - ڕەنگی زێڕین */
 .vip-btn {
     background: linear-gradient(135deg, #FFD700, #FFA500);
     border: none;
@@ -138,6 +140,12 @@ body {
     cursor: pointer;
     font-size: 0.8rem;
     white-space: nowrap;
+    transition: transform 0.2s;
+}
+
+.vip-btn:hover {
+    background: linear-gradient(135deg, #E6C200, #CC8400);
+    transform: scale(1.02);
 }
 
 .search-form {
@@ -178,8 +186,8 @@ body {
 }
 
 .search-results .search-item:hover {
-    background-color: var(--accent);
-    color: white;
+    background-color: var(--border);
+    color: var(--text-primary);
 }
 
 /* ========== سلایدی سەرەکی ========== */
@@ -223,48 +231,41 @@ body {
     object-position: top center;
 }
 
-/* لە کۆمپیوتەردا */
 @media (min-width: 1025px) {
     .hero-carousel {
         aspect-ratio: auto;
         height: 85vh;
         min-height: 600px;
     }
-    
     .carousel-bg-img {
         object-fit: cover;
         object-position: top center;
     }
 }
 
-/* لە تابلێتدا */
 @media (min-width: 769px) and (max-width: 1024px) {
     .hero-carousel {
         aspect-ratio: auto;
         height: 60vh;
         min-height: 450px;
     }
-    
     .carousel-bg-img {
         object-fit: cover;
         object-position: top center;
     }
 }
 
-/* لە مۆبایلدا */
 @media (max-width: 768px) {
     .hero-carousel {
         aspect-ratio: 27 / 40;
         height: auto;
     }
-    
     .carousel-bg-img {
         object-fit: cover;
         object-position: top center;
     }
 }
 
-/* ناوەڕۆکی سلاید */
 .carousel-content {
     position: absolute;
     bottom: 0;
@@ -333,6 +334,7 @@ body {
     margin-top: 0.5rem;
 }
 
+/* دوگمەکانی سلاید - ڕەنگی زێڕین */
 .carousel-btn {
     padding: 0.6rem 1.8rem;
     border: none;
@@ -341,12 +343,12 @@ body {
     font-size: 1rem;
     font-family: 'NRT', sans-serif;
     font-weight: bold;
-    transition: all 0.3s ease;
+    transition: transform 0.2s;
 }
 
 .carousel-btn.trailer {
-    background-color: var(--accent);
-    color: white;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #1A1A1A;
 }
 
 .carousel-btn.info {
@@ -354,8 +356,14 @@ body {
     color: white;
 }
 
-.carousel-btn.trailer:hover, .carousel-btn.info:hover {
-    transform: scale(1.05);
+.carousel-btn.trailer:hover {
+    background: linear-gradient(135deg, #E6C200, #CC8400);
+    transform: scale(1.02);
+}
+
+.carousel-btn.info:hover {
+    background-color: rgba(0,0,0,0.8);
+    transform: scale(1.02);
 }
 
 .carousel-dots {
@@ -379,7 +387,7 @@ body {
 }
 
 .dot.active {
-    background-color: var(--accent);
+    background-color: #FFD700;
     width: 24px;
     border-radius: 5px;
 }
@@ -406,13 +414,13 @@ body {
     color: var(--text-primary);
     text-decoration: none;
     font-size: 1.3rem;
-    border-right: 4px solid var(--accent);
+    border-right: 4px solid #FFD700;
     padding-right: 0.8rem;
-    transition: color 0.3s;
+    transition: none;
 }
 
 .section-header h2 a:hover {
-    color: var(--accent);
+    color: var(--text-primary);
 }
 
 .slider-controls {
@@ -432,12 +440,13 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s;
+    transition: transform 0.2s;
 }
 
 .slider-btn:hover {
-    background-color: var(--accent);
-    color: white;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    transform: scale(1.05);
 }
 
 .slider-container {
@@ -464,7 +473,7 @@ body {
 }
 
 .movies-slider::-webkit-scrollbar-thumb {
-    background: var(--accent);
+    background: #FFD700;
     border-radius: 10px;
 }
 
@@ -501,6 +510,11 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.movie-year {
+    font-size: 0.75rem;
+    color: #FFD700;
 }
 
 /* ========== مێنیوی مۆبایل ========== */
@@ -568,11 +582,11 @@ body {
     font-size: 1rem;
     padding: 0.5rem 0;
     display: block;
-    transition: color 0.3s;
+    transition: none;
 }
 
 .mobile-nav-links a:hover {
-    color: var(--accent);
+    color: var(--text-primary);
 }
 
 .mobile-actions {
@@ -599,6 +613,12 @@ body {
     color: #1A1A1A;
     font-weight: bold;
     cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.mobile-vip-btn:hover {
+    background: linear-gradient(135deg, #E6C200, #CC8400);
+    transform: scale(1.02);
 }
 
 /* ========== فووتەر ========== */
@@ -634,11 +654,11 @@ footer {
 .social-icons a {
     color: var(--text-primary);
     font-size: 1.5rem;
-    transition: color 0.3s;
+    transition: none;
 }
 
 .social-icons a:hover {
-    color: var(--accent);
+    color: #FFD700;
 }
 
 .footer-about {
@@ -712,15 +732,114 @@ footer {
 .modal-content button {
     width: 100%;
     padding: 0.8rem;
-    background-color: var(--accent);
-    color: white;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #1A1A1A;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     margin-top: 0.5rem;
+    font-weight: bold;
+    transition: transform 0.2s;
 }
 
-/* ========== Responsive (بەشەکانی تر) ========== */
+.modal-content button:hover {
+    background: linear-gradient(135deg, #E6C200, #CC8400);
+    transform: scale(1.02);
+}
+
+.modal-content p {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.modal-content a {
+    color: #FFD700;
+    text-decoration: none;
+}
+
+.modal-content a:hover {
+    color: #FFD700;
+}
+
+/* ========== پەڕەی وردەکاری فیلم/زنجیرە ========== */
+.movie-meta {
+    color: #FFD700;
+}
+
+.movie-genre-tag, .series-genre-tag {
+    background-color: var(--bg-secondary);
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    border: 1px solid var(--border);
+}
+
+.watch-btn {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #1A1A1A;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.watch-btn:hover {
+    background: linear-gradient(135deg, #E6C200, #CC8400);
+    transform: scale(1.02);
+}
+
+.episode-number {
+    color: #FFD700;
+}
+
+.watch-episode-btn {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #1A1A1A;
+    padding: 0.3rem 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.watch-episode-btn:hover {
+    background: linear-gradient(135deg, #E6C200, #CC8400);
+    transform: scale(1.02);
+}
+
+/* ========== پەڕەی هەموو بەرهەمەکان ========== */
+.page-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: transform 0.2s;
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #1A1A1A;
+    border-color: #FFD700;
+}
+
+.page-btn:hover:not(.active) {
+    background-color: var(--border);
+    transform: scale(1.02);
+}
+
+/* ========== پەڕەی ستاف ========== */
+.staff-role {
+    color: #FFD700;
+}
+
+/* ========== Responsive ========== */
 @media (max-width: 768px) {
     .navbar {
         padding: 0.5rem 1rem;
@@ -741,7 +860,6 @@ footer {
         height: 28px;
     }
     
-    /* سلاید لە مۆبایلدا */
     .hero-carousel {
         aspect-ratio: 27 / 40;
         height: auto;
